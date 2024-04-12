@@ -1,0 +1,4 @@
+.idea
+kubectl
+minikube-linux-amd64
+get_helm.sh

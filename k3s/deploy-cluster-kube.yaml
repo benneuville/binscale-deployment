@@ -1,0 +1,130 @@
+---
+- name: Export ANSIBLE_HOST_KEY_CHECKING
+  hosts: all
+  tasks:
+    - name: Export ANSIBLE_HOST_KEY_CHECKING=False
+      shell: export ANSIBLE_HOST_KEY_CHECKING=False
+
+- name: Deploy K3s Cluster
+  hosts: master-node
+  become: true
+  tasks:
+    - name: Update the system
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Installing Curl
+      apt:
+        name: curl
+        state: present
+
+    - name: Download the K3s installation script
+      shell: curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable servicelb --flannel-backend=wireguard-native --disable traefik --node-ip {{ ansible_host }} --cluster-cidr 10.42.0.0/16 --service-cidr 10.43.0.0/16" sh -
+
+- hosts: master-node
+  become: yes
+  tasks:
+    - name: Read content of the file
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: file_content
+
+    - name: Extract value from file content
+      set_fact:
+        value_from_file: "{{ file_content.content | b64decode | regex_replace('\n', '') }}"
+
+    - name: Use the value later in the script
+      debug:
+        msg: "The value from the file is {{ value_from_file }}"
+
+- name: Add nodes to the "k3s_nodes" inventory group
+  hosts: worker-nodes
+  become: true
+  tasks:
+    - name: Update the system
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Installing Curl
+      apt:
+        name: curl
+        state: present
+
+    - debug: 
+        var: hostvars[groups['master-node'][0]]['value_from_file']
+
+    - name: Download the K3s installation script for the worker nodes
+      shell: curl -sfL https://get.k3s.io | K3S_URL=https://{{ hostvars[groups['master-node'][0]]['ansible_default_ipv4']['address'] }}:6443 K3S_TOKEN={{ hostvars[groups['master-node'][0]]['value_from_file'] }} sh -
+
+- name: Unset ANSIBLE_HOST_KEY_CHECKING
+  hosts: all
+  tasks:
+    - name: Unset ANSIBLE_HOST_KEY_CHECKING
+      shell: unset ANSIBLE_HOST_KEY_CHECKING
+
+- name: Deploy requirements for the stack and tests on the master
+  hosts: master-node
+  become: true
+  tasks:
+    - name: Installing Python packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3-pip
+        - python3-kubernetes
+        - python3-pandas
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: Installing Git
+      apt:
+        name: git
+        state: present
+
+    - name: Installing Ansible
+      apt:
+        name: ansible
+        state: present
+
+    - name: Downloading Kubectl
+      get_url:
+        url: "https://dl.k8s.io/release/{{ lookup('url', 'https://dl.k8s.io/release/stable.txt') }}/bin/linux/amd64/kubectl"
+        dest: /tmp/kubectl
+        mode: 0755
+
+    - name: Installing Kubectl
+      command: install -o root -g root -m 0755 /tmp/kubectl /usr/local/bin/kubectl
+
+    - name: Download Helm script
+      get_url:
+        url: "https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3"
+        dest: /tmp/get_helm.sh
+        mode: "0777"
+
+    - name: Execute Helm script
+      shell: "/tmp/get_helm.sh"
+      args:
+        executable: /bin/bash
+
+    - name: Install jq
+      ansible.builtin.package:
+        name: jq
+        state: present
+
+    - name: Install Kubernetes Collection core
+      ansible.builtin.command:
+        cmd: ansible-galaxy collection install kubernetes.core
+
+    - name: Create .kube directory
+      command: mkdir -p ~/.kube
+
+    - name: Set kube config
+      command: cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
+
+    - name: Clone the Git repository
+      git:
+        repo: "https://github.com/antoinebqt/PER2023-045.git"  # URL of the Git repository
+        dest: "~/PER2023-045"

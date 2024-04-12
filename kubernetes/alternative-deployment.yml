@@ -1,0 +1,251 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: workload
+  name: workload
+spec:
+  restartPolicy: Never
+  containers:
+    - name: java-kafka-producer
+      image: docker.io/mezzeddine/produceroldgrpc:v1
+      #image: docker.io/mezzeddine/omgrpc:v3
+      #image: docker.io/mezzeddine/producertaxigrpc:v1
+
+
+      env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap:9092
+        - name: TOPIC
+          value: testtopic1
+        - name: DELAY_MS
+          value: "1000"
+        - name: LOG_LEVEL
+          value: "INFO"
+        - name: PRODUCER_ACKS
+          value: "0"
+        - name: ADDITIONAL_CONFIG
+          value: |
+                retries=100
+---
+          apiVersion: v1
+          kind: Pod
+          metadata:
+              labels:
+                app: grpcassignmentserver
+              name: controllerandscaler
+          spec:
+                restartPolicy: Never
+                serviceAccountName: admin-service-account
+                containers:
+                  - name: controllerandscaler
+                    #image: docker.io/mezzeddine/graphtest:v7
+                    #image: docker.io/mezzeddine/controllerproducer:v24
+                    #image: docker.io/mezzeddine/controllerproducer:v28
+                    #image: docker.io/mezzeddine/controllerproducer:v33
+                    #image: docker.io/mezzeddine/controllerms:v2 
+                    #image: docker.io/mezzeddine/controllerms:v9 # no lag estimation
+                    #image: docker.io/mezzeddine/controllerms:v21 #lag estimation
+                    #image: docker.io/mezzeddine/controllerms:v28 # no cool :(
+                    #image: docker.io/mezzeddine/controllerms:v29 # no cool :(
+                    #image: docker.io/mezzeddine/controllerms:v35 #  DI, 
+                    #image: docker.io/mezzeddine/controllerms:v36 #  DI, 
+                    #image: docker.io/mezzeddine/controllerms:v37 #  DI, 
+                    #image: docker.io/mezzeddine/controllerms:v38 #  DI, 
+                    #image: docker.io/mezzeddine/controllerms:v39 #  DI, 
+                    #image: docker.io/mezzeddine/controllerms:v40 # 1, 0.5, taxi
+                    #image: docker.io/mezzeddine/controllerms:v40 # 1, 0.4
+                    #image: docker.io/mezzeddine/controllerms:v41 # 1, 0.5, old
+                    #image: docker.io/mezzeddine/controllerms:v41 # 0.9, 0.4, old this 95
+                    #image: docker.io/mezzeddine/controllerms:v43 # 0.9, 0.4, taxi
+                    #image: docker.io/mezzeddine/controllerms:v44 # 0.9, 0.4, taxi, wsla = 0.75
+                    #image: docker.io/mezzeddine/controllerms:v45 # 0.9, 0.4, old 15 sec cool
+                    #image: docker.io/mezzeddine/controllerms:v46 # 0.9, 0.4, old 20 sec cool
+                    #image: docker.io/mezzeddine/controllerms:v49 # 0.9, 0.4, old
+                    #image: docker.io/mezzeddine/controllerms:v66 # just arrival 
+                    image: docker.io/mezzeddine/controllerms:v66 # 0.9, 0.4 sure
+                    #image: docker.io/mezzeddine/controllerms:v69 # linear
+                    #image: docker.io/mezzeddine/controllerms:v72 # prom
+                    #image: docker.io/mezzeddine/controllerlineartaxi:v1 # taxxi  # 
+                    #image: docker.io/mezzeddine/controller55:v0
+                    #image: docker.io/mezzeddine/controller77:v0
+                    #image: docker.io/mezzeddine/controller88:v1
+                    #image: docker.io/mezzeddine/controller66:v0
+                    #image: docker.io/mezzeddine/controller44:v0
+                    #image: docker.io/mezzeddine/controller75:v0
+                    #image: docker.io/mezzeddine/controller74:v0
+                    #image: docker.io/mezzeddine/controller84:v0
+                    #image: docker.io/mezzeddine/controller16:v0 # 0.9, 0.4 sure
+                    #image: docker.io/mezzeddine/controller93:v0     #controller16:v0 # 0.9, 0.4 sure
+                    #image: docker.io/mezzeddine/controllerreb2w1:v0
+                    #image: docker.io/mezzeddine/controllerreb2w5:v0
+                    #image: docker.io/mezzeddine/controllerreb2w2:v0
+                    #image: docker.io/mezzeddine/controllerreb2w3:v0
+                    #image: docker.io/mezzeddine/controllerreb2w15:v0
+                    #image: docker.io/mezzeddine/controllerreb2w15f9:v0
+                    #image: docker.io/mezzeddine/controllerreb2w15f9c:v0
+                    #image: docker.io/mezzeddine/controller02:v1
+                    #image: docker.io/mezzeddine/controllerwsla3:v0
+                    #image: docker.io/mezzeddine/controllerreb2wsla3:v2
+                    #image: docker.io/mezzeddine/controllerwsla2:v0
+                    #image: docker.io/mezzeddine/controllerreb2wsla2:v0
+                    #image: docker.io/mezzeddine/controllerwsla1:v0
+                    #image: docker.io/mezzeddine/controllerreb2wsla1:v0
+                    #image: docker.io/mezzeddine/controllerwsla15:v0
+                    #image: docker.io/mezzeddine/controllerreb2wsla15:v0
+                    #image: docker.io/mezzeddine/controllerwsla15:v1
+                    #image: docker.io/mezzeddine/controllerreb2wsla15taxic:v0
+                    #  mezzeddine/controllerreb2wsla05taken
+                    #image: docker.io/mezzeddine/controllerreb2wsla05taken:v0
+                    #image: docker.io/mezzeddine/controllerreb2wsl1taken:v0
+                    #image: docker.io/mezzeddine/controllerwsla15taxi:v0
+                    #  mezzeddine/controllerwsla05taxif2:v0 , , controllerwsla05taxif3
+                    #image: docker.io/mezzeddine/controllerwsla05taxif2:v0
+                    #image: docker.io/mezzeddine/controllerwsla05taxif3:v0
+                    #image: docker.io/mezzeddine/controllerreb05wsla05:v0 # taken
+                    #image: docker.io/mezzeddine/controllerwsla05reb05:v0
+                    #image: docker.io/mezzeddine/controllerwsla05reb05f3:v0
+                    #image: docker.io/mezzeddine/controllerreb05wsla05taxi:v0 # taken
+                    #image: docker.io/mezzeddine/controllerwsla05reb05taxinottaken:v0               #controllerreb05wsla05taxi:v0 # taken
+                    #image: docker.io/mezzeddine/controllerwsla05reb05taxinottakenf3:v0               #controllerreb05wsla05taxi:v0 # taken
+                    #image: docker.io/mezzeddine/controllerwsla05reb05taxinottakenf2:v0 
+                    #image: docker.io/mezzeddine/controllerreb1w5:v0
+                    #image: docker.io/mezzeddine/controllerw05f:v0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    ports:
+                    - containerPort: 5002
+                    env:
+                    - name: BOOTSTRAP_SERVERS
+                      value: my-cluster-kafka-bootstrap:9092
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: assignmentservice #arrivalservice #assignmentservice
+spec:
+  selector:
+        app: workload
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rateservice
+spec:
+  selector:
+        app: latency
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: latency
+  name: latency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency
+          #image: docker.io/mezzeddine/consumereventssticky:v0 # demo range
+          #image: docker.io/mezzeddine/consumerlatency:v0 # demo range
+          #image: docker.io/mezzeddine/consumerlatency:v1 # demo range
+          #image: docker.io/mezzeddine/consumerlatency:v3 # 
+          #image: docker.io/mezzeddine/consumerlatency:v5 # 
+          #image: docker.io/mezzeddine/consumerlatency:v5 # 
+          #image: docker.io/mezzeddine/consumerlatency:v6 # 
+          #image: docker.io/mezzeddine/consumerlatency:v12 # 
+          #image: docker.io/mezzeddine/consumerlatency:v16 # 
+          #image: docker.io/mezzeddine/consumerlatency:v19 # 
+          #image: docker.io/mezzeddine/consumernolag:v1 # 
+          #image: docker.io/mezzeddine/consumernolagreb:v2 # 
+          #image: docker.io/mezzeddine/consumernolagreb1:v4 # 3 sec reb
+          #image: docker.io/mezzeddine/consumerlagreb5:v0 # 3 sec reb
+          image: docker.io/mezzeddine/consumernolagevents:v0 # 
+          #image: docker.io/mezzeddine/consumer10:v3 # 10 sec
+          #image: docker.io/mezzeddine/consumer10:v4 # 15 sec
+          #image: docker.io/mezzeddine/consumer500h:v0 # 500
+          #image: docker.io/mezzeddine/consumer500hreb2:v0 # 500
+          #image: docker.io/mezzeddine/consumer500hreb500:v0 # 500
+          #image: docker.io/mezzeddine/consumerreb1:v0 
+          #image: docker.io/mezzeddine/consumerreb7:v1
+
+
+
+
+          ports:
+          - containerPort: 8080
+            name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: testtopic1
+            - name: GROUP_ID
+              value: testgroup1
+            - name: SLEEP
+              value: "5"
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                max.poll.records=500
+---
+  apiVersion: monitoring.coreos.com/v1
+  kind: PodMonitor
+  metadata:
+    name: demoobservabilitypodmonitor
+    labels:
+      app: strimzi
+  spec:
+    selector:
+      matchLabels:
+        app: latency
+    namespaceSelector:
+      matchNames:
+        - default
+    podMetricsEndpoints:
+      - path: /prometheus
+        port: brom
+        interval: 5s

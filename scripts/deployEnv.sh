@@ -1,0 +1,1 @@
+ansible-playbook ansible/deploy-env.yaml

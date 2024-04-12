@@ -1,0 +1,28 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: elastic
+spec:
+  version: 8.6.2
+  count: 1
+  config:
+    monitoring.ui.ccs.enabled: false
+    xpack.reporting.queue.timeout: 10800000
+    xpack.reporting.csv.maxSizeBytes: 209715200
+  elasticsearchRef:
+    name: elastic-cluster
+  podTemplate:
+    spec:
+      priorityClassName: elastic-cluster-high-priority
+      containers:
+      - name: kibana
+        env:
+          - name: NODE_OPTIONS
+            value: "--max-old-space-size=2048"
+        resources:
+          requests:
+            memory: 1.5Gi
+            cpu: 1.5
+          limits:
+            memory: 1.5Gi

@@ -1,0 +1,47 @@
+# apiVersion: v1
+# kind: Secret
+# metadata:
+#   name: elasticsearch-password
+# type: Opaque
+# data:
+#   password: RlBROHk4YjkwanVWOExhVjg4S0IxMms4
+# ---
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elastic-cluster
+  namespace: elastic
+spec:
+  version: 8.6.2
+  volumeClaimDeletePolicy: DeleteOnScaledownOnly
+  nodeSets:
+  - name: all-in-one
+    count: 1
+    config:
+      node.roles: ["master", "data", "ingest", "data_warm"]
+    podTemplate:
+      spec:
+        priorityClassName: elastic-cluster-high-priority
+        containers:
+        - name: elasticsearch
+          resources:
+            limits:
+              memory: 3Gi
+            requests:
+              cpu: 3
+              memory: 3Gi
+        initContainers:
+        - name: sysctl
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          command: ['sh', '-c', 'sysctl -w vm.max_map_count=262144']
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 30Gi
