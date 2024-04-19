@@ -9,7 +9,8 @@ spec:
   restartPolicy: Never
   containers:
     - name: java-kafka-producer
-      image: docker.io/laaziz2001/producer:1.0
+      image: docker.io/laaziz2001/custom_image:latest
+      command: ["java", "-jar", "/app/producer.jar"]
       env:
         - name: BOOTSTRAP_SERVERS
           value: my-cluster-kafka-bootstrap:9092
@@ -23,57 +24,55 @@ spec:
           value: "0"
         - name: ADDITIONAL_CONFIG
           value: |
-                retries=100
-
+            retries=100
 ---
-
 apiVersion: v1
 kind: Pod
 metadata:
-    labels:
-      app: grpcassignmentserver
-    name: controllerandscaler
-    namespace: default
+  labels:
+    app: grpcassignmentserver
+  name: controllerandscaler
+  namespace: default
 spec:
-  serviceAccountName: admin-service-account
+  #serviceAccountName: admin-service-account
   restartPolicy: Always
   containers:
     - name: controllerandscaler
-      image: docker.io/laaziz2001/controller:1.0
+      image: docker.io/laaziz2001/custom_image:latest
       ports:
-      - containerPort: 5002
+        - containerPort: 5002
       env:
-      - name: BOOTSTRAP_SERVERS
-        value: my-cluster-kafka-bootstrap:9092
-      - name: FUP
-        value: "0.9"
-      - name: MU
-        value: "200"
-      - name: WSLA
-        value: "0.5"
-      - name: FDOWN
-        value: "0.4"
-      - name: REB_TIME
-        value: "0.05"
-      - name: DI
-        value: "1000"
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap:9092
+        - name: FUP
+          value: "0.9"
+        - name: MU
+          value: "200"
+        - name: WSLA
+          value: "0.5"
+        - name: FDOWN
+          value: "0.4"
+        - name: REB_TIME
+          value: "0.05"
+        - name: DI
+          value: "1000"
+        - name: DEBUG_OPTIONS
+          value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: assignmentservice
+  name: arrivalservice #assignmentservice
   namespace: default
 spec:
   selector:
-        app: workload
+    app: workload
   ports:
     - protocol: TCP
       port: 5002
       targetPort: 5002
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -81,14 +80,12 @@ metadata:
   namespace: default
 spec:
   selector:
-        app: latency
+    app: latency
   ports:
     - protocol: TCP
       port: 5002
       targetPort: 5002
-
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -108,10 +105,11 @@ spec:
     spec:
       containers:
         - name: latency
-          image: docker.io/laaziz2001/consumer:1.0
+          image: docker.io/laaziz2001/custom_image:latest
+          command: ["java", "-jar", "/app/consumer.jar"]
           ports:
-          - containerPort: 8080
-            name: brom
+            - containerPort: 8080
+              name: brom
           env:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
@@ -125,29 +123,28 @@ spec:
               value: "1000000"
             - name: ADDITIONAL_CONFIG
               value: |
-                max.poll.records=500
+                max.poll.records=100
             - name: SCALE
               value: "3"
             - name: SHAPE
               value: "2.75"
-
 ---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: demoobservabilitypodmonitor
+  labels:
+    app: strimzi
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: latency
+  namespaceSelector:
+    matchNames:
+      - default
+  podMetricsEndpoints:
+    - path: /prometheus
+      port: brom
+      interval: 5s
 
-  apiVersion: monitoring.coreos.com/v1
-  kind: PodMonitor
-  metadata:
-    name: demoobservabilitypodmonitor
-    labels:
-      app: strimzi
-    namespace: default
-  spec:
-    selector:
-      matchLabels:
-        app: latency
-    namespaceSelector:
-      matchNames:
-        - default
-    podMetricsEndpoints:
-      - path: /prometheus
-        port: brom
-        interval: 5s
