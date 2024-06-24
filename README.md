@@ -1,12 +1,9 @@
-# PER2023–045 - Type : Developpement
 ## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes, GCP.
 ## Déploiement, monitoring et optimisation de performances d'une pile technologique de Micro services, sur Kafka, Kubernetes, GCP
 
-### Authors of this repository
-- [Antoine BUQUET](https://github.com/antoinebqt)
-- [Benoit GAUDET](https://github.com/BenoitGAUDET38)
-- [Ayoub IMAMI](https://github.com/AyoubIMAMI)
-- [Mourad KARRAKCHOU](https://github.com/MouradKarrakchou)
+### Author of this repository
+[Fatima Zahrae LAAZIZ](https://github.com/fatimazahraelaaziz)
+
 
 ---
 
@@ -68,57 +65,3 @@ scripts/deployEnv.sh
 ```bash
 scripts/launchExperience.sh
 ```
-
----
-
-### Second configuration with K3s on a cluster of clean machines (Grid5000)
-
-#### Requirements
-- An account on Grid5000
-
-#### Steps
-- All information about Grid5000 can be found on [getting started](https://www.grid5000.fr/w/Getting_Started)
-- Clone the project on your home directory on a site of Grid5000 (for exemple **sophia**)
-- Get the number of hosts that you want for the K8s cluster
-```bash
-# Exemple of 2 nodes for 2 hours
-oarsub -I -l host=2,walltime=2 -t deploy
-kadeploy3 debian11-min
-```
-- Clone this project in your Grid5000 home directory
-```bash
-git clone https://github.com/antoinebqt/PER2023-045.git
-```
-- Modify the IP addresses in K3s/hosts.ini (only one master is allowed)
-- Deploy the K3s cluster
-
-NB: You must be in the root folder of the project to use the scripts.
-```bash
-cd PER2023-045
-chmod +x scripts/chmodAll.sh && scripts/chmodAll.sh
-vim k3s/hosts.ini
-pip install ansible # not necessary if already installed
-scripts/deploy-k3s-cluster.sh
-```
-- Connect to your master node
-```bash
-ssh root@<ip_address>
-ssh root@<grid_node_name>
-```
-- Deploy the stack
-```bash
-cd ~/PER2023-045
-scripts/deployEnv.sh
-```
-- Wait 10 minutes then launch the experience
-```bash
-scripts/launchExperience.sh
-```
-- Wait until the end of the experience
-- Retrieve the experience data
-```bash
-# from your home Grid5000, not the master node
-scp -r root@<ip_address>:~/PER2023-045/python/output ~
-```
-The data will be in your home directory
-# Deployment
