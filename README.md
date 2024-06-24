@@ -64,7 +64,7 @@ scripts/deployEnv.sh
 ```bash
 scripts/launchExperience.sh
 ```
-- **PS: In order to reset ** the machine
+- **PS: In order to reset** the machine
 ```bash
 scripts/resetCluster.sh
 ```
