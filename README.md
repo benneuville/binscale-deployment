@@ -24,7 +24,6 @@
 - [kubernetes](https://github.com/fatimazahraelaaziz/Deployment/tree/master/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
 - [scripts](https://github.com/fatimazahraelaaziz/Deployment/tree/master/scripts) folder which contains the following `.sh` files:
   - `chmodAll.sh`: give the execution rights to all the scripts
-  - `deploy-k3s-cluster.sh`: deploy a K3s cluster on a list of hosts
   - `deployEnv.sh`: deploy all the environment needed for the application
   - `launchExperience.sh`: launch the execution of the application, retrieve the data and generate the graphs in the [`python/output`](https://github.com/fatimazahraelaaziz/Deployment/tree/master/python/output) folder
   - `mnk-requirements1.sh`: install Docker for Minikube
