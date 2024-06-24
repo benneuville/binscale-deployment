@@ -9,7 +9,7 @@
 
 ### Technologies
 - Docker
-- Kubernetes (MiniKube, K3s)
+- Kubernetes (MiniKube)
 - Kafka
 - Ansible
 - Prometheus
@@ -63,4 +63,8 @@ scripts/deployEnv.sh
 - **Launch** the experience
 ```bash
 scripts/launchExperience.sh
+```
+- **PS: In order to reset ** the machine
+```bash
+scripts/resetCluster.sh
 ```
