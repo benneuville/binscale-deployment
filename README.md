@@ -1,5 +1,5 @@
-## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes, GCP.
-## Déploiement, monitoring et optimisation de performances d'une pile technologique de Micro services, sur Kafka, Kubernetes, GCP
+## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes.
+## Déploiement, monitoring et optimisation de performances d'une pile technologique de Micro services, sur Kafka, Kubernetes.
 
 ### Author of this repository
 [Fatima Zahrae LAAZIZ](https://github.com/fatimazahraelaaziz)
