@@ -20,13 +20,13 @@
 ---
 
 ### Project structure
-- [ansible](https://github.com/antoinebqt/TER/tree/master/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
-- [kubernetes](https://github.com/antoinebqt/TER/tree/master/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
-- [scripts](https://github.com/antoinebqt/TER/tree/master/scripts) folder which contains the following `.sh` files:
+- [ansible](https://github.com/fatimazahraelaaziz/Deployment/tree/master/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
+- [kubernetes](https://github.com/fatimazahraelaaziz/Deployment/tree/master/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
+- [scripts](https://github.com/fatimazahraelaaziz/Deployment/tree/master/scripts) folder which contains the following `.sh` files:
   - `chmodAll.sh`: give the execution rights to all the scripts
   - `deploy-k3s-cluster.sh`: deploy a K3s cluster on a list of hosts
   - `deployEnv.sh`: deploy all the environment needed for the application
-  - `launchExperience.sh`: launch the execution of the application, retrieve the data and generate the graphs in the [`python/output`](https://github.com/antoinebqt/TER/tree/master/python/output) folder
+  - `launchExperience.sh`: launch the execution of the application, retrieve the data and generate the graphs in the [`python/output`](https://github.com/fatimazahraelaaziz/Deployment/tree/master/python/output) folder
   - `mnk-requirements1.sh`: install Docker for Minikube
   - `mnk-requirements2.sh`: install Kubectl, Minikube, Helm, Python packages and Ansible
 
