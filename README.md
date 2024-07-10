@@ -10,12 +10,14 @@
 ### Technologies
 - Docker
 - Kubernetes (MiniKube)
+- Helm
 - Kafka
 - Ansible
 - Prometheus
 - Grafana
 - Python
-- Helm
+- ElasticSearch
+- Kibana
 
 ---
 
