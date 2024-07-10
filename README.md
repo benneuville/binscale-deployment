@@ -1,10 +1,6 @@
 ## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes.
 ## Déploiement, monitoring et optimisation de performances d'une pile technologique de Micro services, sur Kafka, Kubernetes.
 
-### Author of this repository
-[Fatima Zahrae LAAZIZ](https://github.com/fatimazahraelaaziz)
-
-
 ---
 
 ### Technologies
@@ -32,6 +28,10 @@
   - `mnk-requirements2.sh`: install Kubectl, Minikube, Helm, Python packages and Ansible
 
 ---
+
+### Link to Experience
+[Experience Repository](https://github.com/fatimazahraelaaziz/Experience/tree/main)
+
  
 ### First configuration with Minikube on a single, clean machine
 NB: You must be in the root folder to use the scripts.
