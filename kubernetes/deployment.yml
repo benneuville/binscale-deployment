@@ -40,7 +40,7 @@ metadata:
   name: controllerandscaler
   namespace: default
 spec:
-  serviceAccountName: admin-service-account
+  serviceAccountName: default-admin
   restartPolicy: Always
   containers:
     - name: controllerandscaler

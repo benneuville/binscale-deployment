@@ -36,8 +36,8 @@
     - name: Apply Prometheus Configuration
       command: kubectl apply -f ../kubernetes/prometheus.yaml
 
-    - name: Apply Grafana Configuration
-      command: kubectl apply -f ../kubernetes/grafana.yaml
+    # - name: Apply Grafana Configuration
+    #   command: kubectl apply -f ../kubernetes/grafana.yaml
 
     - name: Apply Prometheus Service
       command: kubectl apply -f ../kubernetes/prometheus-service.yaml
