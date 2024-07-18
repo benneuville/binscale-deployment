@@ -9,13 +9,15 @@ spec:
   restartPolicy: Never
   containers:
     - name: java-kafka-producer
-      image: docker.io/laaziz2001/custom_image:latest
+      image: docker.io/laaziz2001/logs:v65
       command: ["java", "-jar", "/app/producer.jar"]
       env:
         - name: BOOTSTRAP_SERVERS
           value: my-cluster-kafka-bootstrap:9092
         - name: TOPIC
           value: testtopic1
+        - name: PARTITION_WEIGHTS
+          value: "3,2,1,2,1"
         - name: DELAY_MS
           value: "1000"
         - name: LOG_LEVEL
@@ -34,28 +36,32 @@ metadata:
   name: controllerandscaler
   namespace: default
 spec:
-  #serviceAccountName: admin-service-account
+  serviceAccountName: admin-service-account
   restartPolicy: Always
   containers:
     - name: controllerandscaler
-      image: docker.io/laaziz2001/custom_image:latest
+      image: docker.io/laaziz2001/logs:v65
       ports:
         - containerPort: 5002
       env:
         - name: BOOTSTRAP_SERVERS
           value: my-cluster-kafka-bootstrap:9092
+        - name: TOPIC
+          value: testtopic1
+        - name: GROUP_ID
+          value: testgroup1
         - name: FUP
-          value: "0.9"
+          value: "0.7"
         - name: MU
           value: "200"
         - name: WSLA
           value: "0.5"
         - name: FDOWN
-          value: "0.4"
+          value: "0.2"
         - name: REB_TIME
           value: "0.05"
         - name: DI
-          value: "1000"
+          value: "500"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
@@ -105,7 +111,7 @@ spec:
     spec:
       containers:
         - name: latency
-          image: docker.io/laaziz2001/custom_image:latest
+          image: docker.io/laaziz2001/logs:v65
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
@@ -128,6 +134,10 @@ spec:
               value: "3"
             - name: SHAPE
               value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
@@ -147,4 +157,3 @@ spec:
     - path: /prometheus
       port: brom
       interval: 5s
-
