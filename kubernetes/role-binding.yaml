@@ -1,11 +1,12 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: admin-role-binding
+#   name: admin-role-binding
+  name: default-admin
   namespace: default
 subjects:
   - kind: ServiceAccount
-    name: admin-service-account
+    name: default
     namespace: default
 roleRef:
   kind: ClusterRole

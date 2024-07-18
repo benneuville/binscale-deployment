@@ -46,7 +46,7 @@ spec:
           key: kafka-metrics-config.yml
 
   zookeeper:
-    replicas: 3
+    replicas: 1
     readinessProbe:
       initialDelaySeconds: 15
       timeoutSeconds: 5

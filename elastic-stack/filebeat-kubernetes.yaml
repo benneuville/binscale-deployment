@@ -140,17 +140,23 @@ data:
     cloud.id: ${ELASTIC_CLOUD_ID}
     cloud.auth: ${ELASTIC_CLOUD_AUTH}
 
-    output.elasticsearch:
-      hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
-      username: ${ELASTICSEARCH_USERNAME}
-      password: ${ELASTICSEARCH_PASSWORD}
+    # output.elasticsearch:
+    #   hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+    #   username: ${ELASTICSEARCH_USERNAME}
+    #   password: ${ELASTICSEARCH_PASSWORD}
       
-      ## ADD THESE TWO LINES IF FILEBEAT AGENTS FAIL TO SEND LOGS TO THE CLUSTER ##
-      protocol: "https"
-      ssl.verification_mode: none
+    #   ## ADD THESE TWO LINES IF FILEBEAT AGENTS FAIL TO SEND LOGS TO THE CLUSTER ##
+    #   protocol: "https"
+    #   ssl.verification_mode: none
 
-      ## CUSTOM INDEX PATTERN
-      index: "filebeat-aks-devops-prod-%{[agent.version]}"
+    #   ## CUSTOM INDEX PATTERN
+    #   index: "filebeat-aks-devops-prod-%{[agent.version]}"
+
+    output.file:
+      path: "/var/log"
+      filename: filebeat-logs
+      rotate_every_kb: 102400
+      number_of_files: 20
 
     setup.template:
       name: "filebeat-aks-devops-prod"
@@ -244,7 +250,7 @@ spec:
           readOnly: true
         - name: varlog
           mountPath: /var/log
-          readOnly: true
+          readOnly: false
       volumes:
       - name: config
         configMap:

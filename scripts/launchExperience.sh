@@ -114,3 +114,30 @@ python3 python/cdf.py
 # python3 python/displayPlotLag.py
 
 printf "\n\033[1;36m## Results are available in the python/output folder\033[0m\n"
+
+
+#kubectl port-forward service/elastic-cluster-es-http 9200:9200 -n elastic --address 0.0.0.0
+#curl -k -u  "elastic:$ELASTIC_PASSWORD" https://localhost:9200/_  
+curl -XPOST "https://elastic-cluster-es-http.elastic.svc:9200/_search" -H "kbn-xsrf: reporting" -H "Content-Type: application/json" -d'
+{
+  "query": {
+    "bool": {
+      "must": [
+        {
+          "match_phrase": {
+            "kubernetes.deployment.name": "latency"
+          }
+        }
+      ]
+    }
+  },
+  "_source": ["@timestamp", "message", "kubernetes.pod.name"],
+  "sort": [
+    {
+      "@timestamp": {
+        "order": "desc"
+      }
+    }
+  ],
+  "track_total_hits": true
+}'
