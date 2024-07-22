@@ -133,9 +133,10 @@ data:
     #        paths:
     #          - /var/log/containers/*${data.kubernetes.container.id}.log
 
-    processors:
-      - add_cloud_metadata:
-      - add_host_metadata:
+    #FAb : removed metadata from logs
+    # processors:
+    #   - add_cloud_metadata:
+    #   - add_host_metadata:
 
     cloud.id: ${ELASTIC_CLOUD_ID}
     cloud.auth: ${ELASTIC_CLOUD_AUTH}
@@ -153,10 +154,11 @@ data:
     #   index: "filebeat-aks-devops-prod-%{[agent.version]}"
 
     output.file:
-      path: "/var/log"
+      path: "/var/log/experiments"
       filename: filebeat-logs
       rotate_every_kb: 102400
       number_of_files: 20
+      rotate_on_startup : true
 
     setup.template:
       name: "filebeat-aks-devops-prod"
@@ -208,22 +210,22 @@ spec:
           "-e",
         ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: elastic-cluster-es-http.elastic.SVC
-        - name: ELASTICSEARCH_PORT
-          value: "9200"
-        - name: ELASTICSEARCH_USERNAME
-          value: elastic
-        - name: ELASTICSEARCH_PASSWORD
-          #value: FPQ8y8b90juV8LaV88KB12k8
-          valueFrom:
-            secretKeyRef:
-              name: elastic-cluster-es-elastic-user
-              key: elastic
-        - name: ELASTIC_CLOUD_ID
-          value:
-        - name: ELASTIC_CLOUD_AUTH
-          value:
+        # - name: ELASTICSEARCH_HOST
+        #   value: elastic-cluster-es-http.elastic.SVC
+        # - name: ELASTICSEARCH_PORT
+        #   value: "9200"
+        # - name: ELASTICSEARCH_USERNAME
+        #   value: elastic
+        # - name: ELASTICSEARCH_PASSWORD
+        #   #value: FPQ8y8b90juV8LaV88KB12k8
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: elastic-cluster-es-elastic-user
+        #       key: elastic
+        # - name: ELASTIC_CLOUD_ID
+        #   value:
+        # - name: ELASTIC_CLOUD_AUTH
+        #   value:
         - name: NODE_NAME
           valueFrom:
             fieldRef:
@@ -251,6 +253,9 @@ spec:
         - name: varlog
           mountPath: /var/log
           readOnly: false
+        - name: varlogexperiments
+          mountPath: /var/log/experiments
+          readOnly: false
       volumes:
       - name: config
         configMap:
@@ -262,6 +267,9 @@ spec:
       - name: varlog
         hostPath:
           path: /var/log
+      - name: varlogexperiments
+        hostPath:
+          path: /var/log/experiments
       # data folder stores a registry of read status for all files, so we don't send everything again on a Filebeat pod restart
       - name: data
         hostPath:

@@ -47,26 +47,26 @@
   hosts: localhost
 
   tasks:
-    - name: Add helm elastic repo
-      command: helm repo add elastic https://helm.elastic.co
+#     - name: Add helm elastic repo
+#       command: helm repo add elastic https://helm.elastic.co
 
-    - name: Update helm repo
-      command: helm repo update
+#     - name: Update helm repo
+#       command: helm repo update
 
-    - name: Install elastic operator
-      command: helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
+#     - name: Install elastic operator
+#       command: helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
 
     - name: Create elastic namespace
       command: kubectl create namespace elastic
 
-    - name: Apply Elastic Priority Classes
-      command: kubectl apply -f ../elastic-stack/elastic-priority-classes.yaml
+    # - name: Apply Elastic Priority Classes
+    #   command: kubectl apply -f ../elastic-stack/elastic-priority-classes.yaml
 
-    - name: Apply Elasticksearch cluster
-      command: kubectl apply -f ../elastic-stack/elasticsearch-cluster.yaml
+    # - name: Apply Elasticksearch cluster
+    #   command: kubectl apply -f ../elastic-stack/elasticsearch-cluster.yaml
 
-    - name: Apply Kibana instance
-      command: kubectl apply -f ../elastic-stack/kibana-instance.yaml
+#     - name: Apply Kibana instance
+#       command: kubectl apply -f ../elastic-stack/kibana-instance.yaml
 
     - name: Apply Filebeat
       command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml

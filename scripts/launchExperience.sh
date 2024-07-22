@@ -3,7 +3,7 @@
 printf "\n\033[1;36m## Deleting the previous deployment\033[0m\n"
 kubectl delete -f kubernetes/deployment.yml
 
-sleep 45
+sleep 25
 
 printf "\n\033[1;36m## Starting the experience\033[0m\n"
 start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')
@@ -22,6 +22,17 @@ while true; do
         break
     fi
 done
+
+echo "Removing deployment"
+kubectl delete -f kubernetes/deployment.yml
+
+echo "Experience Finished, analysing output in the python/input folder"
+cd python/input/ || exit
+../../scripts/log_analysis/extractLogs.sh filebeat*
+python3 ../../scripts/log_analysis/analyze.py consumer_logs.txt controler_logs.txt
+
+exit 0
+
 
 # Start port forwarding
 kubectl port-forward svc/kibana-kb-http 15601:5601 -n elastic &

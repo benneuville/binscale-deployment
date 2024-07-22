@@ -40,7 +40,7 @@ metadata:
   name: controllerandscaler
   namespace: default
 spec:
-  serviceAccountName: default-admin
+  serviceAccountName: admin-service-account 
   restartPolicy: Always
   containers:
     - name: controllerandscaler
@@ -152,6 +152,8 @@ spec:
               value: "50"
             - name: WSLA
               value: "500"
+            - name: ASYNC_COMMIT
+              value: "True"
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
