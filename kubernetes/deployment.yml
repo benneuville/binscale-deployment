@@ -13,7 +13,7 @@ spec:
       #image: docker.io/laaziz2001/logs:v65
       image: 134.59.129.189:5000/experience_fab
       # image: 134.59.131.235:5000/experience-2024-04-21
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
       command: ["java", "-jar", "/app/producer.jar"]
       env:
         - name: BOOTSTRAP_SERVERS
@@ -50,7 +50,7 @@ spec:
       image: 134.59.129.189:5000/experience_fab
 
       # image: 134.59.131.235:5000/experience-2024-04-21
-      imagePullPolicy: IfNotPresent
+      imagePullPolicy: Always
 
       ports:
         - containerPort: 5002
@@ -125,7 +125,7 @@ spec:
           # image: docker.io/laaziz2001/logs:v65
           image: 134.59.129.189:5000/experience_fab
           # image: 134.59.131.235:5000/experience-2024-04-21
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
@@ -153,7 +153,7 @@ spec:
             - name: WSLA
               value: "500"
             - name: ASYNC_COMMIT
-              value: "True"
+              value: "False"
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor

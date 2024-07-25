@@ -312,7 +312,7 @@ def plot_duration_between_commits() :
     for key in consumer_commit_events:
         dates = consumer_commit_events[key]
         dates.sort()
-        durations = [(dates[i] - dates[i-1]).total_seconds() for i in range(1, len(dates))]
+        durations = [(dates[i] - dates[i-1]).total_seconds()*1000 for i in range(1, len(dates))]
         # print(durations)
         x = [i for i in range(0, len(durations))]
         plt.figure(figsize=(30, 5))
