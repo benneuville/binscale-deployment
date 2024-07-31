@@ -204,7 +204,7 @@ def plot_global_consumer_latency_list():
     plt.ylabel('Latency')
     plt.savefig("latency.png")
 
-
+#region plot consumer latency
 def plot_consumer_latency():
     num_of_groups = len(consumer_latency_events.keys())
     fig, axs = plt.subplots(num_of_groups, 1, figsize=(30, 20), facecolor='w', edgecolor='k', sharex='all')
@@ -219,6 +219,11 @@ def plot_consumer_latency():
         axs[i].set_ylabel("Consumer " + str(i))
         i+=1
         
+        #rotate x axis labels
+    plt.xticks(rotation=30)
+    #only hour and seconds
+    plt.gca().xaxis.set_major_locator(plt.matplotlib.dates.MinuteLocator())
+    plt.gca().xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter('%H:%M:%S'))
     plt.savefig('latency_per_pod.png')
     plt.close()        
 
@@ -310,19 +315,23 @@ def plot_processed_events(interval):
 
 def plot_duration_between_commits() :
     for key in consumer_commit_events:
+        # print("Consumer: ", key)
         dates = consumer_commit_events[key]
         dates.sort()
         durations = [(dates[i] - dates[i-1]).total_seconds()*1000 for i in range(1, len(dates))]
         # print(durations)
+       
         x = [i for i in range(0, len(durations))]
-        plt.figure(figsize=(30, 5))
-        plt.title("Duration between commits for consumer " + key)
-        plt.xlabel('Time')
-        plt.bar(x,durations,  label="Duration between commits",width=0.9*np.min(np.diff(x)))
-        plt.legend()
-        plt.ylabel('Duration')
-        plt.savefig("duration-" + key + ".png")
-        print("output file: ", "duration-" + key + ".png")
+        if (len(x) > 1):
+        # print(x)
+            plt.figure(figsize=(30, 5))
+            plt.title("Duration between commits for consumer " + key)
+            plt.xlabel('Time')
+            plt.bar(x,durations,  label="Duration between commits",width=0.9*np.min(np.diff(x)))
+            plt.legend()
+            plt.ylabel('Duration')
+            plt.savefig("duration-" + key + ".png")
+            print("output file: ", "duration-" + key + ".png")
 
 
 if __name__ == "__main__":
