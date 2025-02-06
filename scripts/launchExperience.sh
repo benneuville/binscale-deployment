@@ -13,15 +13,26 @@ printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience\033[0m\n
 sleep 300
 
 while true; do
-    desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
-    if [ "$desired_replicas" -ge 2 ]; then
-        echo "Experience not yet finished, retrying in 1 min"
-        sleep 60 # Adjust the interval as needed
+    running_pods=$(kubectl get pods -l app=latency --field-selector=status.phase=Running --no-headers | wc -l)
+    if [ "$running_pods" -gt 0 ]; then
+        echo "Experience not yet finished (running pods: $running_pods), retrying in 1 min"
+        sleep 60
     else
         echo "Experience finished"
         break
     fi
 done
+
+# while true; do
+#     desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
+#     if [ "$desired_replicas" -ge 2 ]; then
+#         echo "Experience not yet finished, retrying in 1 min"
+#         sleep 60 # Adjust the interval as needed
+#     else
+#         echo "Experience finished"
+#         break
+#     fi
+# done
 
 echo "Removing deployment"
 kubectl delete -f kubernetes/deployment.yml
