@@ -12,45 +12,16 @@ ansible-playbook ansible/deploy-app.yaml
 printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience\033[0m\n"
 sleep 300
 
-
-echo "Surveillance du consumer lag..."
-
 while true; do
-    # Remplacez cette commande par celle qui est adaptée à votre environnement
-    lag=$(kafka-consumer-groups.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --describe --group testgroup1 \
-           | awk 'NR>1 {sum += $5} END {print sum}')
-    
-    echo "Consumer lag actuel : $lag"
-
-    if [ "$lag" -eq "0" ]; then
-        echo "Aucun message en attente, vérification sur 1 minute..."
-        sleep 60
-        
-        # Revérification du lag
-        new_lag=$(kafka-consumer-groups.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --describe --group testgroup1 \
-                  | awk 'NR>1 {sum += $5} END {print sum}')
-        if [ "$new_lag" -eq "0" ]; then
-            echo "Consumer lag maintenu à zéro : l'expérience est considérée terminée."
-            break
-        fi
+    desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
+    if [ "$desired_replicas" -ge 9 ]; then
+        echo "Experience not yet finished, retrying in 1 min"
+        sleep 60 # Adjust the interval as needed
+    else
+        echo "Experience finished"
+        break
     fi
-    
-    sleep 60
 done
-
-echo "Fin de l'expérience (sans forcer l'arrêt des consumers)."
-
-
-# while true; do
-#     desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
-#     if [ "$desired_replicas" -ge 2 ]; then
-#         echo "Experience not yet finished, retrying in 1 min"
-#         sleep 60 # Adjust the interval as needed
-#     else
-#         echo "Experience finished"
-#         break
-#     fi
-# done
 
 echo "Removing deployment"
 kubectl delete -f kubernetes/deployment.yml
