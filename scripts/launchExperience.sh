@@ -9,8 +9,8 @@ printf "\n\033[1;36m## Starting the experience\033[0m\n"
 start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')
 ansible-playbook ansible/deploy-app.yaml
 
-printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience\033[0m\n"
-sleep 300
+printf "\n\033[1;36m## Waiting 15 minutes for the end of the experience\033[0m\n"
+sleep 900
 
 while true; do
     desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
