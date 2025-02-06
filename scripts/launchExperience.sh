@@ -12,16 +12,34 @@ ansible-playbook ansible/deploy-app.yaml
 printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience\033[0m\n"
 sleep 300
 
+
+echo "Surveillance du consumer lag..."
+
 while true; do
-    running_pods=$(kubectl get pods -l app=latency --field-selector=status.phase=Running --no-headers | wc -l)
-    if [ "$running_pods" -gt 0 ]; then
-        echo "Experience not yet finished (running pods: $running_pods), retrying in 1 min"
+    # Remplacez cette commande par celle qui est adaptée à votre environnement
+    lag=$(kafka-consumer-groups.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --describe --group testgroup1 \
+           | awk 'NR>1 {sum += $5} END {print sum}')
+    
+    echo "Consumer lag actuel : $lag"
+
+    if [ "$lag" -eq "0" ]; then
+        echo "Aucun message en attente, vérification sur 1 minute..."
         sleep 60
-    else
-        echo "Experience finished"
-        break
+        
+        # Revérification du lag
+        new_lag=$(kafka-consumer-groups.sh --bootstrap-server my-cluster-kafka-bootstrap:9092 --describe --group testgroup1 \
+                  | awk 'NR>1 {sum += $5} END {print sum}')
+        if [ "$new_lag" -eq "0" ]; then
+            echo "Consumer lag maintenu à zéro : l'expérience est considérée terminée."
+            break
+        fi
     fi
+    
+    sleep 60
 done
+
+echo "Fin de l'expérience (sans forcer l'arrêt des consumers)."
+
 
 # while true; do
 #     desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
