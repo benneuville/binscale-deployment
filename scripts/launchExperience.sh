@@ -1,4 +1,4 @@
-#!/bin/bash
+ #!/bin/bash
 
 printf "\n\033[1;36m## Deleting the previous deployment\033[0m\n"
 kubectl delete -f kubernetes/deployment.yml
