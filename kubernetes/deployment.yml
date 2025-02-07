@@ -1,37 +1,42 @@
 # trunk-ignore-all(prettier)
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
+  name: producer-deployment
+  namespace: default
   labels:
     app: workload
-  name: workload
-  namespace: default
 spec:
-  restartPolicy: Never
-  replicas: 10
-  containers:
-    - name: java-kafka-producer
-      image: docker.io/laaziz2001/logs:v65
-      # image: 134.59.129.189:5000/experience_fab
-      # image: 134.59.131.235:5000/experience-2024-04-21
-      imagePullPolicy: Always
-      command: ["java", "-jar", "/app/producer.jar"]
-      env:
-        - name: BOOTSTRAP_SERVERS
-          value: my-cluster-kafka-bootstrap:9092
-        - name: TOPIC
-          value: testtopic1
-        - name: PARTITION_WEIGHTS
-          value: "1,1,1,1,1,1,1,1,1,1"
-        - name: DELAY_MS
-          value: "1000"
-        - name: LOG_LEVEL
-          value: "INFO"
-        - name: PRODUCER_ACKS
-          value: "0"
-        - name: ADDITIONAL_CONFIG
-          value: |
-            retries=100
+  replicas: 9
+  selector:
+    matchLabels:
+      app: workload
+  template:
+    metadata:
+      labels:
+        app: workload
+    spec:
+      containers:
+        - name: java-kafka-producer
+          image: docker.io/laaziz2001/logs:v65
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/producer.jar"]
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: testtopic1
+            - name: PARTITION_WEIGHTS
+              value: "1,1,1,1,1,1,1,1,1,1"
+            - name: DELAY_MS
+              value: "1000"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: PRODUCER_ACKS
+              value: "0"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                retries=100
 ---
 apiVersion: v1
 kind: Pod
