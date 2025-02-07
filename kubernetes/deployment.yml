@@ -8,6 +8,7 @@ metadata:
   namespace: default
 spec:
   restartPolicy: Never
+  replicas: 10
   containers:
     - name: java-kafka-producer
       image: docker.io/laaziz2001/logs:v65
