@@ -7,7 +7,7 @@ metadata:
   labels:
     app: workload
 spec:
-  replicas: 9
+  replicas: 5
   selector:
     matchLabels:
       app: workload
@@ -27,7 +27,7 @@ spec:
             - name: TOPIC
               value: testtopic1
             - name: PARTITION_WEIGHTS
-              value: "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
+              value: "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS
               value: "1000"
             - name: LOG_LEVEL
@@ -114,7 +114,7 @@ metadata:
   name: latency
   namespace: default
 spec:
-  replicas: 1
+  replicas: 6
   selector:
     matchLabels:
       app: latency
@@ -148,7 +148,7 @@ spec:
               value: |
                 max.poll.records=100
             - name: SCALE
-              value: "3"
+              value: "5"
             - name: SHAPE
               value: "2.75"
             - name: TIME_TO_COMMIT
