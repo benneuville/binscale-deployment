@@ -68,6 +68,8 @@ spec:
           value: testgroup1
         - name: NUMBER_PARTITIONS
           value: "20"
+        - name: INIT_SIZE
+          value: "6"
         - name: FUP
           value: "0.7"
         - name: MU
