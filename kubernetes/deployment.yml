@@ -67,9 +67,9 @@ spec:
         - name: GROUP_ID
           value: testgroup1
         - name: NUMBER_PARTITIONS
-          value: "20"
+          value: "50"
         - name: INIT_SIZE
-          value: "6"
+          value: "1"
         - name: FUP
           value: "0.7"
         - name: MU
@@ -120,7 +120,7 @@ metadata:
   name: latency
   namespace: default
 spec:
-  replicas: 6
+  replicas: 1
   selector:
     matchLabels:
       app: latency
