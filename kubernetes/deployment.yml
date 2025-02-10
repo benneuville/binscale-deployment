@@ -18,7 +18,8 @@ spec:
     spec:
       containers:
         - name: java-kafka-producer
-          image: docker.io/laaziz2001/logs:v65
+          image: docker.io/benneuville/per052_exp:v1
+          # image: docker.io/laaziz2001/logs:v65
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/producer.jar"]
           env:
@@ -50,7 +51,8 @@ spec:
   restartPolicy: Always
   containers:
     - name: controllerandscaler
-      image: docker.io/laaziz2001/logs:v65
+      image: docker.io/benneuville/per052_exp:v1
+      # image: docker.io/laaziz2001/logs:v65
       # image: 134.59.129.189:5000/experience_fab
       # image: 134.59.131.235:5000/experience-2024-04-21
       imagePullPolicy: Always
@@ -64,6 +66,8 @@ spec:
           value: testtopic1
         - name: GROUP_ID
           value: testgroup1
+        -name: NUMBER_PARTITIONS
+          value: "20"
         - name: FUP
           value: "0.7"
         - name: MU
@@ -125,7 +129,8 @@ spec:
     spec:
       containers:
         - name: latency
-          image: docker.io/laaziz2001/logs:v65
+          image: docker.io/benneuville/per052_exp:v1
+          # image: docker.io/laaziz2001/logs:v65
           # image: 134.59.129.189:5000/experience_fab
           # image: 134.59.131.235:5000/experience-2024-04-21
           imagePullPolicy: Always
