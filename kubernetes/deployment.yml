@@ -71,17 +71,17 @@ spec:
         - name: INIT_SIZE
           value: "1"
         - name: FUP
-          value: "0.7"
+          value: "0.9"
         - name: MU
           value: "200"
         - name: WSLA
           value: "0.5"
         - name: FDOWN
-          value: "0.2"
+          value: "0.4"
         - name: REB_TIME
           value: "0.05"
         - name: DI
-          value: "500"
+          value: "1000"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
