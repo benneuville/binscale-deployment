@@ -28,7 +28,7 @@ spec:
             - name: TOPIC
               value: testtopic1
             - name: PARTITION_WEIGHTS
-              value: "3,1,2,2,1,1,1,1,1,1"
+              value: "3,1,2,2,1"
             - name: DELAY_MS
               value: "1000"
             - name: LOG_LEVEL
@@ -67,21 +67,21 @@ spec:
         - name: GROUP_ID
           value: testgroup1
         - name: NUMBER_PARTITIONS
-          value: "10"
+          value: "5"
         - name: INIT_SIZE
           value: "1"
         - name: FUP
-          value: "0.9"
+          value: "0.7"
         - name: MU
           value: "200"
         - name: WSLA
           value: "0.5"
         - name: FDOWN
-          value: "0.4"
+          value: "0.2"
         - name: REB_TIME
           value: "0.05"
         - name: DI
-          value: "1000"
+          value: "500"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
