@@ -155,7 +155,7 @@ spec:
               value: |
                 max.poll.records=100
             - name: SCALE
-              value: "20"
+              value: "3"
             - name: SHAPE
               value: "2.75"
             - name: TIME_TO_COMMIT

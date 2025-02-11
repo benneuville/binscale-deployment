@@ -14,7 +14,7 @@ sleep 900
 
 while true; do
     desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
-    if [ "$desired_replicas" -ge 10 ]; then
+    if [ "$desired_replicas" -ge 2 ]; then
         echo "Experience not yet finished, retrying in 1 min"
         sleep 60 # Adjust the interval as needed
     else
