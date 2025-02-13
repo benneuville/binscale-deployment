@@ -4,3 +4,7 @@ chmod +x scripts/launchExperience.sh
 chmod +x scripts/mnk-requirements1.sh
 chmod +x scripts/mnk-requirements2.sh
 chmod +x scripts/resetCluster.sh
+chmod +x scripts/worker-deployEnv-multinode.sh
+chmod +x scripts/master-deployEnv-multinode.sh
+chmod +x scripts/multinode-requierements1.sh
+chmod +x scripts/multinode-requierements2.sh
