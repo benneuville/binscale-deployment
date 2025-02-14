@@ -5,6 +5,7 @@ printf "\n\033[1;31m## Note you had to launch multinode-requierements file(s) \0
 printf "\033[1;31m## MASTER NODE \033[0m\n"
 sleep 5
 
+sudo sh -c 'echo "127.0.0.1 master-node" >> /etc/hosts'
 sudo hostnamectl set-hostname master-node
 
 sudo tee /etc/default/kubelet<<EOF
