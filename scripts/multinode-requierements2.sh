@@ -9,7 +9,7 @@ sleep 5
 sudo swapoff -a
 
 #launch Docker
-sudo systemctl status docker
+sudo systemctl start docker
 
 
 # PACKAGE PYTHON
