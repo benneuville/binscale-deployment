@@ -5,6 +5,13 @@ printf "\n\033[1;31m## Note you had to launch multinode-requierements file(s) \0
 printf "\033[1;31m## WORKER NODE \033[0m\n"
 sleep 5
 
+# need to provide MASTERIP, TOKEN and HASH
+if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+  echo "Usage: $0 <MASTER_IP> <TOKEN> <HASH>"
+    exit 1
+fi
+
+sudo hostnamectl set-hostname worker01
 # Remplacez <MASTER_IP>, <TOKEN> et <HASH> par les valeurs fournies par le master lors de l'initialisation.
 sudo kubeadm join <MASTER_IP>:6443 --token <TOKEN> --discovery-token-ca-cert-hash sha256:<HASH>
 

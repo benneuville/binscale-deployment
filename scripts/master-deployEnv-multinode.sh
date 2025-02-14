@@ -5,6 +5,30 @@ printf "\n\033[1;31m## Note you had to launch multinode-requierements file(s) \0
 printf "\033[1;31m## MASTER NODE \033[0m\n"
 sleep 5
 
+sudo hostnamectl set-hostname master-node
+
+sudo tee /etc/default/kubelet<<EOF
+KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"
+EOF
+sudo systemctl daemon-reload && sudo systemctl restart kubelet
+sudo tee /etc/docker/daemon.json<<EOF
+{
+      "exec-opts": ["native.cgroupdriver=systemd"],
+      "log-driver": "json-file",
+      "log-opts": {
+      "max-size": "100m"
+   },
+       "storage-driver": "overlay2"
+        }
+EOF
+sudo systemctl daemon-reload && sudo systemctl restart docker
+mkdir /etc/systemd/system/kubelet.service.d
+sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf<<EOF
+Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"
+EOF
+sudo systemctl daemon-reload && sudo systemctl restart kubelet
+sudo kubeadm init --control-plane-endpoint=master-node --upload-certs
+
 # Start Kubernetes cluster with kubeadm
 sudo kubeadm init --pod-network-cidr=10.244.0.0/16
 
