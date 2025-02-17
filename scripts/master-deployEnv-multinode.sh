@@ -7,6 +7,7 @@ sleep 5
 
 sudo sh -c 'echo "127.0.0.1 master-node" >> /etc/hosts'
 sudo hostnamectl set-hostname master-node
+sudo systemctl restart containerd
 
 sudo tee /etc/default/kubelet<<EOF
 KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"
@@ -39,8 +40,8 @@ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Install Flannel
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+# kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
 
-kubectl get pods -n kube-system
+# kubectl get pods -n kube-system
 
 printf "\n\033[1;32m## On the next list, the ip address requiered for worker nodes is on the line \"default\" \033[0m\n\n"
