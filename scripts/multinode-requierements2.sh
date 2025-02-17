@@ -33,7 +33,7 @@ sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 # Check version
 kubectl version --client
 # Port availability
-sudo apt install -y netcat
+sudo apt install -y netcat-openbsd
 nc 127.0.0.1 6443 -v
 
 sudo mkdir -p /etc/apt/keyrings

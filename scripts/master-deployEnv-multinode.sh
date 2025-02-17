@@ -29,6 +29,7 @@ sudo tee /etc/systemd/system/kubelet.service.d/10-kubeadm.conf<<EOF
 Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"
 EOF
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
+printf "\032[1;31m## START KUBEADM\032[0m\n"
 sudo kubeadm init --control-plane-endpoint=master-node --upload-certs
 
 # Start Kubernetes cluster with kubeadm
