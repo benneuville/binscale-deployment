@@ -6,5 +6,7 @@ chmod +x scripts/mnk-requirements2.sh
 chmod +x scripts/resetCluster.sh
 chmod +x scripts/worker-deployEnv-multinode.sh
 chmod +x scripts/master-deployEnv-multinode.sh
-chmod +x scripts/multinode-requierements1.sh
-chmod +x scripts/multinode-requierements2.sh
+chmod +x scripts/multinode-requierements.sh
+chmod +x scripts/multinode-master.sh
+chmod +x scripts/multinode-worker.sh
+chmod +x scripts/multinode-kube-init.sh
