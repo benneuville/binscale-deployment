@@ -1,1 +1,1 @@
-ansible-playbook ansible/deploy-env.yaml
+ansible-playbook ansible/multinode-deploy-env.yaml
