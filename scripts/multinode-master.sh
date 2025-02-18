@@ -28,4 +28,4 @@ EOF
 
 sudo systemctl daemon-reload && sudo systemctl restart kubelet
 
-sh ./multinode-master-deploy.sh
+sh ./scripts/multinode-master-deploy.sh
