@@ -10,3 +10,5 @@ chmod +x scripts/multinode-requierements.sh
 chmod +x scripts/multinode-master.sh
 chmod +x scripts/multinode-worker.sh
 chmod +x scripts/multinode-kube-init.sh
+chmod +x scripts/multinode-master-deploy.sh
+chmod +x scripts/multinode-deployEnv.sh
