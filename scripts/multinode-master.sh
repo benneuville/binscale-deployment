@@ -5,6 +5,11 @@ printf "\n\033[1;31m## WARNING : you need to modify the host file with command \
 printf "\n\n"
 sleep 10
 
+sudo hostnamectl set-hostname master-node
+sudo systemctl restart containerd
+sudo systemctl daemon-reload && sudo systemctl restart docker
+
+
 sudo tee /etc/default/kubelet<<EOF
 KUBELET_EXTRA_ARGS="--cgroup-driver=cgroupfs"
 EOF

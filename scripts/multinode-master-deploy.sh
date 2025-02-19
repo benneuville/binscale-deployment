@@ -1,6 +1,6 @@
 printf "\033[1;33m## START KUBEADM \033[0m\n"
 sudo kubeadm reset -f
-sudo kubeadm init --control-plane-endpoint=master-node --upload-certs --pod-network-cidr=10.244.0.0/16 | tee /tmp/kubeadm_init.log
+sudo kubeadm init --pod-network-cidr=192.168.0.0/16 | tee /tmp/kubeadm_init.log
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
