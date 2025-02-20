@@ -1,4 +1,4 @@
-printf "\t☸️\033[1;31m INSTALL KUBERNETES / KUBEADM / KUBELET \033[0m\n"
+printf "☸️\033[1;31m INSTALL KUBERNETES / KUBEADM / KUBELET \033[0m\n"
 sudo apt-get update
 # apt-transport-https may be a dummy package; if so, you can skip that package
 sudo apt-get install -y apt-transport-https ca-certificates curl gpg

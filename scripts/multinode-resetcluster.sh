@@ -1,4 +1,4 @@
-printf "\t🚀\033[1;31m LAUNCH MASTER-NODE \033[0m\n"
+printf "🚀\033[1;31m LAUNCH MASTER-NODE \033[0m\n"
 sudo kubeadmin reset -f
 sudo kubeadm init
 
