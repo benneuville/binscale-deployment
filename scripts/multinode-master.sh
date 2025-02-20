@@ -9,8 +9,8 @@ sleep 10
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 echo "Script directory: $SCRIPT_DIR"
 
-"$PWD"/mtnd-experience-requierements.sh
-"$PWD"/mtnd-requierements.sh
-"$PWD"/mtnd-docker.sh
-"$PWD"/mtnd-k8s.sh
-"$PWD"/multinode-resetcluster.sh
+"$SCRIPT_DIR"/mtnd-experience-requierements.sh
+"$SCRIPT_DIR"/mtnd-requierements.sh
+"$SCRIPT_DIR"/mtnd-docker.sh
+"$SCRIPT_DIR"/mtnd-k8s.sh
+"$SCRIPT_DIR"/multinode-resetcluster.sh
