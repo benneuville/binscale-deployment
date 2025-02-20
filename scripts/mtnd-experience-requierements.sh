@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # WARNING
-printf "📖\033[1;31m## APPLICATION REQUIEREMENTS INSTALLATION \033[0m\n"
+printf "📖\033[1;31m APPLICATION REQUIEREMENTS INSTALLATION \033[0m\n"
 sleep 5
 
 # PACKAGE PYTHON
@@ -10,6 +10,9 @@ sudo apt update
 sudo apt install -y python3-pip
 sudo apt install -y python3-kubernetes
 sudo apt install -y python3-pandas
+
+# JQ
+sudo apt install -y jq
 
 # ANSIBLE
 printf "\n\033[1;36m## Installing Ansible\033[0m\n"

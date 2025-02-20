@@ -1,5 +1,5 @@
 printf "🚀\033[1;31m LAUNCH MASTER-NODE \033[0m\n"
-sudo kubeadmin reset -f
+sudo kubeadm reset -f
 sudo kubeadm init
 
 mkdir -p $HOME/.kube
@@ -10,5 +10,5 @@ kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.25.0/
 
 printf "⚠️\033[1;33mnote : the command below is requiered for worker nodes \033[0m\n"
 printf "📍\033[1;32m "
-kubeadmin token create --print-join-command
+kubeadm token create --print-join-command
 printf "\033[0m"

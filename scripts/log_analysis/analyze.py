@@ -117,7 +117,7 @@ def compute_lag_from_events(decision_interval):
     # processing_date.sort()
     first_date = insertion_date[0]
     last_date = insertion_date[-1]
-    # print(len(insertion_date), len(processing_date))
+    print(len(insertion_date), len(processing_date))
     next_date = first_date + datetime.timedelta(milliseconds=decision_interval)
     event_in = 0
     event_out = 0
@@ -357,7 +357,7 @@ if __name__ == "__main__":
     # consumer_latency_events.sort(key=lambda x: x[0])
 
 
-    decision_interval = 100#compute_decision_interval()
+    decision_interval = 100 #compute_decision_interval()
     print("Decision interval: ", decision_interval)
     if len(sys.argv) == 4:
         decision_interval_from_events = int(sys.argv[3])

@@ -40,7 +40,47 @@ NB: You must be in the root folder to use the scripts.
 - 18 CPU cores
 - 18 GB of RAM
 
-#### Steps
+#### Steps Multi-nodes cluster
+- Change the name of your host (master-node, worker01,...)
+```bash
+sudo hostnamectl set-hostname <hostname>
+bash
+```
+- Add all hostnames in the `/etc/hosts` file (ex: `172.16.39.3 master-node`)
+```bash
+nano /etc/hosts
+```
+- **For Master** (it could take long time):
+```bash
+./scripts/multinode-master.sh
+```
+- **For Workers**:
+```bash
+./scripts/multinode-worker.sh
+```
+*On the master, you will take the last command printed in green and copy-paste it in workers. Or, in the master, use* `kubeadm token create --print-join-command` *to get the* `sudo kubeadm join [master-node-ip]:6443 --token [token] --discovery-token-ca-cert-hash sha256:[hash]` *to join the cluster as a node.*
+
+- **Deploy** all the ressources
+```bash
+scripts/deployEnv.sh
+```
+
+- **Launch** the experience
+```bash
+scripts/launchExperience.sh
+```
+- **PS: Reset (for Master)** the cluster
+```bash
+scripts/multinode-resetcluster.sh
+```
+- **PS2: Reset Worker**
+```bash
+kubeadm reset -f
+```
+*Note that you have to reset the cluster, you have to reset master and workers, and do the* `kubeadm join` *command on workers seen before*
+
+
+#### Steps Minikube
 
 - Execute the following command in order to be able to **execute all the scripts**
 ```bash
@@ -70,3 +110,4 @@ scripts/launchExperience.sh
 ```bash
 scripts/resetCluster.sh
 ```
+### Steps
