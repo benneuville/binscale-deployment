@@ -6,7 +6,6 @@ printf "\n\n"
 sleep 10
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-"$SOURCE"/mtnd-experience-requierements.sh
 "$SOURCE"/mtnd-requierements.sh
 "$SOURCE"/mtnd-docker.sh
 "$SOURCE"/mtnd-k8s.sh

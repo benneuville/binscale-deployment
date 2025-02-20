@@ -14,6 +14,7 @@ sudo apt install -y python3-pandas
 # ANSIBLE
 printf "\n\033[1;36m## Installing Ansible\033[0m\n"
 sudo apt install -y ansible
+ansible-galaxy collection install kubernetes.core
 
 # HELM
 printf "\n\033[1;36m## Installing Helm\033[0m\n"
