@@ -1,5 +1,4 @@
-## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes.
-## Déploiement, monitoring et optimisation de performances d'une pile technologique de Micro services, sur Kafka, Kubernetes.
+## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes on Grid5000 (and locally on Minicube).
 
 ---
 
@@ -12,8 +11,8 @@
 - Prometheus
 - Grafana
 - Python
-- ElasticSearch
 - Kibana
+- NFS server
 
 ---
 
@@ -21,11 +20,22 @@
 - [ansible](https://github.com/fatimazahraelaaziz/Deployment/tree/master/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
 - [kubernetes](https://github.com/fatimazahraelaaziz/Deployment/tree/master/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
 - [scripts](https://github.com/fatimazahraelaaziz/Deployment/tree/master/scripts) folder which contains the following `.sh` files:
-  - `chmodAll.sh`: give the execution rights to all the scripts
-  - `deployEnv.sh`: deploy all the environment needed for the application
-  - `launchExperience.sh`: launch the execution of the application, retrieve the data and generate the graphs in the [`python/output`](https://github.com/fatimazahraelaaziz/Deployment/tree/master/python/output) folder
-  - `mnk-requirements1.sh`: install Docker for Minikube
-  - `mnk-requirements2.sh`: install Kubectl, Minikube, Helm, Python packages and Ansible
+#### MULTI-NODES cluster scripts
+- `multinode-master.sh`: deploy master-node
+- `multinode-worker.sh`: deploy worker
+- `multinode-launchExperience.sh`: launch experience on master-node
+- `multinode-resetcluster.sh`: reset cluster on master-node
+Other scripts could be common in master and workers, and are called in `multinode-master.sh` and `multinode-worker.sh`
+- `mtnd-requierements.sh` : common requierements between master and workers
+
+#### MINIKUBE scripts
+- `chmodAll.sh`: give the execution rights to all the scripts
+- `deployEnv.sh`: deploy all the environment needed for the application
+- `launchExperience.sh`: launch the execution of the application, retrieve the data and generate the graphs in the [`python/output`](https://github.com/fatimazahraelaaziz/Deployment/tree/master/python/output) folder
+- `mnk-requirements1.sh`: install Docker for Minikube
+- `mnk-requirements2.sh`: install Kubectl, Minikube, Helm, Python packages and Ansible
+
+
 
 ---
 
@@ -83,6 +93,8 @@ scripts/multinode-resetcluster.sh
 kubeadm reset -f
 ```
 *Note that you have to reset the cluster, you have to reset master and workers, and do the* `kubeadm join` *command on workers seen before*
+
+#### Grid 5000
 
 
 #### Steps Minikube
