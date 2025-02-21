@@ -41,11 +41,16 @@ NB: You must be in the root folder to use the scripts.
 - 18 GB of RAM
 
 #### Steps Multi-nodes cluster
+- Execution scripts
+```bash
+chmod +x scripts/*
+```
 - Change the name of your host (master-node, worker01,...)
 ```bash
 sudo hostnamectl set-hostname <hostname>
 bash
 ```
+*Note that the master need to be named **master-node***
 - Add all hostnames in the `/etc/hosts` file (ex: `172.16.39.3 master-node`)
 ```bash
 nano /etc/hosts
@@ -67,7 +72,7 @@ scripts/deployEnv.sh
 
 - **Launch** the experience
 ```bash
-scripts/launchExperience.sh
+scripts/multinode-launchExperience.sh
 ```
 - **PS: Reset (for Master)** the cluster
 ```bash

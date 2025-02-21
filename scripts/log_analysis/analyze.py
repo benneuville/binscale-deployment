@@ -357,7 +357,7 @@ if __name__ == "__main__":
     # consumer_latency_events.sort(key=lambda x: x[0])
 
 
-    decision_interval = 100 #compute_decision_interval()
+    decision_interval = 100#compute_decision_interval()
     print("Decision interval: ", decision_interval)
     if len(sys.argv) == 4:
         decision_interval_from_events = int(sys.argv[3])

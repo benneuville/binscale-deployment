@@ -1,14 +1,1 @@
-chmod +x scripts/deploy-k3s-cluster.sh
-chmod +x scripts/deployEnv.sh
-chmod +x scripts/launchExperience.sh
-chmod +x scripts/mnk-requirements1.sh
-chmod +x scripts/mnk-requirements2.sh
-chmod +x scripts/resetCluster.sh
-chmod +x scripts/worker-deployEnv-multinode.sh
-chmod +x scripts/master-deployEnv-multinode.sh
-chmod +x scripts/multinode-requierements.sh
-chmod +x scripts/multinode-master.sh
-chmod +x scripts/multinode-worker.sh
-chmod +x scripts/multinode-kube-init.sh
-chmod +x scripts/multinode-master-deploy.sh
-chmod +x scripts/multinode-deployEnv.sh
+chmod +x scripts/*
