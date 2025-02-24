@@ -1,6 +1,6 @@
 printf "📖\033[1;31m MULTINODE REQUIEREMENTS INSTALLATION\n\033[0m"
-sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get update -y
+sudo apt-get upgrade -y
 
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab

@@ -8,8 +8,9 @@ sudo mkdir -p /export/logs
 
 sudo chown nobody:nogroup /export/logs
 
-grep -qF "master-node:/export/logs" /etc/fstab || sudo sh -c 'echo "master-node:/export/logs   /var/log/experiments   nfs   defaults   0 0" >> /etc/fstab'
-
+if ! grep -qF "/export/logs" /etc/exports; then
+    echo "/export/logs    *(rw,sync,no_subtree_check)" | sudo tee -a /etc/exports
+fi
 
 sudo exportfs -ra
 

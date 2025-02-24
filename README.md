@@ -1,10 +1,11 @@
-## Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes on Grid5000 (and locally on Minicube).
+# Deployment, monitoring, and performance optimization of a microservices technology stack on Kafka, Kubernetes on Grid5000 (and locally on Minicube).
 
+The goal of this repository is to experiment the Bin Pack autoscaler solution in a Multinode Cluster with Grid5000.
 ---
 
-### Technologies
+## Technologies
 - Docker
-- Kubernetes (MiniKube)
+- Kubernetes (MiniKube or Kubeadm & Kubelet)
 - Helm
 - Kafka
 - Ansible
@@ -12,45 +13,52 @@
 - Grafana
 - Python
 - Kibana
-- NFS server
+- NFS server (for multinode solution)
 
 ---
 
-### Project structure
-- [ansible](https://github.com/fatimazahraelaaziz/Deployment/tree/master/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
-- [kubernetes](https://github.com/fatimazahraelaaziz/Deployment/tree/master/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
-- [scripts](https://github.com/fatimazahraelaaziz/Deployment/tree/master/scripts) folder which contains the following `.sh` files:
-#### MULTI-NODES cluster scripts
+## Project structure
+
+- [/ansible](https://github.com/benneuville/per052-deployment/tree/no_elastic/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
+- [/kubernetes](https://github.com/benneuville/per052-deployment/tree/no_elastic/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
+- [/scripts](https://github.com/benneuville/per052-deployment/tree/no_elastic/scripts) folder which contains the following `.sh` files
+
+### MULTI-NODES cluster scripts
 - `multinode-master.sh`: deploy master-node
 - `multinode-worker.sh`: deploy worker
 - `multinode-launchExperience.sh`: launch experience on master-node
 - `multinode-resetcluster.sh`: reset cluster on master-node
-Other scripts could be common in master and workers, and are called in `multinode-master.sh` and `multinode-worker.sh`
-- `mtnd-requierements.sh` : common requierements between master and workers
 
-#### MINIKUBE scripts
+Other scripts could be common to master and workers deployment, and are called in `multinode-master.sh` and `multinode-worker.sh`
+- `mtnd-requierements.sh` : common requierements between master and workers
+- `mtnd-experience-requierements.sh` : requierements for experience (on master) Ansible (and package requierements), Helm, , JQ commands, Python
+- `mtnd-docker.sh` : install Docker
+- `mtnd-k8s.sh` : install kubernetes, kubeadm & kubelet
+- `mtnd-nfs-master.sh` : install, deploy & configure NFS Server
+- `mtnd-nfs-worker.sh` : install NFS utils & configure mount
+
+### MINIKUBE scripts
 - `chmodAll.sh`: give the execution rights to all the scripts
 - `deployEnv.sh`: deploy all the environment needed for the application
 - `launchExperience.sh`: launch the execution of the application, retrieve the data and generate the graphs in the [`python/output`](https://github.com/fatimazahraelaaziz/Deployment/tree/master/python/output) folder
 - `mnk-requirements1.sh`: install Docker for Minikube
 - `mnk-requirements2.sh`: install Kubectl, Minikube, Helm, Python packages and Ansible
 
-
-
 ---
 
-### Link to Experience
-[Experience Repository](https://github.com/fatimazahraelaaziz/Experience/tree/main)
+## Link to Experience
+* [Source Experience Repository](https://github.com/fatimazahraelaaziz/Experience/tree/main)
+* [Experience Repository](https://github.com/benneuville/per052-experience/tree/no_elastic) for this repository
 
  
-### First configuration with Minikube on a single, clean machine
+## First configuration with Minikube on a single, clean machine
 NB: You must be in the root folder to use the scripts.
 
-#### Requirements
+### Requirements
 - 18 CPU cores
 - 18 GB of RAM
 
-#### Steps Multi-nodes cluster
+### Steps Multi-nodes cluster
 - Execution scripts
 ```bash
 chmod +x scripts/*
@@ -65,14 +73,16 @@ bash
 ```bash
 nano /etc/hosts
 ```
-- **For Master** (it could take long time):
-```bash
-./scripts/multinode-master.sh
-```
-- **For Workers**:
-```bash
-./scripts/multinode-worker.sh
-```
+- **Deploy**
+
+    **For 👑Master** (it could take long time)
+    ```bash
+    ./scripts/multinode-master.sh
+    ```
+    **For 🦺Workers**
+    ```bash
+    ./scripts/multinode-worker.sh
+    ```
 *On the master, you will take the last command printed in green and copy-paste it in workers. Or, in the master, use* `kubeadm token create --print-join-command` *to get the* `sudo kubeadm join [master-node-ip]:6443 --token [token] --discovery-token-ca-cert-hash sha256:[hash]` *to join the cluster as a node.*
 
 - **Deploy** all the ressources
@@ -84,20 +94,87 @@ scripts/deployEnv.sh
 ```bash
 scripts/multinode-launchExperience.sh
 ```
-- **PS: Reset (for Master)** the cluster
+- **PS: Reset the cluster**
+
+    **For 👑Master**
+    ```bash
+    scripts/multinode-resetcluster.sh
+    ```
+    **For 🦺Workers**
+    ```bash
+    kubeadm reset -f
+    ```
+    *Note that you have to reset the cluster, you have to reset master and workers, and do the* `kubeadm join` *command on workers seen before*
+
+### Grid 5000
+Here are some instructions on useful procedures and commands on [Grid5000](https://www.grid5000.fr/) and is based on the [Getting Started](https://www.grid5000.fr/w/Getting_Started) section
+#### Create an account
+Refer to [Get an account](https://www.grid5000.fr/w/Grid5000:Get_an_account) section of the website
+
+#### Access to Grid5000
 ```bash
-scripts/multinode-resetcluster.sh
+ssh <login>@access.grid5000.fr
 ```
-- **PS2: Reset Worker**
+#### Connect to a frontend site
 ```bash
-kubeadm reset -f
+ssh <site> # grenoble
 ```
-*Note that you have to reset the cluster, you have to reset master and workers, and do the* `kubeadm join` *command on workers seen before*
+*You can choose along the list of sites [here](https://www.grid5000.fr/w/Grid5000:Network#Grid'5000_sites_networks). For multiples nodes cluster and to respect the [Usage Policy](https://www.grid5000.fr/w/Grid5000:UsagePolicy),* ***Grenoble is advised***
 
-#### Grid 5000
+#### Deploy a job with your environment
+On a frontend site, to allocate a job :
+  ```bash
+  oarsub -I -t deploy -l host=1,walltime=8
+  ```
+  You will get an output like
+  ```bash
+  # Filtering out exotic resources (servan, drac, yeti, troll).
+  OAR_JOB_ID=<job_id>
+  # Interactive mode: waiting...
+  # Starting...
+  ```
+  *More explainations [here](https://www.grid5000.fr/w/Getting_Started#Reserving_resources_with_OAR:_the_basics) to understand how to use OAR commands*
 
+And to deploy an environment in the job :
+  ```bash
+  kadeploy3 ubuntu2204-min
+  ```
+  *More explainations [here](https://www.grid5000.fr/w/Getting_Started#Deploying_your_nodes_to_get_root_access_and_create_your_own_experimental_environment) to understand how kadeploy and OAR work*
 
-#### Steps Minikube
+#### Delete a job
+On a frontend site or access site
+```bash
+curl -i -X DELETE https://api.grid5000.fr/stable/sites/<site>/jobs/<job_id>
+```
+Refer to [job deletion](https://www.grid5000.fr/w/API_tutorial#Job_deletion) API Tutorial
+
+#### Extract data results
+
+**On frontend** (like grenoble), use *scp commands* to get image results
+```bash
+scp root@<master-node>:per052-deployment/python/input/*.png ./public/result/
+# example : scp root@dahu-22:per052-deployment/python/input/*.png ./public/result/
+```
+
+Then, **on your external machine**, use *scp commands*
+```bash
+scp <site>.g5k:public/result/*.png .
+# example : scp grenoble.g5k:public/result/*.png .
+```
+
+#### Reset Cluster data
+To avoid data blend
+- **On master-node**
+  ```bash
+  rm python/input/*.*
+  ```
+- **On frontend**
+  ```bash
+  rm /public/result/*
+  ```
+
+---
+### Steps Minikube
 
 - Execute the following command in order to be able to **execute all the scripts**
 ```bash
@@ -127,4 +204,3 @@ scripts/launchExperience.sh
 ```bash
 scripts/resetCluster.sh
 ```
-### Steps

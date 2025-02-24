@@ -15,7 +15,7 @@ sudo apt install -y python3-kubernetes
 sudo apt install -y python3-pandas
 
 "$SCRIPT_DIR"/mtnd-requierements.sh
-"$SCRIPT_DIR"/mtnd-nfs-master.sh
+"$SCRIPT_DIR"/mtnd-nfs-worker.sh
 "$SCRIPT_DIR"/mtnd-docker.sh
 "$SCRIPT_DIR"/mtnd-k8s.sh
 
