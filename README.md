@@ -58,6 +58,89 @@ NB: You must be in the root folder to use the scripts.
 - 18 CPU cores
 - 18 GB of RAM
 
+
+### Grid 5000
+Here are some instructions on useful procedures and commands on [Grid5000](https://www.grid5000.fr/) and is based on the [Getting Started](https://www.grid5000.fr/w/Getting_Started) section
+#### Create an account
+Refer to [Get an account](https://www.grid5000.fr/w/Grid5000:Get_an_account) section of the website
+
+#### Access to Grid5000
+```bash
+ssh <login>@access.grid5000.fr
+```
+#### Connect to a frontend site
+```bash
+ssh <site> # grenoble
+```
+*You can choose along the list of sites [here](https://www.grid5000.fr/w/Grid5000:Network#Grid'5000_sites_networks). For multiples nodes cluster and to respect the [Usage Policy](https://www.grid5000.fr/w/Grid5000:UsagePolicy),* ***Grenoble is advised***
+
+#### Deploy a job with your environment
+On a frontend site, to allocate a job :
+  ```bash
+  oarsub -I -t deploy -l host=1,walltime=8
+  ```
+  You will get an output like
+  ```bash
+  # Filtering out exotic resources (servan, drac, yeti, troll).
+  OAR_JOB_ID=<job_id>
+  # Interactive mode: waiting...
+  # Starting...
+  ```
+  *More explainations [here](https://www.grid5000.fr/w/Getting_Started#Reserving_resources_with_OAR:_the_basics) to understand how to use OAR commands*
+
+And to deploy an environment in the job :
+  ```bash
+  kadeploy3 ubuntu2204-min
+  ```
+  *More explainations [here](https://www.grid5000.fr/w/Getting_Started#Deploying_your_nodes_to_get_root_access_and_create_your_own_experimental_environment) to understand how kadeploy and OAR work*
+
+#### Delete a job
+On a frontend site or access site
+```bash
+curl -i -X DELETE https://api.grid5000.fr/stable/sites/<site>/jobs/<job_id>
+```
+Refer to [job deletion](https://www.grid5000.fr/w/API_tutorial#Job_deletion) API Tutorial
+
+#### Extract data results
+
+  **On your external machine**, setup your `.ssh/config` with :
+
+  ```xml
+  Host g5k
+    User <login>
+    Hostname access.grid5000.fr
+    ForwardAgent no
+
+  Host grenoble.g5k
+    User <login>
+    ProxyCommand ssh g5k -W grenoble:%p
+    ForwardAgent no
+  ```
+  *Note : you can modify `grenoble` by another site*
+
+**On frontend** (like grenoble), use *scp commands* to get image results
+```bash
+scp root@<master-node>:per052-deployment/python/input/*.png ./public/result/
+# example : scp root@dahu-22:per052-deployment/python/input/*.png ./public/result/
+```
+
+Then, **on your external machine**, use *scp commands*
+```bash
+scp <site>.g5k:public/result/*.png .
+# example : scp grenoble.g5k:public/result/*.png .
+```
+
+#### Reset Cluster data
+To avoid data blend
+- **On master-node**
+  ```bash
+  rm python/input/*.*
+  ```
+- **On frontend**
+  ```bash
+  rm /public/result/*
+  ```
+
 ### Steps Multi-nodes cluster
 - Execution scripts
 ```bash
@@ -105,73 +188,6 @@ scripts/multinode-launchExperience.sh
     kubeadm reset -f
     ```
     *Note that you have to reset the cluster, you have to reset master and workers, and do the* `kubeadm join` *command on workers seen before*
-
-### Grid 5000
-Here are some instructions on useful procedures and commands on [Grid5000](https://www.grid5000.fr/) and is based on the [Getting Started](https://www.grid5000.fr/w/Getting_Started) section
-#### Create an account
-Refer to [Get an account](https://www.grid5000.fr/w/Grid5000:Get_an_account) section of the website
-
-#### Access to Grid5000
-```bash
-ssh <login>@access.grid5000.fr
-```
-#### Connect to a frontend site
-```bash
-ssh <site> # grenoble
-```
-*You can choose along the list of sites [here](https://www.grid5000.fr/w/Grid5000:Network#Grid'5000_sites_networks). For multiples nodes cluster and to respect the [Usage Policy](https://www.grid5000.fr/w/Grid5000:UsagePolicy),* ***Grenoble is advised***
-
-#### Deploy a job with your environment
-On a frontend site, to allocate a job :
-  ```bash
-  oarsub -I -t deploy -l host=1,walltime=8
-  ```
-  You will get an output like
-  ```bash
-  # Filtering out exotic resources (servan, drac, yeti, troll).
-  OAR_JOB_ID=<job_id>
-  # Interactive mode: waiting...
-  # Starting...
-  ```
-  *More explainations [here](https://www.grid5000.fr/w/Getting_Started#Reserving_resources_with_OAR:_the_basics) to understand how to use OAR commands*
-
-And to deploy an environment in the job :
-  ```bash
-  kadeploy3 ubuntu2204-min
-  ```
-  *More explainations [here](https://www.grid5000.fr/w/Getting_Started#Deploying_your_nodes_to_get_root_access_and_create_your_own_experimental_environment) to understand how kadeploy and OAR work*
-
-#### Delete a job
-On a frontend site or access site
-```bash
-curl -i -X DELETE https://api.grid5000.fr/stable/sites/<site>/jobs/<job_id>
-```
-Refer to [job deletion](https://www.grid5000.fr/w/API_tutorial#Job_deletion) API Tutorial
-
-#### Extract data results
-
-**On frontend** (like grenoble), use *scp commands* to get image results
-```bash
-scp root@<master-node>:per052-deployment/python/input/*.png ./public/result/
-# example : scp root@dahu-22:per052-deployment/python/input/*.png ./public/result/
-```
-
-Then, **on your external machine**, use *scp commands*
-```bash
-scp <site>.g5k:public/result/*.png .
-# example : scp grenoble.g5k:public/result/*.png .
-```
-
-#### Reset Cluster data
-To avoid data blend
-- **On master-node**
-  ```bash
-  rm python/input/*.*
-  ```
-- **On frontend**
-  ```bash
-  rm /public/result/*
-  ```
 
 ---
 ### Steps Minikube
