@@ -28,7 +28,7 @@ spec:
             - name: TOPIC
               value: testtopic1
             - name: PARTITION_WEIGHTS
-              value: "1,1,1,1,1,1,1,1,1,1"
+              value: "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS
               value: "1000"
             - name: LOG_LEVEL
@@ -67,7 +67,7 @@ spec:
         - name: GROUP_ID
           value: testgroup1
         - name: NUMBER_PARTITIONS
-          value: "10"
+          value: "15"
         - name: INIT_SIZE
           value: "1"
         - name: FUP
@@ -77,7 +77,7 @@ spec:
         - name: WSLA
           value: "0.5"
         - name: FDOWN
-          value: "0.075"
+          value: "0.1"
         - name: REB_TIME
           value: "0.05"
         - name: DI
