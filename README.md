@@ -19,9 +19,9 @@ The goal of this repository is to experiment the Bin Pack autoscaler solution in
 
 ## Project structure
 
-- [/ansible](https://github.com/benneuville/per052-deployment/tree/no_elastic/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
-- [/kubernetes](https://github.com/benneuville/per052-deployment/tree/no_elastic/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
-- [/scripts](https://github.com/benneuville/per052-deployment/tree/no_elastic/scripts) folder which contains the following `.sh` files
+- [/ansible](https://github.com/benneuville/binscale-deployment/tree/no_elastic/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
+- [/kubernetes](https://github.com/benneuville/binscale-deployment/tree/no_elastic/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
+- [/scripts](https://github.com/benneuville/binscale-deployment/tree/no_elastic/scripts) folder which contains the following `.sh` files
 
 ### MULTI-NODES cluster scripts
 - `multinode-master.sh`: deploy master-node
@@ -48,7 +48,7 @@ Other scripts could be common to master and workers deployment, and are called i
 
 ## Link to Experience
 * [Source Experience Repository](https://github.com/fatimazahraelaaziz/Experience/tree/main)
-* [Experience Repository](https://github.com/benneuville/per052-experience/tree/no_elastic) for this repository
+* [Experience Repository](https://github.com/benneuville/binscale-experience/tree/no_elastic) for this repository
 
  
 ## First configuration with Minikube on a single, clean machine
@@ -120,8 +120,8 @@ Refer to [job deletion](https://www.grid5000.fr/w/API_tutorial#Job_deletion) API
 
 **On frontend** (like grenoble), use *scp commands* to get image results
 ```bash
-scp root@<master-node>:per052-deployment/python/input/*.png ./public/result/
-# example : scp root@dahu-22:per052-deployment/python/input/*.png ./public/result/
+scp root@<master-node>:binscale-deployment/python/input/*.png ./public/result/
+# example : scp root@dahu-22:binscale-deployment/python/input/*.png ./public/result/
 ```
 
 Then, **on your external machine**, use *scp commands*
