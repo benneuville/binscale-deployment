@@ -1,11 +1,11 @@
 ---
-- name: Deploy Kafka Cluster (Strimzi 0.45.1)
+- name: Deploy Kafka Cluster (Strimzi 0.48.0)
   hosts: localhost
 
   tasks:
-    - name: Apply Strimzi Operator (version 0.45.1)
+    - name: Apply Strimzi Operator (version 0.48.0)
       command: >
-        kubectl apply -f https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.48.0/strimzi-cluster-operator-0.48.0.yaml -n default
+        kubectl apply -f ../strimzi/strimzi-cluster-operator-0.48.0.yaml -n default
 
     - name: Apply Kafka Cluster definition (my-cluster)
       command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n default
