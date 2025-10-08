@@ -3,10 +3,11 @@ kind: Kafka
 metadata:
   name: my-cluster
   namespace: default
-
+  labels:
+    app: strimzi
 spec:
   kafka:
-    version: 4.0.0
+    version: 3.8.0
     replicas: 3
     listeners:
       - name: plain
