@@ -9,6 +9,37 @@
         https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.45.1/strimzi-cluster-operator-0.45.1.yaml
         -n default
 
+    - name: Create Strimzi RBAC fix for Lease permissions
+      copy:
+        dest: /tmp/strimzi-rbac-fix.yaml
+        content: |
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRole
+          metadata:
+            name: strimzi-cluster-operator-leases
+          rules:
+            - apiGroups: ["coordination.k8s.io"]
+              resources: ["leases"]
+              verbs: ["get", "list", "watch", "create", "update", "delete"]
+
+          ---
+          apiVersion: rbac.authorization.k8s.io/v1
+          kind: ClusterRoleBinding
+          metadata:
+            name: strimzi-cluster-operator-leases-binding
+          subjects:
+            - kind: ServiceAccount
+              name: strimzi-cluster-operator
+              namespace: default
+          roleRef:
+            kind: ClusterRole
+            name: strimzi-cluster-operator-leases
+            apiGroup: rbac.authorization.k8s.io
+
+    - name: Apply Strimzi RBAC fix
+      command: kubectl apply -f /tmp/strimzi-rbac-fix.yaml
+
+
     - name: Apply Kafka Cluster definition (my-cluster)
       command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n default
 
