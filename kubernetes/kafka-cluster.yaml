@@ -2,7 +2,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: Kafka
 metadata:
   name: my-cluster
-  namespace: default
+  namespace: binscale
 
 spec:
   kafka:
@@ -33,7 +33,7 @@ spec:
       offsets.topic.replication.factor: 3
       transaction.state.log.replication.factor: 3
       transaction.state.log.min.isr: 2
-      default.replication.factor: 3
+      binscale.replication.factor: 3
       min.insync.replicas: 2
       inter.broker.protocol.version: "3.8"
     storage:

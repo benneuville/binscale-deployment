@@ -2,7 +2,7 @@ apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaNodePool
 metadata:
   name: my-cluster-pool
-  namespace: default
+  namespace: binscale
   labels:
     strimzi.io/cluster: my-cluster
 spec:
