@@ -7,7 +7,7 @@
       command: >
         kubectl create -f
         https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.45.1/strimzi-cluster-operator-0.45.1.yaml
-        -n default
+        -n binscale
 
     - name: Create Strimzi RBAC fix for Lease permissions
       copy:
@@ -30,7 +30,7 @@
           subjects:
             - kind: ServiceAccount
               name: strimzi-cluster-operator
-              namespace: default
+              namespace: binscale
           roleRef:
             kind: ClusterRole
             name: strimzi-cluster-operator-leases
@@ -41,16 +41,16 @@
 
 
     - name: Apply Kafka Cluster definition (my-cluster)
-      command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n default
+      command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n binscale
 
     - name: Apply Kafka Node Pool definition
-      command: kubectl apply -f ../kubernetes/kafka-nodepool.yaml -n default
+      command: kubectl apply -f ../kubernetes/kafka-nodepool.yaml -n binscale
 
     - name: Apply Kafka Topic
-      command: kubectl apply -f ../kubernetes/kafka-topic.yaml -n default
+      command: kubectl apply -f ../kubernetes/kafka-topic.yaml -n binscale
 
     - name: Check Kafka Cluster Readiness
-      command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n default
+      command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n binscale
 
 
 - name: Deploy Prometheus, Grafana, and related resources
@@ -58,22 +58,22 @@
 
   tasks:
     - name: Apply Prometheus Operator Deployment
-      command: kubectl apply -f ../kubernetes/prometheus-operator-deployment.yaml -n default
+      command: kubectl apply -f ../kubernetes/prometheus-operator-deployment.yaml -n binscale
 
     - name: Apply Prometheus Additional Configuration
-      command: kubectl apply -f ../kubernetes/prometheus-additional.yaml -n default
+      command: kubectl apply -f ../kubernetes/prometheus-additional.yaml -n binscale
 
     - name: Apply Prometheus Rules
-      command: kubectl apply -f ../kubernetes/prometheus-rules.yaml -n default
+      command: kubectl apply -f ../kubernetes/prometheus-rules.yaml -n binscale
 
     - name: Apply Strimzi Pod Monitor
-      command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml -n default
+      command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml -n binscale
 
     - name: Apply Prometheus Configuration
-      command: kubectl apply -f ../kubernetes/prometheus.yaml -n default
+      command: kubectl apply -f ../kubernetes/prometheus.yaml -n binscale
 
     - name: Apply Prometheus Service
-      command: kubectl apply -f ../kubernetes/prometheus-service.yaml -n default
+      command: kubectl apply -f ../kubernetes/prometheus-service.yaml -n binscale
 
 
 - name: Deploy Elastic Stack
