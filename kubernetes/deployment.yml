@@ -18,8 +18,7 @@ spec:
     spec:
       containers:
         - name: java-kafka-producer
-          image: docker.io/benneuville/per052_exp:v1
-          # image: docker.io/laaziz2001/logs:v65
+          image: docker.io/benneuville/binscale:hf
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/producer.jar"]
           env:
@@ -51,10 +50,7 @@ spec:
   restartPolicy: Always
   containers:
     - name: controllerandscaler
-      image: docker.io/benneuville/per052_exp:v1
-      # image: docker.io/laaziz2001/logs:v65
-      # image: 134.59.129.189:5000/experience_fab
-      # image: 134.59.131.235:5000/experience-2024-04-21
+      image: docker.io/benneuville/binscale:hf
       imagePullPolicy: Always
 
       ports:
@@ -131,10 +127,7 @@ spec:
     spec:
       containers:
         - name: latency
-          image: docker.io/benneuville/per052_exp:v1
-          # image: docker.io/laaziz2001/logs:v65
-          # image: 134.59.129.189:5000/experience_fab
-          # image: 134.59.131.235:5000/experience-2024-04-21
+          image: docker.io/benneuville/binscale:hf
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
