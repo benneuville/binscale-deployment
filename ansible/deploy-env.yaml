@@ -1,72 +1,60 @@
-- name: Deploy Kafka Cluster
+---
+- name: Deploy Kafka Cluster (Strimzi 0.45.1)
   hosts: localhost
 
   tasks:
-    - name: Apply Strimzi Ressources
-      command: kubectl apply -f https://strimzi.io/install/latest?namespace=default
+    - name: Apply Strimzi Operator (version 0.45.1)
+      command: >
+        kubectl create -f
+        https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.45.1/strimzi-cluster-operator-0.45.1.yaml
+        -n default
+      args:
+        warn: false
+      ignore_errors: yes  # évite un crash si déjà installé
 
-    - name: Apply Kafka (metrics3.yaml)
-      command: kubectl apply -f ../kubernetes/metrics3.yaml -n default
+    - name: Apply Kafka Cluster definition (my-cluster)
+      command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n default
 
-   # - name: Apply Kafka Ephemeral
-     # command: kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml -n default
+    - name: Apply Kafka Node Pool definition
+      command: kubectl apply -f ../kubernetes/kafka-nodepool.yaml -n default
 
     - name: Apply Kafka Topic
-      command: kubectl apply -f ../kubernetes/kafka-topic.yaml
+      command: kubectl apply -f ../kubernetes/kafka-topic.yaml -n default
 
     - name: Check Kafka Cluster Readiness
       command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n default
+
 
 - name: Deploy Prometheus, Grafana, and related resources
   hosts: localhost
 
   tasks:
     - name: Apply Prometheus Operator Deployment
-      command: kubectl create -f ../kubernetes/prometheus-operator-deployment.yaml
+      command: kubectl apply -f ../kubernetes/prometheus-operator-deployment.yaml -n default
 
     - name: Apply Prometheus Additional Configuration
-      command: kubectl apply -f ../kubernetes/prometheus-additional.yaml
+      command: kubectl apply -f ../kubernetes/prometheus-additional.yaml -n default
 
     - name: Apply Prometheus Rules
-      command: kubectl apply -f ../kubernetes/prometheus-rules.yaml
+      command: kubectl apply -f ../kubernetes/prometheus-rules.yaml -n default
 
     - name: Apply Strimzi Pod Monitor
-      command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml
+      command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml -n default
 
     - name: Apply Prometheus Configuration
-      command: kubectl apply -f ../kubernetes/prometheus.yaml
-
-    # - name: Apply Grafana Configuration
-    #   command: kubectl apply -f ../kubernetes/grafana.yaml
+      command: kubectl apply -f ../kubernetes/prometheus.yaml -n default
 
     - name: Apply Prometheus Service
-      command: kubectl apply -f ../kubernetes/prometheus-service.yaml
+      command: kubectl apply -f ../kubernetes/prometheus-service.yaml -n default
 
 
 - name: Deploy Elastic Stack
   hosts: localhost
 
   tasks:
-#     - name: Add helm elastic repo
-#       command: helm repo add elastic https://helm.elastic.co
-
-#     - name: Update helm repo
-#       command: helm repo update
-
-#     - name: Install elastic operator
-#       command: helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
-
-    - name: Create elastic namespace
+    - name: Create elastic namespace (if not exists)
       command: kubectl create namespace elastic
-
-    # - name: Apply Elastic Priority Classes
-    #   command: kubectl apply -f ../elastic-stack/elastic-priority-classes.yaml
-
-    # - name: Apply Elasticksearch cluster
-    #   command: kubectl apply -f ../elastic-stack/elasticsearch-cluster.yaml
-
-#     - name: Apply Kibana instance
-#       command: kubectl apply -f ../elastic-stack/kibana-instance.yaml
+      ignore_errors: yes
 
     - name: Apply Filebeat
-      command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml
+      command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml -n elastic

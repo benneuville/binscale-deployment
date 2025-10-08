@@ -1,0 +1,13 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: default
+spec:
+  kafka:
+    version: 4.0.0
+  zookeeper:
+    replicas: 3
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}

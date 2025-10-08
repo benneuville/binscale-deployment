@@ -1,0 +1,72 @@
+- name: Deploy Kafka Cluster
+  hosts: localhost
+
+  tasks:
+    - name: Apply Strimzi Ressources
+      command: kubectl create -f https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.38.0/strimzi-cluster-operator-0.38.0.yaml -n default
+
+    - name: Apply Kafka (metrics3.yaml)
+      command: kubectl apply -f ../kubernetes/metrics3.yaml -n default
+
+   # - name: Apply Kafka Ephemeral
+     # command: kubectl apply -f https://strimzi.io/examples/latest/kafka/kafka-ephemeral.yaml -n default
+
+    - name: Apply Kafka Topic
+      command: kubectl apply -f ../kubernetes/kafka-topic.yaml
+
+    - name: Check Kafka Cluster Readiness
+      command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n default
+
+- name: Deploy Prometheus, Grafana, and related resources
+  hosts: localhost
+
+  tasks:
+    - name: Apply Prometheus Operator Deployment
+      command: kubectl create -f ../kubernetes/prometheus-operator-deployment.yaml
+
+    - name: Apply Prometheus Additional Configuration
+      command: kubectl apply -f ../kubernetes/prometheus-additional.yaml
+
+    - name: Apply Prometheus Rules
+      command: kubectl apply -f ../kubernetes/prometheus-rules.yaml
+
+    - name: Apply Strimzi Pod Monitor
+      command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml
+
+    - name: Apply Prometheus Configuration
+      command: kubectl apply -f ../kubernetes/prometheus.yaml
+
+    # - name: Apply Grafana Configuration
+    #   command: kubectl apply -f ../kubernetes/grafana.yaml
+
+    - name: Apply Prometheus Service
+      command: kubectl apply -f ../kubernetes/prometheus-service.yaml
+
+
+- name: Deploy Elastic Stack
+  hosts: localhost
+
+  tasks:
+#     - name: Add helm elastic repo
+#       command: helm repo add elastic https://helm.elastic.co
+
+#     - name: Update helm repo
+#       command: helm repo update
+
+#     - name: Install elastic operator
+#       command: helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
+
+    - name: Create elastic namespace
+      command: kubectl create namespace elastic
+
+    # - name: Apply Elastic Priority Classes
+    #   command: kubectl apply -f ../elastic-stack/elastic-priority-classes.yaml
+
+    # - name: Apply Elasticksearch cluster
+    #   command: kubectl apply -f ../elastic-stack/elasticsearch-cluster.yaml
+
+#     - name: Apply Kibana instance
+#       command: kubectl apply -f ../elastic-stack/kibana-instance.yaml
+
+    - name: Apply Filebeat
+      command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml
