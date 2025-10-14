@@ -1,0 +1,69 @@
+# trunk-ignore-all(prettier)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency
+  namespace: default
+  labels:
+    app: latency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: testtopic1
+            - name: GROUP_ID
+              value: testgroup1
+            - name: SLEEP
+              value: "5"
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                max.poll.records=100
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: demoobservabilitypodmonitor
+  labels:
+    app: strimzi
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: latency
+  namespaceSelector:
+    matchNames:
+      - default
+  podMetricsEndpoints:
+    - path: /prometheus
+      port: brom
+      interval: 5s

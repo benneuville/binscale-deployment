@@ -1,23 +1,28 @@
 ---
 - name: Deploy Kafka Cluster (Strimzi 0.45.0)
   hosts: localhost
+  vars:
+    namespace: default
 
   tasks:
     - name: Apply Strimzi Operator (version 0.45.0)
       command: >
-        kubectl apply -f ../strimzi/strimzi-cluster-operator-0.45.0.yaml -n default
+        kubectl apply -f ../strimzi/strimzi-cluster-operator-0.45.0.yaml -n {{ namespace }}
 
     - name: Apply Kafka Cluster definition (my-cluster)
-      command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n default
+      command: kubectl apply -f ../kubernetes/kafka-cluster.yaml -n {{ namespace }}
 
     - name: Apply Kafka Node Pool definition
-      command: kubectl apply -f ../kubernetes/kafka-nodepool.yaml -n default
+      command: kubectl apply -f ../kubernetes/kafka-nodepool.yaml -n {{ namespace }}
 
     - name: Apply Kafka Topic
-      command: kubectl apply -f ../kubernetes/kafka-topic.yaml -n default
+      command: kubectl apply -f ../kubernetes/kafka-topic.yaml -n {{ namespace }}
 
     - name: Check Kafka Cluster Readiness
-      command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n default
+      command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n {{ namespace }}
+
+# [UNACTIVE] CAUSE : NOT USED ON EXPERIMENTS FOR NOW 
+# ------------------ In future case study, Prometheus could be used for data collection and 
 
 - name: Deploy Prometheus
   hosts: localhost
@@ -27,15 +32,15 @@
     - name: Deploy Prometheus CRDs
       command: kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.86.0/stripped-down-crds.yaml
     - name: Config Prometheus
-      command: kubectl apply -f ../prometheus/prometheus-config.yaml -n default
+      command: kubectl apply -f ../prometheus/prometheus-config.yaml -n {{ namespace }}
     - name: Deploy Prometheus
-      command: kubectl apply -f ../prometheus/prometheus-deployment.yaml -n default
+      command: kubectl apply -f ../prometheus/prometheus-deployment.yaml -n {{ namespace }}
     - name: Expose Prometheus Service
-      command: kubectl apply -f ../prometheus/prometheus-service.yaml -n default
+      command: kubectl apply -f ../prometheus/prometheus-service.yaml -n {{ namespace }}
     - name: Deploy Prometheus Additional Config
-      command: kubectl apply -f ../prometheus/prometheus-additional.yaml -n default
+      command: kubectl apply -f ../prometheus/prometheus-additional.yaml -n {{ namespace }}
     - name: Deploy Prometheus Rules
-      command: kubectl apply -f ../prometheus/prometheus-rules.yaml -n default
+      command: kubectl apply -f ../prometheus/prometheus-rules.yaml -n {{ namespace }}
 
 - name: Deploy Filebeat for log collection
   hosts: localhost
@@ -47,38 +52,3 @@
 
     - name: Apply Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
-
-
-# - name: Deploy Prometheus, Grafana, and related resources
-#   hosts: localhost
-
-#   tasks:
-#     - name: Apply Prometheus Operator Deployment
-#       command: kubectl apply -f ../kubernetes/prometheus-operator-deployment.yaml -n default
-
-#     - name: Apply Prometheus Additional Configuration
-#       command: kubectl apply -f ../kubernetes/prometheus-additional.yaml -n default
-
-#     - name: Apply Prometheus Rules
-#       command: kubectl apply -f ../kubernetes/prometheus-rules.yaml -n default
-
-#     - name: Apply Strimzi Pod Monitor
-#       command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml -n default
-
-#     - name: Apply Prometheus Configuration
-#       command: kubectl apply -f ../kubernetes/prometheus.yaml -n default
-
-#     - name: Apply Prometheus Service
-#       command: kubectl apply -f ../kubernetes/prometheus-service.yaml -n default
-
-
-# - name: Deploy Elastic Stack
-#   hosts: localhost
-
-#   tasks:
-#     - name: Create elastic namespace (if not exists)
-#       command: kubectl create namespace elastic
-#       ignore_errors: yes
-
-#     - name: Apply Filebeat
-#       command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml -n elastic

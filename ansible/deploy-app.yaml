@@ -1,13 +1,34 @@
 ---
 - name: Deploy Application
   hosts: localhost
+  become: false
+  vars:
+    namespace: default
+    timeout: 180s
 
   tasks:
+
     - name: Apply Admin Service Account for ControllerAndScaler Pod
       command: kubectl apply -f ../kubernetes/service-account.yaml
 
     - name: Apply Role Binding
       command: kubectl apply -f ../kubernetes/role-binding.yaml
 
-    - name: Apply Deployment
-      command: kubectl apply -f ../kubernetes/deployment.yml
+    - name: Controller Deployment
+      command: kubectl apply -f ../experience/controller.yaml
+
+    - name: Waiting for Controller
+      command: kubectl wait pod -l app=grpcassignmentserver --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
+      register: controller_ready
+      failed_when: controller_ready.rc != 0
+
+    - name: Consumer Deployment (latency)
+      command: kubectl apply -f ../experience/latency.yaml
+
+    - name: Waiting for consumer
+      command: kubectl wait deployment/latency --for=condition=Available --timeout={{ timeout }} -n {{ namespace }}
+      register: consumer_ready
+      failed_when: consumer_ready.rc != 0
+      
+    - name: Producer Deployment (workload)
+      command: kubectl apply -f ../experience/producer.yaml

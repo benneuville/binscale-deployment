@@ -121,13 +121,6 @@ data:
             matchers:
             - logs_path:
                 logs_path: "/var/log/containers/"
-    # - type: log
-    #   enabled: true
-    #   paths:
-    #     - /var/log/experiments/*.log
-
-    # output.console:
-    #   pretty: true
     output.file:
       path: "/var/log/experiments"
       filename: filebeat-logs

@@ -1,0 +1,52 @@
+# trunk-ignore-all(prettier)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-deployment
+  namespace: default
+  labels:
+    app: workload
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workload
+  template:
+    metadata:
+      labels:
+        app: workload
+    spec:
+      containers:
+        - name: java-kafka-producer
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/producer.jar"]
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: testtopic1
+            - name: PARTITION_WEIGHTS
+              value: "1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1"
+            - name: DELAY_MS
+              value: "1000"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: PRODUCER_ACKS
+              value: "0"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                retries=100
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: arrivalservice
+  namespace: default
+spec:
+  selector:
+    app: workload
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002

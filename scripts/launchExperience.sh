@@ -29,7 +29,7 @@ kubectl delete -f kubernetes/deployment.yml
 echo "Experience Finished, analysing output in the python/input folder"
 cd python/input/ || exit
 ../../scripts/log_analysis/extractLogs.sh filebeat*
-python3 ../../scripts/log_analysis/analyze.py consumer_logs.txt controler_logs.txt
+python3 ../../scripts/log_analysis/analyze.py consumer_logs.txt controller_logs.txt
 
 exit 0
 
