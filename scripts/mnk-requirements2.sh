@@ -10,6 +10,11 @@ sudo apt install -y python3-pip
 sudo apt install -y python3-kubernetes
 sudo apt install -y python3-pandas
 
+# JQ
+
+printf "\n\033[1;36m## Installing JQ\033[0m\n"
+sudo apt install -y jq
+
 # ANSIBLE
 printf "\n\033[1;36m## Installing Ansible\033[0m\n"
 sudo apt install -y ansible

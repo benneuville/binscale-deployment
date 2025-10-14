@@ -19,31 +19,25 @@
     - name: Check Kafka Cluster Readiness
       command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n default
 
-
-- name: Deploy Prometheus, Grafana, and related resources
+- name: Deploy Prometheus
   hosts: localhost
 
+# v0.86.0 (Latest version of october 2025)
   tasks:
-    - name: Apply Prometheus Operator Deployment
-      command: kubectl apply -f ../kubernetes/prometheus-operator-deployment.yaml -n default
+    - name: Deploy Prometheus CRDs
+      command: kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.86.0/stripped-down-crds.yaml
+    - name: Config Prometheus
+      command: kubectl apply -f ../prometheus/prometheus-config.yaml -n default
+    - name: Deploy Prometheus
+      command: kubectl apply -f ../prometheus/prometheus-deployment.yaml -n default
+    - name: Expose Prometheus Service
+      command: kubectl apply -f ../prometheus/prometheus-service.yaml -n default
+    - name: Deploy Prometheus Additional Config
+      command: kubectl apply -f ../prometheus/prometheus-additional.yaml -n default
+    - name: Deploy Prometheus Rules
+      command: kubectl apply -f ../prometheus/prometheus-rules.yaml -n default
 
-    - name: Apply Prometheus Additional Configuration
-      command: kubectl apply -f ../kubernetes/prometheus-additional.yaml -n default
-
-    - name: Apply Prometheus Rules
-      command: kubectl apply -f ../kubernetes/prometheus-rules.yaml -n default
-
-    - name: Apply Strimzi Pod Monitor
-      command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml -n default
-
-    - name: Apply Prometheus Configuration
-      command: kubectl apply -f ../kubernetes/prometheus.yaml -n default
-
-    - name: Apply Prometheus Service
-      command: kubectl apply -f ../kubernetes/prometheus-service.yaml -n default
-
-
-- name: Deploy Elastic Stack
+- name: Deploy Filebeat for log collection
   hosts: localhost
 
   tasks:
@@ -52,4 +46,39 @@
       ignore_errors: yes
 
     - name: Apply Filebeat
-      command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml -n elastic
+      command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
+
+
+# - name: Deploy Prometheus, Grafana, and related resources
+#   hosts: localhost
+
+#   tasks:
+#     - name: Apply Prometheus Operator Deployment
+#       command: kubectl apply -f ../kubernetes/prometheus-operator-deployment.yaml -n default
+
+#     - name: Apply Prometheus Additional Configuration
+#       command: kubectl apply -f ../kubernetes/prometheus-additional.yaml -n default
+
+#     - name: Apply Prometheus Rules
+#       command: kubectl apply -f ../kubernetes/prometheus-rules.yaml -n default
+
+#     - name: Apply Strimzi Pod Monitor
+#       command: kubectl apply -f ../kubernetes/strimzi-pod-monitor.yaml -n default
+
+#     - name: Apply Prometheus Configuration
+#       command: kubectl apply -f ../kubernetes/prometheus.yaml -n default
+
+#     - name: Apply Prometheus Service
+#       command: kubectl apply -f ../kubernetes/prometheus-service.yaml -n default
+
+
+# - name: Deploy Elastic Stack
+#   hosts: localhost
+
+#   tasks:
+#     - name: Create elastic namespace (if not exists)
+#       command: kubectl create namespace elastic
+#       ignore_errors: yes
+
+#     - name: Apply Filebeat
+#       command: kubectl apply -f ../elastic-stack/filebeat-kubernetes.yaml -n elastic

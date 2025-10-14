@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: consumers-monitor
+  labels:
+    app: latency
+spec:
+  selector:
+    matchLabels:
+      app: latency
+  podMetricsEndpoints:
+    - path: /metrics
+      port: brom
+      interval: 5s
