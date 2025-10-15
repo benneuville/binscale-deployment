@@ -26,6 +26,8 @@
 
 - name: Deploy Prometheus
   hosts: localhost
+  vars:
+    namespace: default
 
 # v0.86.0 (Latest version of october 2025)
   tasks:
@@ -44,6 +46,8 @@
 
 - name: Deploy Filebeat for log collection
   hosts: localhost
+  vars:
+    namespace: default
 
   tasks:
     - name: Create elastic namespace (if not exists)

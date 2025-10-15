@@ -1,4 +1,3 @@
-# trunk-ignore-all(prettier)
 apiVersion: v1
 kind: Pod
 metadata:
@@ -27,13 +26,13 @@ spec:
         - name: INIT_SIZE
           value: "1"
         - name: FUP
-          value: "0.7"
+          value: "0.8"
+        - name: FDOWN
+          value: "0.3"
         - name: MU
           value: "200"
         - name: WSLA
           value: "0.5"
-        - name: FDOWN
-          value: "0.1"
         - name: REB_TIME
           value: "0.05"
         - name: DI

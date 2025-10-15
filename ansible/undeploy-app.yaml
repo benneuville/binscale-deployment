@@ -1,0 +1,22 @@
+---
+- name: Clean up previous deployments
+  hosts: localhost
+  become: false
+  vars:
+    namespace: default
+
+  tasks:
+    - name: Delete Controller
+      command: kubectl delete pod -l app=grpcassignmentserver -n {{ namespace }} --ignore-not-found=true
+      async: 1
+      poll: 0
+
+    - name: Delete Latency
+      command: kubectl delete pod -l app=latency -n {{ namespace }} --ignore-not-found=true
+      async: 1
+      poll: 0
+
+    - name: Delete Producer
+      command: kubectl delete pod -l app=producer -n {{ namespace }} --ignore-not-found=true
+      async: 1
+      poll: 0
