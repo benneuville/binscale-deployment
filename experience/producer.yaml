@@ -1,4 +1,3 @@
-# trunk-ignore-all(prettier)
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -37,6 +36,9 @@ spec:
             - name: ADDITIONAL_CONFIG
               value: |
                 retries=100
+# NOT REQUIERED DECLARED VARIABLES
+            - name: WORKLOAD
+              value: "constant" # "constant", "biased", "non_uniform"
 ---
 apiVersion: v1
 kind: Service

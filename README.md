@@ -198,15 +198,21 @@ chmod +x scripts/chmodAll.sh && scripts/chmodAll.sh
 ```
 - **Install** Docker
 ```bash
-scripts/mnk-requirements1.sh
+scripts/minikube/mnk-requirements1.sh
 ```
 - Once the previous script is done, **exit** the machine and **reconnect** to it in order to update the Docker users group, thus avoiding using the `sudo su` command everytime
 
 
 - Install Kubectl, Minikube, Helm, Python packages and Ansible
 ```bash
-scripts/mnk-requirements2.sh
+scripts/minikube/mnk-requirements2.sh
 ```
+
+- Launch Cluster
+```bash
+scripts/minikube/local-cluster.sh
+```
+
 - **Deploy** all the ressources
 ```bash
 scripts/deployEnv.sh
@@ -214,9 +220,9 @@ scripts/deployEnv.sh
 
 - **Launch** the experience
 ```bash
-scripts/launchExperience.sh
+scripts/minikube/launchExperience.sh
 ```
 - **PS: In order to reset** the machine
 ```bash
-scripts/resetCluster.sh
+scripts/local-cluster.sh
 ```

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 printf "\n\033[1;36m## Deleting the previous deployment\033[0m\n"
-kubectl delete -f kubernetes/deployment.yml
+ansible-playbook ansible/undeploy-app.yaml
 
 sleep 45
 
@@ -23,3 +23,5 @@ while true; do
     fi
 done
 
+echo "Removing deployment"
+ansible-playbook ansible/undeploy-app.yaml
