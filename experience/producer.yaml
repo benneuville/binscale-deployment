@@ -38,17 +38,4 @@ spec:
                 retries=100
 # NOT REQUIERED DECLARED VARIABLES
             - name: WORKLOAD
-              value: "constant" # "constant", "biased", "non_uniform"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: arrivalservice
-  namespace: default
-spec:
-  selector:
-    app: workload
-  ports:
-    - protocol: TCP
-      port: 5002
-      targetPort: 5002
+              value: "non_uniform" # "constant", "biased", "non_uniform"
