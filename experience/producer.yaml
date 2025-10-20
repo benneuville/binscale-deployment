@@ -38,7 +38,7 @@ spec:
                 retries=100
 # NOT REQUIERED DECLARED VARIABLES
             - name: WORKLOAD
-              value: "constant" # "constant", "biased", "non_uniform"
+              value: "non_uniform" # "constant", "biased", "non_uniform"
 ---
 apiVersion: v1
 kind: Service
