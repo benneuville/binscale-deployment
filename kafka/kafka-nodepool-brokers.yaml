@@ -1,0 +1,18 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaNodePool
+metadata:
+  name: my-cluster-brokers
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  replicas: 3
+  roles:
+    - broker
+  storage:
+    type: ephemeral
+  template:
+    pod:
+      metadata:
+        labels:
+          app.kubernetes.io/component: kafka-broker
+      terminationGracePeriodSeconds: 30
