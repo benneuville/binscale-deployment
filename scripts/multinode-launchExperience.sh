@@ -30,7 +30,7 @@ ansible-playbook ansible/undeploy-app.yaml
 echo "Experience Finished, analysing output in the python/input folder"
 cd python/input/ || exit
 ../../scripts/log_analysis/extractLogs.sh /export/logs/filebeat*
-python3 ../../scripts/log_analysis/analyze.py consumer_logs.txt controler_logs.txt
+python3 ../../scripts/log_analysis/analyze.py consumer_logs.txt controller_logs.txt
 
 rm -f /export/logs/filebeat*
 exit 0
