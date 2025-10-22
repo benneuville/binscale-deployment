@@ -39,6 +39,8 @@
   tasks:
     - name: Deploy Prometheus CRDs
       command: kubectl apply -f https://github.com/prometheus-operator/prometheus-operator/releases/download/v0.86.0/stripped-down-crds.yaml
+    - name: RBAC for Prometheus
+      command: kubectl apply -f ../prometheus/prometheus-rbac.yaml -n {{ namespace }}
     - name: Config Prometheus
       command: kubectl apply -f ../prometheus/prometheus-config.yaml -n {{ namespace }}
     - name: Deploy Prometheus
