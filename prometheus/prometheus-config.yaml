@@ -32,15 +32,36 @@ data:
             target_label: pod
 
       # Scrape pods "consumers" avec label app=latency
-      - job_name: 'consumers'
+      - job_name: 'latency'
+        metrics_path: /prometheus
         kubernetes_sd_configs:
           - role: pod
         relabel_configs:
           - source_labels: [__meta_kubernetes_pod_label_app]
             regex: latency
             action: keep
+          # Garde les pods ayant un port nommé "metrics" ou "prometheus"
           - source_labels: [__meta_kubernetes_pod_container_port_name]
-            regex: brom
+            regex: prometheus|metrics|brom
+            action: keep
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+      # Scrape des pods "workload" exposant les métriques Prometheus
+      - job_name: 'workload'
+        metrics_path: /prometheus
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          # Garde uniquement les pods avec le label app=producer
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: workload
+            action: keep
+          # Garde les pods ayant un port nommé "metrics" ou "prometheus"
+          - source_labels: [__meta_kubernetes_pod_container_port_name]
+            regex: prometheus|metrics|brom
             action: keep
           - source_labels: [__meta_kubernetes_namespace]
             target_label: namespace
