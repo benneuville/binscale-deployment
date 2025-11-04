@@ -1,0 +1,93 @@
+
+{% if node.targets|length > 0 %}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ node.params.group_id }}-config
+  namespace: default
+data:
+  {{ node.params.group_id }}.yaml: |
+    output:
+{% for target in node.targets %}
+    - name: {{ target.topic_name }}
+      ratio: {{ target.ratio }} 
+{% endfor %}
+---
+{% endif %}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ node.id }}
+  namespace: default
+  labels:
+    app: latency
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ node.id }}
+  template:
+    metadata:
+      labels:
+        app: {{ node.id }}
+    spec:
+      containers:
+        - name: {{ node.id }}
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: {{ node.params.topic_name }}
+            - name: GROUP_ID
+              value: {{ node.params.group_id }}
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                max.poll.records={{ node.params.max_poll_records }}
+            - name: SCALE
+              value: "{{ node.params.scale }}"
+            - name: SHAPE
+              value: "{{ node.params.shape }}"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "{{ node.params.wsla }}"
+            - name: ASYNC_COMMIT
+              value: "False"
+{% if node.targets|length > 0 %}
+            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
+              value: "/config/{{ node.params.group_id }}.yaml"
+          volumeMounts:
+            - name: {{ node.params.group_id }}-config
+              mountPath: /config
+      volumes:
+        - name: {{ node.params.group_id }}-config
+          configMap:
+            name: {{ node.params.group_id }}-config
+{% endif %}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: demoobservabilitypodmonitor
+  labels:
+    app: strimzi
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: {{ node.id }}
+  namespaceSelector:
+    matchNames:
+      - default
+  podMetricsEndpoints:
+    - path: /prometheus
+      port: brom
+      interval: 5s

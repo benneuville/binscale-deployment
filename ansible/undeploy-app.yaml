@@ -10,7 +10,10 @@
       command: kubectl delete -f ../experience/controller.yaml -n {{ namespace }} --ignore-not-found=true
 
     - name: Delete Latency Deployment and PodMonitor
-      command: kubectl delete -f ../experience/latency.yaml -n {{ namespace }} --ignore-not-found=true
+      command: kubectl delete -f ../experience/generated/latency.yaml -n {{ namespace }} --ignore-not-found=true
 
     - name: Delete Producer Deployment and Service
-      command: kubectl delete -f ../experience/producer.yaml -n {{ namespace }} --ignore-not-found=true
+      command: kubectl delete -f ../experience/generated/workload.yaml -n {{ namespace }} --ignore-not-found=true
+      
+    - name: Delete Topics Definition
+      command: kubectl delete -f ../experience/generated/kafka-topics.yaml -n {{ namespace }} --ignore-not-found=true

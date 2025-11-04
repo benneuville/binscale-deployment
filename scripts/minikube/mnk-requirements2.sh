@@ -9,6 +9,7 @@ sudo apt update
 sudo apt install -y python3-pip
 sudo apt install -y python3-kubernetes
 sudo apt install -y python3-pandas
+sudo pip install -r ./requirements.txt
 
 # JQ
 
