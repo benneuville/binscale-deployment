@@ -24,15 +24,16 @@ metadata:
   namespace: default
   labels:
     app: latency
+    instance: latency-1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: latency-1
+      app: latency
   template:
     metadata:
       labels:
-        app: latency-1
+        app: latency
     spec:
       containers:
         - name: latency-1
@@ -51,9 +52,8 @@ spec:
               value: latencygroup1
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: ADDITIONAL_CONFIG
-              value: |
-                max.poll.records=500
+            - name: MAX_POLL_RECORDS
+              value: "500"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -64,6 +64,9 @@ spec:
               value: "500"
             - name: ASYNC_COMMIT
               value: "False"
+
+            - name: PROCESSING_STRATEGY
+              value: "custom"
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
               value: "/config/latencygroup1.yaml"
@@ -76,25 +79,6 @@ spec:
             name: latencygroup1-config
 
 ---
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: demoobservabilitypodmonitor
-  labels:
-    app: strimzi
-  namespace: default
-spec:
-  selector:
-    matchLabels:
-      app: latency-1
-  namespaceSelector:
-    matchNames:
-      - default
-  podMetricsEndpoints:
-    - path: /prometheus
-      port: brom
-      interval: 5s
----
 
 
 apiVersion: apps/v1
@@ -104,15 +88,16 @@ metadata:
   namespace: default
   labels:
     app: latency
+    instance: latency-2
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: latency-2
+      app: latency
   template:
     metadata:
       labels:
-        app: latency-2
+        app: latency
     spec:
       containers:
         - name: latency-2
@@ -131,9 +116,8 @@ spec:
               value: latencygroup2
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: ADDITIONAL_CONFIG
-              value: |
-                max.poll.records=100
+            - name: MAX_POLL_RECORDS
+              value: "100"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -146,25 +130,6 @@ spec:
               value: "False"
 
 ---
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: demoobservabilitypodmonitor
-  labels:
-    app: strimzi
-  namespace: default
-spec:
-  selector:
-    matchLabels:
-      app: latency-2
-  namespaceSelector:
-    matchNames:
-      - default
-  podMetricsEndpoints:
-    - path: /prometheus
-      port: brom
-      interval: 5s
----
 
 
 apiVersion: apps/v1
@@ -174,15 +139,16 @@ metadata:
   namespace: default
   labels:
     app: latency
+    instance: latency-3
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: latency-3
+      app: latency
   template:
     metadata:
       labels:
-        app: latency-3
+        app: latency
     spec:
       containers:
         - name: latency-3
@@ -201,9 +167,8 @@ spec:
               value: latencygroup3
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: ADDITIONAL_CONFIG
-              value: |
-                max.poll.records=100
+            - name: MAX_POLL_RECORDS
+              value: "100"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -226,11 +191,18 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: latency-3
+      app: latency
+#    matchExpressions:
+#      - key: app
+#        operator: In
+#        values:
+#            - "latency-1"
+#            - "latency-2"
+#            - "latency-3"
   namespaceSelector:
     matchNames:
       - default
   podMetricsEndpoints:
     - path: /prometheus
       port: brom
-      interval: 5s
+      interval: 1s

@@ -18,7 +18,7 @@
       command: kubectl apply -f ../experience/generated/kafka-topics.yaml
 
     - name: Controller Deployment
-      command: kubectl apply -f ../experience/controller.yaml
+      command: kubectl apply -f ../experience/generated/controller.yaml
 
     - name: Waiting for Controller
       command: kubectl wait pod -l app=grpcassignmentserver --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}

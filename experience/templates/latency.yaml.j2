@@ -21,15 +21,16 @@ metadata:
   namespace: default
   labels:
     app: latency
+    instance: {{ node.id }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ node.id }}
+      app: latency
   template:
     metadata:
       labels:
-        app: {{ node.id }}
+        app: latency
     spec:
       containers:
         - name: {{ node.id }}
@@ -48,9 +49,8 @@ spec:
               value: {{ node.params.group_id }}
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: ADDITIONAL_CONFIG
-              value: |
-                max.poll.records={{ node.params.max_poll_records }}
+            - name: MAX_POLL_RECORDS
+              value: "{{ node.params.max_poll_records }}"
             - name: SCALE
               value: "{{ node.params.scale }}"
             - name: SHAPE
@@ -61,7 +61,10 @@ spec:
               value: "{{ node.params.wsla }}"
             - name: ASYNC_COMMIT
               value: "False"
-{% if node.targets|length > 0 %}
+{% if node.targets|length > 0 %}{% if node.params.processing_strategy %}
+            - name: PROCESSING_STRATEGY
+              value: "{{ node.params.processing_strategy }}"
+{% endif %}
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
               value: "/config/{{ node.params.group_id }}.yaml"
           volumeMounts:
@@ -72,22 +75,3 @@ spec:
           configMap:
             name: {{ node.params.group_id }}-config
 {% endif %}
----
-apiVersion: monitoring.coreos.com/v1
-kind: PodMonitor
-metadata:
-  name: demoobservabilitypodmonitor
-  labels:
-    app: strimzi
-  namespace: default
-spec:
-  selector:
-    matchLabels:
-      app: {{ node.id }}
-  namespaceSelector:
-    matchNames:
-      - default
-  podMetricsEndpoints:
-    - path: /prometheus
-      port: brom
-      interval: 5s

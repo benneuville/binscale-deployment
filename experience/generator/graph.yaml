@@ -18,6 +18,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       max_poll_records: 500
+      processing_strategy: custom
   - id: latency-2
     type: latency
     params:
@@ -51,3 +52,18 @@ edges:
     to: latency-3
     weight: 1
     partitions: 10
+
+controller:
+  params:
+  # maybe become a edge parameter
+    fup: 0.8
+    fdown: 0.3
+  # #############################
+    mu: 200
+    wsla: 0.5
+    rebalancing_time: 0.05
+    polling_interval: 12000
+    initial_size: 1
+    scaling_strategy: naive
+    metrics:
+      request_time_range: "4s"

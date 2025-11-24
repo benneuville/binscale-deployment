@@ -4,6 +4,9 @@ import yaml
 WORLOAD = "workload"
 LATENCY = "latency"
 CONTROLLER = "controller"
+KAFKA_TOPIC = "kafka-topic"
+MONITORING_CONSUMER = "monitoring-consumer"
+CONTROLLER = "controller"
 
 def is_workload_node(type):
     return type == WORLOAD
@@ -29,15 +32,23 @@ with open("experience/templates/controller.yaml.j2") as f:
     templates[CONTROLLER] = Template(f.read())
 
 with open("experience/templates/kafka-topic.yaml.j2") as f:
-    templates["kafka-topic"] = Template(f.read())
+    templates[KAFKA_TOPIC] = Template(f.read())
+
+with open("experience/templates/monitoring-consumer.yaml.j2") as f:
+    templates[MONITORING_CONSUMER] = Template(f.read())
+
+with open("experience/templates/controller.yaml.j2") as f:
+    templates[CONTROLLER] = Template(f.read())
 
 ## Load graph
 with open("experience/generator/graph.yaml") as f:
     graph = yaml.safe_load(f)
 
 ### Generate deployment files
-edges = []
+edges = {}
 nodes = {}
+
+controller = graph["controller"]
 
 for node in graph["nodes"]:
     node["targets"] = []
@@ -47,9 +58,12 @@ for edge in graph["edges"]:
     tmp_edge = {
         "from": edge["from"],
         "to": edge["to"],
+        "from_group_id": nodes[edge["from"]]["params"]["group_id"] if is_workload_node(nodes[edge["from"]]["type"]) == False else None,
+        "to_group_id": nodes[edge["to"]]["params"]["group_id"],
         "weight": edge.get("weight", 1),
         "partitions": edge.get("partitions", 10),
-        "topic_name": f"topic-{edge['from']}-to-{edge['to']}"
+        "topic_name": f"topic-{edge['from']}-to-{edge['to']}",
+        "to_wsla": nodes[edge["to"]]["params"].get("wsla", None)
     }
     edge_check(tmp_edge, nodes)
     
@@ -61,14 +75,12 @@ for edge in graph["edges"]:
     else:
         nodes[tmp_edge["from"]]["targets"].append({ "topic_name": tmp_edge["topic_name"], "ratio": tmp_edge["weight"] })
 
-    edges.append(tmp_edge)
-
-
+    edges[tmp_edge["topic_name"]] = tmp_edge
 
 print("🚂 Generating Kafka topics...")
 edges_topic_gen = []
-for edge in edges:
-    edges_topic_gen.append(templates["kafka-topic"].render(edge))
+for edge in edges.values():
+    edges_topic_gen.append(templates[KAFKA_TOPIC].render(edge))
 
 # Output all topics in one file in "/generated/kafka-topics.yaml"
 with open("experience/generated/kafka-topics.yaml", "w") as f:
@@ -80,6 +92,8 @@ print("🚂 Generating Service nodes...")
 nodes_service_gen = []
 for node in [v for v in nodes.values() if v["type"] == LATENCY]:
     nodes_service_gen.append(templates[node["type"]].render(node=node))
+
+nodes_service_gen.append(templates[MONITORING_CONSUMER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY])) # Add monitoring consumer for all latency nodes
 # Output all service nodes in one file in "/generated/latency.yaml"
 with open("experience/generated/latency.yaml", "w") as f:
     f.write("\n---\n".join(nodes_service_gen))
@@ -96,3 +110,15 @@ with open("experience/generated/workload.yaml", "w") as f:
 
 print("✅ Workload nodes generated")
 
+print("🚂 Generating Controller...")
+
+edges_filter = [e for e in edges if(nodes[edges[e]["from"]]["type"]==LATENCY and nodes[edges[e]["to"]]["type"]==LATENCY)]
+
+with open("experience/generated/controller.yaml", "w") as f:
+    f.write(templates[CONTROLLER].render(controller=controller,
+                                         edges={e: edges[e] for e in edges_filter},
+                                         edges_full=edges,
+                                         nodes=[v for v in nodes.values() if v["type"] == LATENCY]))
+
+
+print("✅ Controller generated")
