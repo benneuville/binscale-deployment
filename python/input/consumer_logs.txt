@@ -1,0 +1,282 @@
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 91, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.256
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 96, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.261
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 99, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.264
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 103, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.268
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 107, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.272
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2550, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.527
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2553, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.530
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2556, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.533
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2560, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.537
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2564, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.541
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2567, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.544
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2570, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.547
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2573, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.550
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2577, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.554
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2592, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.569
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2595, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.572
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10216, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.879
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10219, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.882
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10223, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.886
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10226, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.889
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10231, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.894
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10235, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.898
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10243, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.906
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 110, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.275
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 114, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.279
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 119, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.284
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 122, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.287
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 127, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.292
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 130, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.295
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10246, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.909
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10249, insertion time is 11/25/2025T15:33:22.663, processing time is 11/25/2025T15:33:32.912
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10251, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.915
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10255, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.919
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10259, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.923
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10262, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.926
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2598, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.575
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10268, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.932
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10274, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.938
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10277, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.941
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10280, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.944
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10284, insertion time is 11/25/2025T15:33:22.664, processing time is 11/25/2025T15:33:32.948
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10029, insertion time is 11/25/2025T15:33:22.922, processing time is 11/25/2025T15:33:32.951
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10036, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.959
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10040, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.963
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10043, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.966
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10046, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.969
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10051, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.974
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10057, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.980
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 10060, insertion time is 11/25/2025T15:33:22.923, processing time is 11/25/2025T15:33:32.983
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 9980, insertion time is 11/25/2025T15:33:23.007, processing time is 11/25/2025T15:33:32.987
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2601, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.578
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2606, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.583
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 133, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.298
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 138, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.303
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 9988, insertion time is 11/25/2025T15:33:23.007, processing time is 11/25/2025T15:33:32.995
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:32 INFO  MetricsCollector:54 - latency is 9991, insertion time is 11/25/2025T15:33:23.007, processing time is 11/25/2025T15:33:32.998
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9995, insertion time is 11/25/2025T15:33:23.007, processing time is 11/25/2025T15:33:33.002
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9999, insertion time is 11/25/2025T15:33:23.007, processing time is 11/25/2025T15:33:33.006
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 10002, insertion time is 11/25/2025T15:33:23.007, processing time is 11/25/2025T15:33:33.009
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9951, insertion time is 11/25/2025T15:33:23.063, processing time is 11/25/2025T15:33:33.014
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9817, insertion time is 11/25/2025T15:33:23.201, processing time is 11/25/2025T15:33:33.018
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2609, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.586
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2612, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.589
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2615, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.592
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2618, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.595
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2623, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.600
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2626, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.603
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 142, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.307
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 145, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.310
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 166, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.331
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 170, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.335
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2630, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.607
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2634, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.611
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2646, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.623
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2650, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.627
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9822, insertion time is 11/25/2025T15:33:23.201, processing time is 11/25/2025T15:33:33.023
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2653, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.630
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2656, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.633
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 176, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.341
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 179, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.344
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9862, insertion time is 11/25/2025T15:33:23.201, processing time is 11/25/2025T15:33:33.063
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9682, insertion time is 11/25/2025T15:33:23.393, processing time is 11/25/2025T15:33:33.075
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2666, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.643
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 182, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.347
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2671, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.648
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2674, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.651
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9589, insertion time is 11/25/2025T15:33:23.490, processing time is 11/25/2025T15:33:33.079
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 186, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.351
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 191, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.356
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 194, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.359
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2678, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.655
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2681, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.658
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2687, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.664
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2690, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.667
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2693, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.670
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9565, insertion time is 11/25/2025T15:33:23.517, processing time is 11/25/2025T15:33:33.082
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9568, insertion time is 11/25/2025T15:33:23.517, processing time is 11/25/2025T15:33:33.085
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9555, insertion time is 11/25/2025T15:33:23.533, processing time is 11/25/2025T15:33:33.088
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9558, insertion time is 11/25/2025T15:33:23.534, processing time is 11/25/2025T15:33:33.092
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 197, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.362
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 203, insertion time is 11/25/2025T15:33:37.165, processing time is 11/25/2025T15:33:37.368
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  ProcessStrategy:26 - [DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-2', ratio=1.0}, events_count=36}, DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-3', ratio=1.0}, events_count=36}]
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2698, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.675
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2701, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.678
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2705, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.682
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2708, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.685
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2712, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.689
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2716, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.693
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2720, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.697
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2723, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.700
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2726, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.703
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2731, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.708
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2736, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.713
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2742, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.719
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2747, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.724
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9562, insertion time is 11/25/2025T15:33:23.534, processing time is 11/25/2025T15:33:33.096
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 36 events to topic topic-latency-1-to-latency-2
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 36 events to topic topic-latency-1-to-latency-3
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2750, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.727
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2753, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.730
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:37.386
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventProcessing:24 - Processing 1 events using strategy CustomProcessStrategy
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 2, insertion time is 11/25/2025T15:33:37.765, processing time is 11/25/2025T15:33:37.767
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2757, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.734
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9567, insertion time is 11/25/2025T15:33:23.534, processing time is 11/25/2025T15:33:33.101
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  ProcessStrategy:26 - [DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-2', ratio=1.0}, events_count=1}, DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-3', ratio=1.0}, events_count=1}]
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 1 events to topic topic-latency-1-to-latency-2
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2763, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.740
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 1 events to topic topic-latency-1-to-latency-3
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:37.778
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventProcessing:24 - Processing 3 events using strategy CustomProcessStrategy
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2768, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.745
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2773, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.750
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2776, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.753
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2783, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.760
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2786, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.763
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2791, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.768
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2800, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.777
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2803, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.780
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9571, insertion time is 11/25/2025T15:33:23.534, processing time is 11/25/2025T15:33:33.105
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9572, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.108
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 13, insertion time is 11/25/2025T15:33:37.765, processing time is 11/25/2025T15:33:37.778
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2806, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.783
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2809, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.786
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9576, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.112
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9580, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.116
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 16, insertion time is 11/25/2025T15:33:37.765, processing time is 11/25/2025T15:33:37.781
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 20, insertion time is 11/25/2025T15:33:37.765, processing time is 11/25/2025T15:33:37.785
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  ProcessStrategy:26 - [DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-2', ratio=1.0}, events_count=3}, DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-3', ratio=1.0}, events_count=3}]
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 3 events to topic topic-latency-1-to-latency-2
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 3 events to topic topic-latency-1-to-latency-3
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2812, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.789
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2815, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.792
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9584, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.120
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9588, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.124
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9591, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.127
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9594, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.130
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9599, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.135
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9603, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.139
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9607, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.143
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:37.795
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventProcessing:24 - Processing 35 events using strategy CustomProcessStrategy
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2829, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.806
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2832, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.809
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2835, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.812
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9610, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.146
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9616, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.152
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9619, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.155
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 30, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.796
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 33, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.799
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 36, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.802
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 39, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.805
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 43, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.809
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2838, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.815
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  ProcessStrategy:26 - []
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:53.826
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  EventProcessing:24 - Processing 100 events using strategy BalanceProcessStrategy
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2850, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.827
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2853, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.830
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9622, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.158
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 46, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.812
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 49, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.815
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9626, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.162
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9629, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.165
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9633, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.169
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9638, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.174
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9641, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.177
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9645, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.181
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 52, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.818
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 56, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.822
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2857, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.834
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2860, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.837
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2864, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.841
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2870, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.847
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2874, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.851
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9648, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.184
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9651, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.187
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 60, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.826
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2877, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.854
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2880, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.857
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2883, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.860
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9655, insertion time is 11/25/2025T15:33:23.536, processing time is 11/25/2025T15:33:33.191
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9661, insertion time is 11/25/2025T15:33:23.537, processing time is 11/25/2025T15:33:33.198
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9511, insertion time is 11/25/2025T15:33:23.690, processing time is 11/25/2025T15:33:33.201
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9515, insertion time is 11/25/2025T15:33:23.690, processing time is 11/25/2025T15:33:33.205
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 67, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.833
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 70, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.836
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2888, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.865
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9526, insertion time is 11/25/2025T15:33:23.690, processing time is 11/25/2025T15:33:33.216
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 77, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.843
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 80, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.846
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 84, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.850
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2891, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.868
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2896, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.873
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2900, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.877
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9287, insertion time is 11/25/2025T15:33:23.932, processing time is 11/25/2025T15:33:33.219
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 87, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.853
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 91, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.857
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 94, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.860
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 97, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.863
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 100, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.866
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2912, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.889
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2915, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.892
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2918, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.895
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9291, insertion time is 11/25/2025T15:33:23.932, processing time is 11/25/2025T15:33:33.223
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9297, insertion time is 11/25/2025T15:33:23.932, processing time is 11/25/2025T15:33:33.229
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 108, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.874
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 112, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.878
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 117, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.883
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 125, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.891
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 133, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.899
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 137, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.903
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 141, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.907
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 144, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.910
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 147, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.913
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 152, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.918
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 156, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.922
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 159, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.925
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 165, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.931
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 168, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.934
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  MetricsCollector:54 - latency is 172, insertion time is 11/25/2025T15:33:37.766, processing time is 11/25/2025T15:33:37.938
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  ProcessStrategy:26 - [DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-2', ratio=1.0}, events_count=35}, DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-3', ratio=1.0}, events_count=35}]
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 35 events to topic topic-latency-1-to-latency-2
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventEmission:41 - Publishing 35 events to topic topic-latency-1-to-latency-3
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9302, insertion time is 11/25/2025T15:33:23.932, processing time is 11/25/2025T15:33:33.234
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  ProcessStrategy:26 - []
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2924, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.901
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:33.252
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  EventProcessing:24 - Processing 100 events using strategy BalanceProcessStrategy
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9320, insertion time is 11/25/2025T15:33:23.932, processing time is 11/25/2025T15:33:33.252
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:37 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:37.948
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  EventProcessing:24 - Processing 1 events using strategy CustomProcessStrategy
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  MetricsCollector:54 - latency is 4, insertion time is 11/25/2025T15:33:38.366, processing time is 11/25/2025T15:33:38.370
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2929, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.906
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2936, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.913
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9300, insertion time is 11/25/2025T15:33:23.956, processing time is 11/25/2025T15:33:33.256
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9302, insertion time is 11/25/2025T15:33:23.957, processing time is 11/25/2025T15:33:33.259
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9255, insertion time is 11/25/2025T15:33:24.007, processing time is 11/25/2025T15:33:33.262
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9259, insertion time is 11/25/2025T15:33:24.007, processing time is 11/25/2025T15:33:33.266
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9249, insertion time is 11/25/2025T15:33:24.021, processing time is 11/25/2025T15:33:33.270
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  ProcessStrategy:26 - [DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-2', ratio=1.0}, events_count=1}, DistributedEventCustomer{targetTopic=ProducerTopicDistribution{name='topic-latency-1-to-latency-3', ratio=1.0}, events_count=1}]
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  EventEmission:41 - Publishing 1 events to topic topic-latency-1-to-latency-2
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  EventEmission:41 - Publishing 1 events to topic topic-latency-1-to-latency-3
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  EventIngestion:36 - Committed offset at time 11/25/2025T15:33:38.382
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  EventProcessing:24 - Processing 5 events using strategy CustomProcessStrategy
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  MetricsCollector:54 - latency is 17, insertion time is 11/25/2025T15:33:38.366, processing time is 11/25/2025T15:33:38.383
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  MetricsCollector:54 - latency is 20, insertion time is 11/25/2025T15:33:38.366, processing time is 11/25/2025T15:33:38.386
+d9d610b1-781f-4edc-957e-532e1af882a5 2025-11-25 15:33:38 INFO  MetricsCollector:54 - latency is 22, insertion time is 11/25/2025T15:33:38.367, processing time is 11/25/2025T15:33:38.389
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2942, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.919
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2946, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.923
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9178, insertion time is 11/25/2025T15:33:24.097, processing time is 11/25/2025T15:33:33.275
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2950, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.927
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2953, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.930
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2956, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.933
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2959, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.936
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2963, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.940
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2968, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.945
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2971, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.948
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2974, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.951
+dee2a10b-b862-40e0-8a3f-c92fc3a95314 2025-11-25 15:33:53 INFO  MetricsCollector:54 - latency is 2977, insertion time is 11/25/2025T15:33:50.977, processing time is 11/25/2025T15:33:53.954
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54 - latency is 9103, insertion time is 11/25/2025T15:33:24.176, processing time is 11/25/2025T15:33:33.279
+d013a2f6-c1e3-4730-8500-72a92f869563 2025-11-25 15:33:33 INFO  MetricsCollector:54

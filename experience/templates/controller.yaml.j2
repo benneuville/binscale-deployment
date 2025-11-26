@@ -83,24 +83,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rateservice
+  name: grpcassignmentserver
   namespace: default
 spec:
   selector:
-    app: grpcassignmentserver
-  ports:
-    - protocol: TCP
-      port: 5002
-      targetPort: 5002
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: arrivalservice
-  namespace: default
-spec:
-  selector:
-    app: workload
+    app: controllerandscaler
   ports:
     - protocol: TCP
       port: 5002

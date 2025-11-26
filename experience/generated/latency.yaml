@@ -53,7 +53,7 @@ spec:
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: MAX_POLL_RECORDS
-              value: "500"
+              value: "100"
             - name: SCALE
               value: "3"
             - name: SHAPE

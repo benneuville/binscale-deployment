@@ -17,7 +17,7 @@ data:
     nodes:
       - name: latency-1
         wsla: 500
-        maxConsumptionRate: 500
+        maxConsumptionRate: 100
         inputTopic: topic-workload-1-to-latency-1
         partitionNumber: 10
         groupId: latencygroup1
@@ -77,7 +77,7 @@ spec:
         - name: DI
           value: "12000"
         - name: REQUEST_TIME_RANGE
-          value: "4s"
+          value: "15s"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
           
@@ -98,24 +98,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rateservice
+  name: grpcassignmentserver
   namespace: default
 spec:
   selector:
-    app: grpcassignmentserver
-  ports:
-    - protocol: TCP
-      port: 5002
-      targetPort: 5002
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: arrivalservice
-  namespace: default
-spec:
-  selector:
-    app: workload
+    app: controllerandscaler
   ports:
     - protocol: TCP
       port: 5002
