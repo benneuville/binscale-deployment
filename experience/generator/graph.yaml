@@ -62,7 +62,7 @@ controller:
     mu: 200
     wsla: 0.5
     rebalancing_time: 0.05
-    polling_interval: 12000
+    polling_interval: 5000
     initial_size: 1
     scaling_strategy: naive
     metrics:
