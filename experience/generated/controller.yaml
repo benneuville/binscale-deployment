@@ -1,6 +1,22 @@
 
 
 apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-config
+  namespace: default
+data:
+  controller-config.yaml: |
+    topics:
+    nodes:
+      - name: latency-1
+        wsla: 500
+        maxConsumptionRate: 100
+        inputTopic: topic-workload-1-to-latency-1
+        partitionNumber: 10
+        groupId: latencygroup1
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: controllerandscaler

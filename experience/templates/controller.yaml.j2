@@ -1,5 +1,5 @@
 
-{% if edges|length > 0 %}
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -19,7 +19,6 @@ data:
         partitionNumber: {{ edges_full[node.params.topic_name].partitions }}
         groupId: {{ node.params.group_id }}{% endfor %}
 ---
-{% endif %}
 apiVersion: v1
 kind: Pod
 metadata:
