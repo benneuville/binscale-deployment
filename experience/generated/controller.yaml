@@ -63,7 +63,13 @@ spec:
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
           
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
-
+      volumeMounts:
+        - name: controller-config
+          mountPath: /config
+  volumes:
+    - name: controller-config
+      configMap:
+        name: controller-config
 ---
 apiVersion: v1
 kind: Service

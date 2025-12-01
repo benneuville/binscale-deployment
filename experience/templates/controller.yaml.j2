@@ -69,7 +69,6 @@ spec:
           value: "/config/controller-config.yaml"
           {% endif %}
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
-{% if edges|length > 0 %}
       volumeMounts:
         - name: controller-config
           mountPath: /config
@@ -77,7 +76,6 @@ spec:
     - name: controller-config
       configMap:
         name: controller-config
-{% endif %}
 ---
 apiVersion: v1
 kind: Service
