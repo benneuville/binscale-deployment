@@ -19,24 +19,24 @@ nodes:
       producer_ack: 0
       max_poll_records: 100
       processing_strategy: custom
-  - id: latency-2
-    type: latency
-    params:
-      group_id: latencygroup2
-      wsla: 500
-      scale: 3
-      shape: 2.75
-      producer_ack: 0
-      max_poll_records: 100
-  - id: latency-3
-    type: latency
-    params:
-      group_id: latencygroup3
-      wsla: 500
-      scale: 3
-      shape: 2.75
-      producer_ack: 0
-      max_poll_records: 100
+  # - id: latency-2
+  #   type: latency
+  #   params:
+  #     group_id: latencygroup2
+  #     wsla: 500
+  #     scale: 3
+  #     shape: 2.75
+  #     producer_ack: 0
+  #     max_poll_records: 100
+  # - id: latency-3
+  #   type: latency
+  #   params:
+  #     group_id: latencygroup3
+  #     wsla: 500
+  #     scale: 3
+  #     shape: 2.75
+  #     producer_ack: 0
+  #     max_poll_records: 100
 
 # edges
 edges:
@@ -44,14 +44,14 @@ edges:
     to: latency-1
     weight: 1
     partitions: 10
-  - from: latency-1
-    to: latency-2
-    weight: 1
-    partitions: 10
-  - from: latency-1
-    to: latency-3
-    weight: 1
-    partitions: 10
+  # - from: latency-1
+  #   to: latency-2
+  #   weight: 1
+  #   partitions: 10
+  # - from: latency-1
+  #   to: latency-3
+  #   weight: 1
+  #   partitions: 10
 
 controller:
   params:
