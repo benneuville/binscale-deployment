@@ -56,9 +56,11 @@ spec:
         - name: REB_TIME
           value: "0.05"
         - name: DI
-          value: "5000"
+          value: ""
         - name: REQUEST_TIME_RANGE
-          value: "15s"
+          value: "10"
+        - name: REQUEST_TIME_UNIT
+          value: "s"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
           
