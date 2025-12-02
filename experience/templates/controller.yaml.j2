@@ -62,6 +62,8 @@ spec:
           value: "{{ controller.params.polling_interval }}"
         - name: REQUEST_TIME_RANGE
           value: "{{ controller.params.metrics.request_time_range }}"
+        - name: REQUEST_TIME_UNIT
+          value: "{{ controller.params.metrics.request_time_unit }}"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
           {% if edges|length > 0 %}

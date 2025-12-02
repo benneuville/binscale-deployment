@@ -62,8 +62,8 @@ controller:
     mu: 200
     wsla: 0.5
     rebalancing_time: 0.05
-    polling_interval: 5000
     initial_size: 1
     scaling_strategy: naive
     metrics:
-      request_time_range: "15s"
+      request_time_range: "10"
+      request_time_unit: "s" # "s", "m", "h"
