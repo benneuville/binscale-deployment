@@ -59,7 +59,7 @@ spec:
         - name: REB_TIME
           value: "{{ controller.params.rebalancing_time }}"
         - name: DI
-          value: "{{ controller.params.metrics.request_time_range * 1000 }}"
+          value: "{{ controller.params.decision_interval }}"
         - name: REQUEST_TIME_RANGE
           value: "{{ controller.params.metrics.request_time_range }}"
         - name: REQUEST_TIME_UNIT

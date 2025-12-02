@@ -50,6 +50,8 @@ nodes = {}
 
 controller = graph["controller"]
 
+controller["params"]["decision_interval"] = controller["params"]["metrics"]["request_time_range"] * 1000
+
 for node in graph["nodes"]:
     node["targets"] = []
     nodes[node["id"]] = node
