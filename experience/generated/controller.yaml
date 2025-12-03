@@ -11,7 +11,7 @@ data:
     nodes:
       - name: latency-1
         wsla: 500
-        maxConsumptionRate: 100
+        maxConsumptionRate: 200
         inputTopic: topic-workload-1-to-latency-1
         partitionNumber: 10
         groupId: latencygroup1

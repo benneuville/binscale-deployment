@@ -17,7 +17,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
-      max_poll_records: 100
+      max_poll_records: 400
       processing_strategy: custom
   # - id: latency-2
   #   type: latency
