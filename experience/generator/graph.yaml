@@ -65,5 +65,5 @@ controller:
     initial_size: 1
     scaling_strategy: naive
     metrics:
-      request_time_range: 10
+      request_time_range: 3
       request_time_unit: "s" # "s", "m", "h"

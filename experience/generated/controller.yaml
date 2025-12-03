@@ -56,9 +56,9 @@ spec:
         - name: REB_TIME
           value: "0.05"
         - name: DI
-          value: "10000"
+          value: "3000"
         - name: REQUEST_TIME_RANGE
-          value: "10"
+          value: "3"
         - name: REQUEST_TIME_UNIT
           value: "s"
         - name: DEBUG_OPTIONS
