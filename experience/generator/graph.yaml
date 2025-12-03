@@ -4,7 +4,7 @@ nodes:
   - id: workload-1
     type: workload
     params:
-      workload: biaised
+      workload: biased
       producer_ack: 0
       delay_ms: 600
 
