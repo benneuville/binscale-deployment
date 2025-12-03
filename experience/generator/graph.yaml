@@ -4,7 +4,7 @@ nodes:
   - id: workload-1
     type: workload
     params:
-      workload: constant
+      workload: biaised
       producer_ack: 0
       delay_ms: 600
 
@@ -17,7 +17,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
-      max_poll_records: 400
+      max_poll_records: 200
       processing_strategy: custom
   # - id: latency-2
   #   type: latency
@@ -56,8 +56,8 @@ edges:
 controller:
   params:
   # maybe become a edge parameter
-    fup: 0.8
-    fdown: 0.3
+    fup: 0.7
+    fdown: 0.1
   # #############################
     mu: 200
     wsla: 0.5

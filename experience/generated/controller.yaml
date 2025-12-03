@@ -46,9 +46,9 @@ spec:
         - name: SCALING_STRATEGY
           value: "naive"
         - name: FUP
-          value: "0.8"
+          value: "0.7"
         - name: FDOWN
-          value: "0.3"
+          value: "0.1"
         - name: MU
           value: "200"
         - name: WSLA
