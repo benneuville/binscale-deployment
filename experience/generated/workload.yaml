@@ -38,4 +38,4 @@ spec:
                 retries=100
 # NOT REQUIERED DECLARED VARIABLES
             - name: WORKLOAD
-              value: "biaised" # "constant", "biased", "non_uniform"
+              value: "biased" # "constant", "biased", "non_uniform"
