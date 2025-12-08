@@ -68,6 +68,7 @@ def parseLatency(line):
         date_str = line.split("insertion time is ")[1].split(",")[0]
         parsed_date = datetime.datetime.strptime(date_str, '%m/%d/%YT%H:%M:%S.%f')
         latency = int(line.split("latency is ")[1].split(",")[0])
+        
         # insertion_date_for_latency.append(parsed_date)
         # latency_list.append(latency)
         if uid in consumer_latency_events:
