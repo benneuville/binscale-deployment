@@ -1,0 +1,104 @@
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-config
+  namespace: default
+data:
+  controller-config.yaml: |
+    topics:
+      - from: latency-1
+        to: latency-2
+        weight: 1
+      - from: latency-1
+        to: latency-3
+        weight: 1
+    nodes:
+      - name: latency-1
+        wsla: 500
+        maxConsumptionRate: 200
+        inputTopic: topic-workload-1-to-latency-1
+        partitionNumber: 10
+        groupId: latencygroup1
+      - name: latency-2
+        wsla: 500
+        maxConsumptionRate: 200
+        inputTopic: topic-latency-1-to-latency-2
+        partitionNumber: 10
+        groupId: latencygroup2
+      - name: latency-3
+        wsla: 500
+        maxConsumptionRate: 200
+        inputTopic: topic-latency-1-to-latency-3
+        partitionNumber: 10
+        groupId: latencygroup3
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: controllerandscaler
+  namespace: default
+  labels:
+    app: grpcassignmentserver
+spec:
+  serviceAccountName: admin-service-account
+  restartPolicy: Always
+  containers:
+    - name: controllerandscaler
+      image: docker.io/benneuville/binscale:hf
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 5002
+      env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap:9092
+        - name: TOPIC
+          value: testtopic1
+        - name: GROUP_ID
+          value: testgroup1
+        - name: NUMBER_PARTITIONS
+          value: "20"
+        - name: INIT_SIZE
+          value: "1"
+        - name: SCALING_STRATEGY
+          value: "naive"
+        - name: FUP
+          value: "0.7"
+        - name: FDOWN
+          value: "0.1"
+        - name: REB_TIME
+          value: "0.5"
+        - name: DI
+          value: "3000"
+        - name: REQUEST_TIME_RANGE
+          value: "3"
+        - name: REQUEST_TIME_UNIT
+          value: "s"
+        - name: DEBUG_OPTIONS
+          value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+          
+        - name: TOPICS_CONFIG_PATH
+          value: "/config/controller-config.yaml"
+          
+      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
+      volumeMounts:
+        - name: controller-config
+          mountPath: /config
+  volumes:
+    - name: controller-config
+      configMap:
+        name: controller-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpcassignmentserver
+  namespace: default
+spec:
+  selector:
+    app: controllerandscaler
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002

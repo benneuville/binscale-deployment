@@ -2,7 +2,7 @@ printf "💾\033[1;31m INSTALL & SETUP NFS SERVER \033[0m\n"
 
 
 sudo apt update
-sudo apt install nfs-kernel-server -y
+sudo DEBIAN_FRONTEND=noninteractive apt install --y nfs-kernel-server
 
 sudo mkdir -p /export/logs
 

@@ -1,0 +1,208 @@
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: latencygroup1-config
+  namespace: default
+data:
+  latencygroup1.yaml: |
+    output:
+
+    - name: topic-latency-1-to-latency-2
+      ratio: 1 
+
+    - name: topic-latency-1-to-latency-3
+      ratio: 1 
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-1
+  namespace: default
+  labels:
+    app: latency
+    instance: latency-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency-1
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: topic-workload-1-to-latency-1
+            - name: GROUP_ID
+              value: latencygroup1
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: MAX_POLL_RECORDS
+              value: "200"
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+
+            - name: PROCESSING_STRATEGY
+              value: "custom"
+
+            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
+              value: "/config/latencygroup1.yaml"
+          volumeMounts:
+            - name: latencygroup1-config
+              mountPath: /config
+      volumes:
+        - name: latencygroup1-config
+          configMap:
+            name: latencygroup1-config
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-2
+  namespace: default
+  labels:
+    app: latency
+    instance: latency-2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency-2
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: topic-latency-1-to-latency-2
+            - name: GROUP_ID
+              value: latencygroup2
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: MAX_POLL_RECORDS
+              value: "200"
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-3
+  namespace: default
+  labels:
+    app: latency
+    instance: latency-3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency-3
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: topic-latency-1-to-latency-3
+            - name: GROUP_ID
+              value: latencygroup3
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: MAX_POLL_RECORDS
+              value: "200"
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: demoobservabilitypodmonitor
+  labels:
+    app: strimzi
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: latency
+#    matchExpressions:
+#      - key: app
+#        operator: In
+#        values:
+#            - "latency-1"
+#            - "latency-2"
+#            - "latency-3"
+  namespaceSelector:
+    matchNames:
+      - default
+  podMetricsEndpoints:
+    - path: /prometheus
+      port: brom
+      interval: 1s

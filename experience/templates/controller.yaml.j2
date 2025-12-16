@@ -1,0 +1,89 @@
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: controller-config
+  namespace: default
+data:
+  controller-config.yaml: |
+    topics:{% for target in edges.values() %}
+      - from: {{ target.from }}
+        to: {{ target.to }}
+        weight: {{ target.weight }}{% endfor %}
+    nodes:{% for node in nodes %}
+      - name: {{ node.id }}
+        wsla: {{ edges_full[node.params.topic_name].to_wsla }}
+        maxConsumptionRate: {{ node.params.max_poll_records }}
+        inputTopic: {{ node.params.topic_name }}
+        partitionNumber: {{ edges_full[node.params.topic_name].partitions }}
+        groupId: {{ node.params.group_id }}{% endfor %}
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: controllerandscaler
+  namespace: default
+  labels:
+    app: grpcassignmentserver
+spec:
+  serviceAccountName: admin-service-account
+  restartPolicy: Always
+  containers:
+    - name: controllerandscaler
+      image: docker.io/benneuville/binscale:hf
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 5002
+      env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap:9092
+        - name: TOPIC
+          value: testtopic1
+        - name: GROUP_ID
+          value: testgroup1
+        - name: NUMBER_PARTITIONS
+          value: "20"
+        - name: INIT_SIZE
+          value: "{{ controller.params.initial_size }}"
+        - name: SCALING_STRATEGY
+          value: "{{ controller.params.scaling_strategy }}"
+        - name: FUP
+          value: "{{ controller.params.fup }}"
+        - name: FDOWN
+          value: "{{ controller.params.fdown }}"
+        - name: REB_TIME
+          value: "{{ controller.params.rebalancing_time }}"
+        - name: DI
+          value: "{{ controller.params.decision_interval }}"
+        - name: REQUEST_TIME_RANGE
+          value: "{{ controller.params.metrics.request_time_range }}"
+        - name: REQUEST_TIME_UNIT
+          value: "{{ controller.params.metrics.request_time_unit }}"
+        - name: DEBUG_OPTIONS
+          value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+          {% if edges|length > 0 %}
+        - name: TOPICS_CONFIG_PATH
+          value: "/config/controller-config.yaml"
+          {% endif %}
+      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
+      volumeMounts:
+        - name: controller-config
+          mountPath: /config
+  volumes:
+    - name: controller-config
+      configMap:
+        name: controller-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grpcassignmentserver
+  namespace: default
+spec:
+  selector:
+    app: controllerandscaler
+  ports:
+    - protocol: TCP
+      port: 5002
+      targetPort: 5002

@@ -3,9 +3,6 @@
 printf "\n\033[1;36m## Deleting the previous deployment\033[0m\n"
 ansible-playbook ansible/undeploy-app.yaml
 
-
-sleep 25
-
 printf "\n\033[1;36m## Starting the experience\033[0m\n"
 start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')
 ansible-playbook ansible/deploy-app.yaml

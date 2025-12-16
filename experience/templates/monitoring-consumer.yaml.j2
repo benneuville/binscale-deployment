@@ -1,0 +1,23 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: demoobservabilitypodmonitor
+  labels:
+    app: strimzi
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: latency
+#    matchExpressions:
+#      - key: app
+#        operator: In
+#        values:{% for item in nodes %}
+#            - "{{ item.id }}"{% endfor %}
+  namespaceSelector:
+    matchNames:
+      - default
+  podMetricsEndpoints:
+    - path: /prometheus
+      port: brom
+      interval: 1s

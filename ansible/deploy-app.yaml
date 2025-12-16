@@ -14,8 +14,11 @@
     - name: Apply Role Binding
       command: kubectl apply -f ../kubernetes/role-binding.yaml
 
+    - name: Apply Topics Definition
+      command: kubectl apply -f ../experience/generated/kafka-topics.yaml
+
     - name: Controller Deployment
-      command: kubectl apply -f ../experience/controller.yaml
+      command: kubectl apply -f ../experience/generated/controller.yaml
 
     - name: Waiting for Controller
       command: kubectl wait pod -l app=grpcassignmentserver --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
@@ -23,12 +26,12 @@
       failed_when: controller_ready.rc != 0
 
     - name: Consumer Deployment (latency)
-      command: kubectl apply -f ../experience/latency.yaml
+      command: kubectl apply -f ../experience/generated/latency.yaml
 
     - name: Waiting for consumer
-      command: kubectl wait deployment/latency --for=condition=Available --timeout={{ timeout }} -n {{ namespace }}
+      command: kubectl wait deployment -l app=latency --for=condition=Available --timeout={{ timeout }} -n {{ namespace }}
       register: consumer_ready
       failed_when: consumer_ready.rc != 0
       
     - name: Producer Deployment (workload)
-      command: kubectl apply -f ../experience/producer.yaml
+      command: kubectl apply -f ../experience/generated/workload.yaml
