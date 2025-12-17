@@ -64,15 +64,15 @@ spec:
         - name: SCALING_STRATEGY
           value: "naive"
         - name: FUP
-          value: "0.7"
+          value: "0.9"
         - name: FDOWN
-          value: "0.1"
+          value: "0.2"
         - name: REB_TIME
           value: "0.5"
         - name: DI
-          value: "3000"
+          value: "5000"
         - name: REQUEST_TIME_RANGE
-          value: "3"
+          value: "5"
         - name: REQUEST_TIME_UNIT
           value: "s"
         - name: DEBUG_OPTIONS
