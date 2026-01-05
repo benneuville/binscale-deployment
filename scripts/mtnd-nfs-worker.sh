@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "💾\033[1;31m INSTALL & SETUP NFS (UTILS) \033[0m\n"
 
 sudo apt update

@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "🐋\033[1;31m INSTALL DOCKER \033[0m\n"
 sudo DEBIAN_FRONTEND=noninteractive apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
 
