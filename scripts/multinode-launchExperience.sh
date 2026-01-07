@@ -27,6 +27,4 @@ done
 echo "Removing deployment"
 ansible-playbook ansible/undeploy-app.yaml
 
-echo "Experience Finished, analysing output in the python/input folder"
-
 # python3 python/displayPlotLag.py
