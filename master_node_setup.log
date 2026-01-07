@@ -1,23 +1,0 @@
-👑[1;31m MASTER NODE 
-[0m
-## (Note you had to launch multinode-requierements file(s) 
-binscale-deployment/scripts/multinode-master.sh: line 3: $'\r': command not found
-sleep: invalid time interval ‘1\r’
-Try 'sleep --help' for more information.
-[1;31m## WARNING : you need to rename the hostname of this node with command [1;33m'sudo hostnamectl set-hostname master-node'[0m
-[1;31m## WARNING : you need to modify the host file with command [1;33m'sudo nano /etc/hosts'[1;31m to add the [1;33m<address ip> <hostname> [0m(ex. 10.0.230.17 master-node)[31m line of this nodes and others nodes (master + workers). 
-## You can add the other nodes address after 
-## 
-## to get ip address of your node, use [1;33m 'ip addr' [1;31m command. [0m
-
-
-sleep: invalid time interval ‘10\r’
-Try 'sleep --help' for more information.
-Script directory: /root/binscale-deployment/scripts
-binscale-deployment/scripts/multinode-master.sh: line 11: $'\r': command not found
-binscale-deployment/scripts/multinode-master.sh: line 12: /root/binscale-deployment/scripts/mtnd-nfs-master.sh: No such file or directory
-binscale-deployment/scripts/multinode-master.sh: line 13: /root/binscale-deployment/scripts/mtnd-experience-requierements.sh: No such file or directory
-binscale-deployment/scripts/multinode-master.sh: line 14: /root/binscale-deployment/scripts/mtnd-requierements.sh: No such file or directory
-binscale-deployment/scripts/multinode-master.sh: line 15: /root/binscale-deployment/scripts/mtnd-docker.sh: No such file or directory
-binscale-deployment/scripts/multinode-master.sh: line 16: /root/binscale-deployment/scripts/mtnd-k8s.sh: No such file or directory
-binscale-deployment/scripts/multinode-master.sh: line 17: /root/binscale-deployment/scripts/multinode-resetcluster.sh: No such file or directory

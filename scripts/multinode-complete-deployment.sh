@@ -256,8 +256,8 @@ master_node=$(echo -e "$nodes_deployed" | head -n 1)
 export master_node
 worker_nodes=$(echo "$nodes_deployed" | tail -n $(($NUM_NODES - 1)))
 export worker_nodes
-printf "\e[38;5;8m ▣ Master node :\n\e[1m\e[38;5;104m$master_node\e[0m\n"
-printf "\e[38;5;8m ▣ Worker node(s) :\n\e[1m\e[38;5;108m${worker_nodes[@]}\e[0m\n"
+printf "\e[38;5;8m  ▣ Master node :\n\e[1m\e[38;5;104m$master_node\e[0m\n"
+printf "\e[38;5;8m  ▣ Worker node(s) :\n\e[1m\e[38;5;108m${worker_nodes[@]}\e[0m\n"
 
 
 printf "\e[38;5;8m ◻ Building hosts file \033[0m"
@@ -281,12 +281,11 @@ printf "\r\e[38;5;36m ▣ Hosts file built.\e[0m\n"
 printf "\e[38;5;8m ◻ Output directory creation \033[0m"
 date=$(date '+%Y-%m-%d-%H.%M')
 DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date"
-printf "results in : $DIR_OUTPUT_FINAL/\n"
 mkdir -p "$DIR_OUTPUT_FINAL"
 
 printf "\033[2K"
 printf "\r\e[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\e[0m\n"
-printf "\e[38;5;8m ◻ Deploying nodes \033[0m\n"
+printf "\e[38;5;8m ◻ Deploying nodes \033[0m"
 
 ./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$GIT_REPO" -gn "$master_node" -nn "master-node" -bh "$hosts_buffer" -m &
 master_pid=$!
@@ -304,3 +303,38 @@ wait $master_pid
 for pid in "${worker_pids[@]}"; do
     wait $pid
 done
+
+sleep 1
+echo ""
+printf "\e[38;5;36m ▣ Nodes deployed.\e[0m\n"
+printf "\e[38;5;8m ◻ Worker nodes join cluster \033[0m"
+
+join_command=$(ssh $SITE_NAME.g5k "ssh root@$master_node 'kubeadm token create --print-join-command'")
+
+for wk in $worker_nodes; do
+    ssh $SITE_NAME.g5k "ssh root@$wk \"$join_command\"" >/dev/null 2>&1
+done
+sleep 10
+printf "\033[2K"
+printf "\r\e[38;5;36m ▣ Worker nodes have joined the cluster.\e[0m\n"
+
+echo ""
+printf "\e[38;5;8m ◻ Application deployment \033[0m"
+sleep 1
+ssh $SITE_NAME.g5k "ssh root@$master_node 'cd binscale-deployment && scripts/deployEnv.sh'"
+printf "\e[38;5;36m ▣ Application deployed.\e[0m\n"
+
+printf "\e[38;5;8m ◻ Run experience \033[0m"
+ssh $SITE_NAME.g5k "ssh root@$master_node 'cd binscale-deployment && scripts/multinode-launchExperience.sh'"
+scp -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL" > /dev/null 2>&1
+printf "\e[38;5;36m ▣ Experience run completed. Logs retrieved. \e[0m[$DIR_OUTPUT_FINAL]\n"
+
+printf "\e[38;5;8m ◻ Job cleanup \033[0m"
+ssh $SITE_NAME.g5k "ssh root@$master_node 'rm -R /export/logs/*'"
+printf "\033[2K"
+printf "\r\e[38;5;36m ▣ Job cleaned up.\e[0m\n"
+
+printf "\e[38;5;8m ◻ Kill job \033[0m"
+ssh $SITE_NAME.g5k "oardel $JOB_ID" >/dev/null 2>&1
+printf "\033[2K"
+printf "\r\e[38;5;88m ▣ Job $JOB_ID killed.\e[0m\n"

@@ -81,17 +81,17 @@ if [ -z "$BRANCH_NAME" ] || [ -z "$SITE_NAME" ] || [ -z "$GIT_REPO" ] || [ -z "$
     exit 1
 fi
 
-ssh $SITE_NAME.g5k "ssh $SITE_NAME 'ssh root@$NODE_G5K_NAME \"sudo hostnamectl set-hostname $NODE_NAME\"'" > /dev/null 2>&1
-ssh $SITE_NAME.g5k "ssh $SITE_NAME 'ssh root@$NODE_G5K_NAME \"echo -e '$BUFFER_HOSTS' &> /etc/hosts\"'" > /dev/null 2>&1
-ssh $SITE_NAME.g5k "ssh $SITE_NAME 'ssh root@$NODE_G5K_NAME \"git clone $GIT_REPO\"'" > /dev/null 2>&1
-ssh $SITE_NAME.g5k "ssh $SITE_NAME 'ssh root@$NODE_G5K_NAME \"cd binscale-deployment && git checkout $BRANCH_NAME && chmod +x scripts/* && sed -i 's/\r$//' scripts/*.*\"'" > /dev/null 2>&1
-
+printf "\e[38;5;8m ▣ config $NODE_NAME on '$NODE_G5K_NAME' \033[0m\n"
+ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"sudo hostnamectl set-hostname $NODE_NAME\"" >/dev/null 2>&1
+ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME 'printf \"%b\" \"$BUFFER_HOSTS\" > /etc/hosts'"
+ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"git clone $GIT_REPO\"" >/dev/null 2>&1
+ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"cd binscale-deployment && git checkout $BRANCH_NAME && chmod +x scripts/* && sed -i 's/\r$//' scripts/*.*\"" >/dev/null 2>&1
 
 
 if [ "$is_master_node" = true ]; then
     printf "\e[38;5;8m ▣ Setting up MASTER NODE on '$NODE_G5K_NAME' \033[0m\n"
-    ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"sh binscale-deployment/scripts/multinode-master.sh\" 2>&1" | tee $OUTPUT_DIR/master_node_setup.log
+    ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"sed -i 's/\r$//' binscale-deployment/scripts/*.* && binscale-deployment/scripts/multinode-master.sh\" 2>&1" | tee $OUTPUT_DIR/master_node_setup.log 2>&1
 else
     printf "\e[38;5;8m ▣ Setting up WORKER NODE on '$NODE_G5K_NAME' \033[0m\n"
-    ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"sh binscale-deployment/scripts/multinode-worker.sh\" 2>&1" | tee $OUTPUT_DIR/worker_node_"$NODE_NAME"_setup.log
+    ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"sed -i 's/\r$//' binscale-deployment/scripts/*.* && binscale-deployment/scripts/multinode-worker.sh\" 2>&1" | tee $OUTPUT_DIR/worker_node_"$NODE_NAME"_setup.log 2>&1
 fi

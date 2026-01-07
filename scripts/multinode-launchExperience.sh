@@ -28,13 +28,5 @@ echo "Removing deployment"
 ansible-playbook ansible/undeploy-app.yaml
 
 echo "Experience Finished, analysing output in the python/input folder"
-cd python/input/ || exit
-../../scripts/log_analysis/extractLogs.sh /export/logs/filebeat*
-python3 ../../scripts/log_analysis/analyze.py consumer_logs.txt controller_logs.txt
 
-rm -f /export/logs/filebeat*
-exit 0
-
-printf "\n\033[1;36m## Executing cdf.py\033[0m\n"
-python3 python/cdf.py
 # python3 python/displayPlotLag.py
