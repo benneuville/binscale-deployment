@@ -338,7 +338,7 @@ done
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Hosts file built.\033[0m\n"
 
-printf "\033[38;5;8m ◻ Deploying nodes \033[0m"
+printf "\033[38;5;8m ◻ Deploying nodes \033[0m\n"
 
 ./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$GIT_REPO" -gn "$master_node" -nn "master-node" -bh "$hosts_buffer" -m &
 master_pid=$!
@@ -378,7 +378,7 @@ ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/de
 stty sane
 printf "\033[38;5;36m ▣ Application deployed.\033[0m\n"
 
-for file in $INPUT_GRAPH_FOLDER/*.bs.yaml;
+for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     printf "\033[38;5;8m ◻ Run experience [$file] \033[0m"
     ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh $INPUT_GRAPH_FOLDER/$file\""
@@ -396,7 +396,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml;
     scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL"
     printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved. \033[0m[$DIR_OUTPUT_FINAL]\n"
     stty sanes
-do
+done
 
 
 printf "\033[38;5;8m ◻ Job cleanup \033[0m"
