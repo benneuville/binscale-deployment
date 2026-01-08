@@ -7,6 +7,7 @@ DEFAULT_BRANCH_NAME="master"
 DEFAULT_LIFESPAN=2
 DEFAULT_SITE_NAME="grenoble"
 DEFAULT_GIT_REPO="https://github.com/benneuville/binscale-deployment.git"
+DEFAULT_INPUT_GRAPH_FOLDER="./experience/generator/graphs/"
 DEFAULT_QUEUE_NAME="default"
 
 SSH_CONFIG_FILE="$HOME/.ssh/config"
@@ -18,6 +19,7 @@ LIFESPAN=$DEFAULT_LIFESPAN
 SITE_NAME=$DEFAULT_SITE_NAME
 GIT_REPO=$DEFAULT_GIT_REPO
 QUEUE_NAME=$DEFAULT_QUEUE_NAME
+INPUT_GRAPH_FOLDER=$DEFAULT_INPUT_GRAPH_FOLDER
 USERNAME=""
 
 master_node=""
@@ -30,15 +32,16 @@ usage() {
     echo "Deploy complete experience on Grid5000."
     echo ""
     echo "Options:"
-    echo "  -n, --nodes NUM       Number of nodes to deploy (default: $DEFAULT_NODES)"
-    echo "  -o, --output DIR      Output folder (default: $DEFAULT_OUTPUT_DIR)"
-    echo "  -b, --branch NAME     Git branch name to use (default: $DEFAULT_BRANCH_NAME)"
-    echo "  -ls, --lifespan SECS  Lifespan of the nodes in hours (default: $DEFAULT_LIFESPAN)"
-    echo "  -sn, --site NAME      Grid5000 site name (default: $DEFAULT_SITE_NAME)"
-    echo "  -u, --username USER   Grid5000 username (no default)"
-    echo "  -g, --git-repo URL    Git repository URL (default: $DEFAULT_GIT_REPO)"
-    echo "  -q, --queue NAME      Grid5000 queue name (default: $DEFAULT_QUEUE_NAME)"
-    echo "  -na, --no-analyze     Unactive analyze logs"
+    echo "  -n, --nodes NUM                 Number of nodes to deploy (default: $DEFAULT_NODES)"
+    echo "  -o, --output DIR                Output folder (default: $DEFAULT_OUTPUT_DIR)"
+    echo "  -b, --branch NAME               Git branch name to use (default: $DEFAULT_BRANCH_NAME)"
+    echo "  -ls, --lifespan SECS            Lifespan of the nodes in hours (default: $DEFAULT_LIFESPAN)"
+    echo "  -sn, --site NAME                Grid5000 site name (default: $DEFAULT_SITE_NAME)"
+    echo "  -u, --username USER             Grid5000 username (no default)"
+    echo "  -g, --git-repo URL              Git repository URL (default: $DEFAULT_GIT_REPO)"
+    echo "  -q, --queue NAME                Grid5000 queue name (default: $DEFAULT_QUEUE_NAME)"
+    echo "  -if, --input-folder PATH        Path to folder of graph defined for experience (default: $DEFAULT_INPUT_GRAPH_FOLDER)"
+    echo "  -na, --no-analyze               Unactive analyze logs"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -82,6 +85,10 @@ while [[ "$#" -gt 0 ]]; do
         -na|--no-analyze)
             is_analyze_mode=true
             ;;
+        -if|--input-folder)
+            INPUT_GRAPH_FOLDER="$2"
+            shift
+            ;;
         -h|--help)
             usage
             ;;
@@ -120,7 +127,23 @@ printf " \033[33m▣\033[1;33m Grid5000 site name\033[0m [$SITE_NAME]\n"
 printf " \033[33m▣\033[1;33m Grid5000 username\033[0m [$USERNAME]\n"
 printf " \033[33m▣\033[1;33m Grid5000 queue name\033[0m [$QUEUE_NAME]\n"
 
-# sleep 5
+echo ""
+sleep 1
+printf " \033[33m▣\033[1;33m Experience files targeted : \033[0m\n"
+num_exp=0
+for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
+    printf "\033[38;5;88m   ◻ $file\033[0m\n"
+    ((num_exp++))
+done
+printf " \n\033[33m Deploying \033[1;33m$num_exp \033[33mexperience(s)\n\033[0m"
+sleep 0.1
+
+read -p "Do you want to proceed? [Y/n]" yn
+case $yn in
+    [Yy]* ) ;;
+    [Nn]* ) exit;;
+    * ) echo "Please answer yes or no.";;
+esac
 
 sudo mkdir -p "$HOME/.ssh"
 sudo chmod 777 "$HOME/.ssh"
@@ -180,9 +203,36 @@ if [ $? -ne 0 ]; then
     printf "      Error: Branch '$BRANCH_NAME' does not exist in the repository.\n" >&2
     printf " ----------------------------------------------------------------\033[0m\n"
     exit 1
-fi  
-printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is valid \033[0m     "
-git 
+fi
+printf "\033[2K"
+printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is valid \033[0m"
+
+printf "\n\033[38;5;8m ◻ Check modification merge \033[0m"
+
+if ! git diff --quiet; then
+    printf "\n\033[1;31m ------------------------------------------------------------------\n"
+    printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
+    printf " ------------------------------------------------------------------\033[0m\n"
+    exit 1
+fi
+
+git fetch origin
+if [ "$(git rev-list --count "$BRANCH_NAME"..origin/"$BRANCH_NAME")" -gt 0 ]; then
+    printf "\n\033[1;31m ------------------------------------------------------------------\n"
+    printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
+    printf " ------------------------------------------------------------------\033[0m\n"
+    exit 1
+fi
+
+if [ "$(git rev-list --count origin/"$BRANCH_NAME".."$BRANCH_NAME")" -gt 0 ]; then
+    printf "\n\033[1;31m ------------------------------------------------------------------\n"
+    printf "      Error: Branch '$BRANCH_NAME' have unsynchronized changes from origin.\n" >&2
+    printf " ------------------------------------------------------------------\033[0m\n"
+    exit 1
+fi
+
+printf "\033[2K"
+printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is merged \033[0m"
 
 echo ""
 
@@ -213,6 +263,8 @@ echo ""
 
 printf "\033[38;5;8m ◻ Submitting deployment job \033[0m"
 JOB_ID=$(ssh $SITE_NAME.g5k "oarsub -l host=$NUM_NODES,walltime=$LIFESPAN -q \"$QUEUE_NAME\" -t deploy \"kadeploy3 ubuntu2204-min && sleep infinity\"" | grep -oP 'OAR_JOB_ID=\K[0-9]+')
+
+trap "ssh $SITE_NAME.g5k \"oardel $JOB_ID\"; printf \"\033[38;5;88mJob $JOB_ID killed.\033[0m\n\"; exit 0" SIGINT
 
 printf "\033[2K"
 printf "\r\033[38;5;8m ▣ job ID : \033[1m$JOB_ID\033[0m\n"
@@ -286,13 +338,6 @@ done
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Hosts file built.\033[0m\n"
 
-printf "\033[38;5;8m ◻ Output directory creation \033[0m"
-date=$(date '+%Y-%m-%d-%H.%M')
-DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date"
-mkdir -p "$DIR_OUTPUT_FINAL"
-
-printf "\033[2K"
-printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
 printf "\033[38;5;8m ◻ Deploying nodes \033[0m"
 
 ./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$GIT_REPO" -gn "$master_node" -nn "master-node" -bh "$hosts_buffer" -m &
@@ -333,11 +378,26 @@ ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/de
 stty sane
 printf "\033[38;5;36m ▣ Application deployed.\033[0m\n"
 
-printf "\033[38;5;8m ◻ Run experience \033[0m"
-ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh\""
-scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL"
-printf "\033[38;5;36m ▣ Experience run completed. Logs retrieved. \033[0m[$DIR_OUTPUT_FINAL]\n"
-stty sane
+for file in $INPUT_GRAPH_FOLDER/*.bs.yaml;
+
+    printf "\033[38;5;8m ◻ Run experience [$file] \033[0m"
+    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh $INPUT_GRAPH_FOLDER/$file\""
+
+    printf "\033[38;5;8m ◻ Output directory creation \033[0m"
+    date=$(date '+%Y-%m-%d-%H.%M')
+    file_name=$(basename "$file" .bs.yaml | tr " " "_")
+    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file"
+    mkdir -p "$DIR_OUTPUT_FINAL"
+    cp "*$file" "$DIR_OUTPUT_FINAL"
+
+    printf "\033[2K"
+    printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
+
+    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL"
+    printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved. \033[0m[$DIR_OUTPUT_FINAL]\n"
+    stty sanes
+do
+
 
 printf "\033[38;5;8m ◻ Job cleanup \033[0m"
 ssh $SITE_NAME.g5k "ssh root@$master_node \"rm -R /export/logs/*\""
@@ -358,7 +418,7 @@ if [ "$is_analyze_mode" = true ]; then
     $SCRIPT_DIR/log_analysis/mtnd-analyze.py consumer_logs.txt
     cd "$current_path"
 else
-    printf "\033[38;5;8m ◻ Files to analyze in \033[0m[$DIR_OUTPUT_FINAL]
+    printf "\033[38;5;8m ◻ You can analyze files by going to folder and execute :
    \033[38;5;8mExtract logs \033[0m[./scripts/log_analysis/extractLogs.sh filebeat*]
    \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-analyze.py consumer_logs.txt] \033[0m\n"
 fi

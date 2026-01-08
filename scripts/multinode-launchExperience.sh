@@ -1,30 +1,31 @@
  #!/bin/bash
 
-printf "\n\033[1;36m## Deleting the previous deployment\033[0m\n"
-ansible-playbook ansible/undeploy-app.yaml
+while [[ "$#" -gt 0 ]]; do
+    rm -f /export/logs/*
+    printf "\n\033[1;36m Experience \O33[0m[$1]"
+    sleep 5
 
 
-sleep 25
 
-printf "\n\033[1;36m## Starting the experience\033[0m\n"
-start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')
-ansible-playbook ansible/deploy-app.yaml
+    printf "\n\033[1;36m## Starting the experience [$1]\033[0m\n"
+    start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')
+    ansible-playbook ansible/deploy-app.yaml
 
-printf "\n\033[1;36m## Waiting 15 minutes for the end of the experience\033[0m\n"
-sleep 600
+    printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience [$1]\033[0m\n"
+    sleep 600
 
-while true; do
-    desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
-    if [ "$desired_replicas" -ge 2 ]; then
-        echo "Experience not yet finished, retrying in 1 min"
-        sleep 60 # Adjust the interval as needed
-    else
-        echo "Experience finished"
-        break
-    fi
+    while true; do
+        desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
+        if [ "$desired_replicas" -ge 2 ]; then
+            echo "Experience [$1] not yet finished, retrying in 1 min"
+            sleep 60
+        else
+            echo "Experience [$1] finished"
+            break
+        fi
+    done
+
+    echo "Removing deployment [$1]"
+    ansible-playbook ansible/undeploy-app.yaml
+    shift
 done
-
-echo "Removing deployment"
-ansible-playbook ansible/undeploy-app.yaml
-
-# python3 python/displayPlotLag.py

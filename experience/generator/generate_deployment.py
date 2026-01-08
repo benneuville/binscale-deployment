@@ -7,7 +7,6 @@ LATENCY = "latency"
 CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
-CONTROLLER = "controller"
 
 
 if len(sys.argv) < 2:

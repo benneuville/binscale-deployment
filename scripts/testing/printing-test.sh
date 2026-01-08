@@ -1,18 +1,38 @@
 #!/bin/bash
 
-is_analyze_mode=true
-DIR_OUTPUT_FINAL="2026-01-07-14.15"
+read -p "Do you wish to install this program? [Y/n]" yn
+case $yn in
+    [Yy]* ) echo "yessss"; break;;
+    [Nn]* ) exit;;
+    * ) echo "Please answer yes or no.";;
+esac
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-current_path=$PWD
-sed -i 's/\r$//' $SCRIPT_DIR/../log_analysis/extractLogs.sh
-if [ "$is_analyze_mode" = true ]; then
-    cd "$current_path/$DIR_OUTPUT_FINAL"
-    $SCRIPT_DIR/../log_analysis/extractLogs.sh filebeat*
-    python3 $SCRIPT_DIR/../log_analysis/mtnd-analyze.py consumer_logs.txt
-    cd "$current_path"
-else
-    printf "\033[38;5;8m ◻ Files to analyze in \033[0m[$DIR_OUTPUT_FINAL]
-   \033[38;5;8mExtract logs \033[0m[./scripts/log_analysis/extractLogs.sh filebeat*]
-   \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-analyze.py consumer_logs.txt] \033[0m\n"
+# JOB="coucou"
+# trap "ssh grenoble.g5k \"oardel $JOB\"; printf \"\033[38;5;88mJob $JOB killed.\033[0m\n\"; exit 0" SIGINT
+
+
+DEFAULT_INPUT_GRAPH_FOLDER="./experience/generator/graphs/"
+for file in $DEFAULT_INPUT_GRAPH_FOLDER/*.bs.yaml;
+do
+    echo "file = $file"
+    echo "$(basename "$file" .bs.yaml | tr " " "_")"
+done
+
+BRANCH_NAME=17-dep-improve-grid5000-deployment-from-local-machine
+# Vérifie s'il y a des changements locaux non commités
+if ! git diff --quiet; then
+    echo "Erreur : Il y a des changements locaux non commités sur la branche '$BRANCH_NAME'."
+    exit 1
+fi
+
+# Vérifie s'il y a des commits locaux non poussés vers origin
+git fetch origin
+if [ "$(git rev-list --count "$BRANCH_NAME"..origin/"$BRANCH_NAME")" -gt 0 ]; then
+    echo "Erreur : La branche '$BRANCH_NAME' a des commits locaux non poussés vers origin."
+    exit 1
+fi
+
+if [ "$(git rev-list --count origin/"$BRANCH_NAME".."$BRANCH_NAME")" -gt 0 ]; then
+    echo "Erreur : La branche '$BRANCH_NAME' a des commits locaux non synchronisés avec origin."
+    exit 1
 fi
