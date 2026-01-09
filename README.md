@@ -226,3 +226,8 @@ scripts/minikube/launchExperience.sh
 ```bash
 scripts/local-cluster.sh
 ```
+
+
+```sh
+dos2unix ./scripts/multinode-complete-deployment.sh
+```

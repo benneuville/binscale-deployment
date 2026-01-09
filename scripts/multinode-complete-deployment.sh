@@ -23,7 +23,7 @@ INPUT_GRAPH_FOLDER=$DEFAULT_INPUT_GRAPH_FOLDER
 USERNAME=""
 
 master_node=""
-is_analyze_mode=false
+is_analyze_mode=true
 force_skip_merge_check=false
 
 worker_nodes=()
@@ -85,7 +85,7 @@ while [[ "$#" -gt 0 ]]; do
             shift
             ;;
         -na|--no-analyze)
-            is_analyze_mode=true
+            is_analyze_mode=false
             ;;
         -smc| --skip-merge-check)
             force_skip_merge_check=true
@@ -143,7 +143,7 @@ done
 printf " \n\033[33m Deploying \033[1;33m$num_exp \033[33mexperience(s)\n\033[0m"
 sleep 0.1
 
-read -p "Do you want to proceed? [Y/n]" yn
+read -p " Do you want to proceed? [Y/n]" yn
 case $yn in
     [Yy]* ) ;;
     [Nn]* ) exit;;
@@ -264,7 +264,8 @@ if [ $? -ne 0 ]; then
     printf " ----------------------------------------------------------------------\033[0m\n"
     exit 1
 fi
-printf "\r\033[38;5;36m ▣ Allocation is available ['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]       \033[0m"
+printf "\033[2K"
+printf "\r\033[38;5;36m ▣ Allocation is available \033[0m['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]"
 
 echo ""
 echo ""
@@ -285,17 +286,18 @@ while true; do
         printf "\033[2K" 
         printf "\r\033[38;5;36m ▣ Job running.\033[0m\n"
         break
-    else if [ "$STATUS" = "Waiting" ] || [ "$STATUS" = "Launching" ] || [ "$STATUS" = "toLaunch" ]; then
-        time_waited=$((time_waited + 10))
-        printf "\033[2K"
-        printf "\r\033[38;5;8m ◻ Waiting time for job running : ${time_waited}s\033[0m"
-        sleep 10
     else
-        printf "\n\033[1;31m ----------------------------------------------------------------------\n"
-        printf "      Error: Job failed. Status: $STATUS\n" >&2
-        printf " ----------------------------------------------------------------------\033[0m\n"
-        exit 1
-    fi
+        if [ "$STATUS" = "Waiting" ] || [ "$STATUS" = "Launching" ] || [ "$STATUS" = "toLaunch" ]; then
+            time_waited=$((time_waited + 10))
+            printf "\033[2K"
+            printf "\r\033[38;5;8m ◻ Waiting time for job running : ${time_waited}s\033[0m"
+            sleep 10
+        else
+            printf "\n\033[1;31m ----------------------------------------------------------------------\n"
+            printf "      Error: Job failed. Status: $STATUS\n" >&2
+            printf " ----------------------------------------------------------------------\033[0m\n"
+            exit 1
+        fi
     fi
 done
 
@@ -394,7 +396,7 @@ sed -i 's/\r$//' "$SCRIPT_DIR/log_analysis/*.sh"
 for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     printf "\033[38;5;8m ◻ Run experience \033[0m[$file]"
-    
+
     file_name=$(basename "$file" .bs.yaml | tr " " "_")
     date=$(date '+%Y-%m-%d-%H.%M')
     DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name"
@@ -411,7 +413,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     printf "\033[38;5;8m ◻ Output directory creation \033[0m"
     mkdir -p "$DIR_OUTPUT_FINAL"
-    cp "*$file" "$DIR_OUTPUT_FINAL"
+    cp "$file" "$DIR_OUTPUT_FINAL"
 
     printf "\033[2K"
     printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
