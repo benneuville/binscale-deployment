@@ -211,7 +211,6 @@ if [ $? -ne 0 ]; then
 fi
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is valid \033[0m"
-echo "$force_skip_merge_check"
 if [ "$force_skip_merge_check" = true ]; then
     printf "\n\033[38;5;8m ◻ Check modification merge skiped... \033[0m"
 else
@@ -257,7 +256,7 @@ printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Site name '$SITE_NAME' is valid\033[0m"
 echo ""
 
-printf "\033[38;5;8m ◻ Check allocation availability ['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours] \033[0m"
+printf "\033[38;5;8m ◻ Check allocation availability \033[0m['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]"
 echo 'N' | ssh $SITE_NAME.g5k "funk -m free -r $SITE_NAME:$NUM_NODES -w $LIFESPAN:0:0" >/dev/null 2>&1
 if [ $? -ne 0 ]; then
     printf "\n\033[1;31m ----------------------------------------------------------------------\n"
@@ -304,7 +303,7 @@ printf "\033[38;5;8m ◻ Retrieving deployed nodes \033[0m"
 
 time_waited=0
 while true; do
-    OUTPUT=$(ssh $SITE_NAME.g5k "cat OAR.$JOB_ID.stdout | grep -P -i 'Deployment #D-.*-.*-.*-.*-.* done'")
+    OUTPUT=$(ssh "$SITE_NAME.g5k" "cat OAR.$JOB_ID.stdout | grep -P -i 'Deployment #D-.*-.*-.*-.*-.* done'")
     if [ -n "$OUTPUT" ]; then
         printf "\033[2K" 
         printf "\r\033[38;5;36m ▣ Deployed nodes retrieved.\033[0m\n"
@@ -317,9 +316,7 @@ while true; do
     fi
 done
 
-nodes_deployed=$(ssh $SITE_NAME.g5k "tail -n$NUM_NODES OAR.$JOB_ID.stdout")
-# printf "\033[38;5;8m ▣ Deployed nodes : \033[1m\n$nodes_deployed\033[0m\n"
-export nodes_deployed
+nodes_deployed=$(ssh "$SITE_NAME.g5k" "tail -n$NUM_NODES OAR.$JOB_ID.stdout")
 
 master_node=$(echo -e "$nodes_deployed" | head -n 1)
 export master_node
@@ -397,11 +394,12 @@ sed -i 's/\r$//' "$SCRIPT_DIR/log_analysis/*.sh"
 for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     printf "\033[38;5;8m ◻ Run experience \033[0m[$file]"
-    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh '$file'\""
-
+    
     file_name=$(basename "$file" .bs.yaml | tr " " "_")
     date=$(date '+%Y-%m-%d-%H.%M')
-    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file"
+    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name"
+
+    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh '$file'\""
 
     if [ $? -ne 0 ]; then
         buff_output_exp+="\033[38;5;88m ◻ Experience [$file_name] failed.\033[0m\n"

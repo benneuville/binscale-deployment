@@ -5,7 +5,7 @@ while [[ "$#" -gt 0 ]]; do
     printf "\n\033[1;36m Experience\033[0m [$1]"
     sleep 5
     
-    python3 experience/generator/generate_deployment.py $1
+    python3 experience/generator/generate_deployment.py "$1"
     if [ $? -ne 0 ]; then
         exit 1
     fi
