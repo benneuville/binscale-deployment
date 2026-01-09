@@ -17,6 +17,7 @@ while [[ "$#" -gt 0 ]]; do
     printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience [$1]\033[0m\n"
     sleep 600
 
+    # todo: fix
     while true; do
         desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
         if [ "$desired_replicas" -ge 2 ]; then
