@@ -425,8 +425,8 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
         printf "\r\033[38;5;36m ▣ Analyze processed in parallel [$file_name]\033[0m\n"
         {
             cd $DIR_OUTPUT_FINAL || exit 1
-            "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat*
-            "$SCRIPT_DIR/log_analysis/mtnd-analyze.py" consumer_logs.txt
+            "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat* >/dev/null 2>&1
+            python3 "$SCRIPT_DIR/log_analysis/mtnd-analyze.py" consumer_logs.txt
         } &
     fi
 done
