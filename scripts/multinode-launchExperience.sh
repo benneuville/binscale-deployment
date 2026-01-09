@@ -2,10 +2,13 @@
 
 while [[ "$#" -gt 0 ]]; do
     rm -f /export/logs/*
-    printf "\n\033[1;36m Experience \O33[0m[$1]"
+    printf "\n\033[1;36m Experience\033[0m [$1]"
     sleep 5
-
-
+    
+    python3 experience/generator/generate_deployment.py $1
+    if [ $? -ne 0 ]; then
+        exit 1
+    fi
 
     printf "\n\033[1;36m## Starting the experience [$1]\033[0m\n"
     start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')

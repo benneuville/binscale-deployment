@@ -24,6 +24,7 @@ USERNAME=""
 
 master_node=""
 is_analyze_mode=false
+force_skip_merge_check=false
 
 worker_nodes=()
 
@@ -42,6 +43,7 @@ usage() {
     echo "  -q, --queue NAME                Grid5000 queue name (default: $DEFAULT_QUEUE_NAME)"
     echo "  -if, --input-folder PATH        Path to folder of graph defined for experience (default: $DEFAULT_INPUT_GRAPH_FOLDER)"
     echo "  -na, --no-analyze               Unactive analyze logs"
+    echo "  -smc, --skip-merge-check        To force skip git merge check"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -84,6 +86,9 @@ while [[ "$#" -gt 0 ]]; do
             ;;
         -na|--no-analyze)
             is_analyze_mode=true
+            ;;
+        -smc| --skip-merge-check)
+            force_skip_merge_check=true
             ;;
         -if|--input-folder)
             INPUT_GRAPH_FOLDER="$2"
@@ -206,34 +211,38 @@ if [ $? -ne 0 ]; then
 fi
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is valid \033[0m"
+echo "$force_skip_merge_check"
+if [ "$force_skip_merge_check" = true ]; then
+    printf "\n\033[38;5;8m ◻ Check modification merge skiped... \033[0m"
+else
 
-printf "\n\033[38;5;8m ◻ Check modification merge \033[0m"
+    printf "\n\033[38;5;8m ◻ Check modification merge \033[0m"
 
-if ! git diff --quiet; then
-    printf "\n\033[1;31m ------------------------------------------------------------------\n"
-    printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
-    printf " ------------------------------------------------------------------\033[0m\n"
-    exit 1
+    if ! git diff --quiet; then
+        printf "\n\033[1;31m ------------------------------------------------------------------\n"
+        printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
+        printf " ------------------------------------------------------------------\033[0m\n"
+        exit 1
+    fi
+
+    git fetch origin
+    if [ "$(git rev-list --count "$BRANCH_NAME"..origin/"$BRANCH_NAME")" -gt 0 ]; then
+        printf "\n\033[1;31m ------------------------------------------------------------------\n"
+        printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
+        printf " ------------------------------------------------------------------\033[0m\n"
+        exit 1
+    fi
+
+    if [ "$(git rev-list --count origin/"$BRANCH_NAME".."$BRANCH_NAME")" -gt 0 ]; then
+        printf "\n\033[1;31m ------------------------------------------------------------------\n"
+        printf "      Error: Branch '$BRANCH_NAME' have unsynchronized changes from origin.\n" >&2
+        printf " ------------------------------------------------------------------\033[0m\n"
+        exit 1
+    fi
+
+    printf "\033[2K"
+    printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is merged \033[0m"
 fi
-
-git fetch origin
-if [ "$(git rev-list --count "$BRANCH_NAME"..origin/"$BRANCH_NAME")" -gt 0 ]; then
-    printf "\n\033[1;31m ------------------------------------------------------------------\n"
-    printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
-    printf " ------------------------------------------------------------------\033[0m\n"
-    exit 1
-fi
-
-if [ "$(git rev-list --count origin/"$BRANCH_NAME".."$BRANCH_NAME")" -gt 0 ]; then
-    printf "\n\033[1;31m ------------------------------------------------------------------\n"
-    printf "      Error: Branch '$BRANCH_NAME' have unsynchronized changes from origin.\n" >&2
-    printf " ------------------------------------------------------------------\033[0m\n"
-    exit 1
-fi
-
-printf "\033[2K"
-printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is merged \033[0m"
-
 echo ""
 
 printf "\033[38;5;8m ◻ Check site name \033[0m"
@@ -378,15 +387,31 @@ ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/de
 stty sane
 printf "\033[38;5;36m ▣ Application deployed.\033[0m\n"
 
+buff_output_exp="\033[0m Experience results :\033[0m\n"
+
+folders_to_analyze=()
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+sed -i 's/\r$//' "$SCRIPT_DIR/log_analysis/*.sh"
+
 for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
-    printf "\033[38;5;8m ◻ Run experience [$file] \033[0m"
-    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh $INPUT_GRAPH_FOLDER/$file\""
+    printf "\033[38;5;8m ◻ Run experience \033[0m[$file]"
+    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh '$file'\""
+
+    file_name=$(basename "$file" .bs.yaml | tr " " "_")
+    date=$(date '+%Y-%m-%d-%H.%M')
+    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file"
+
+    if [ $? -ne 0 ]; then
+        buff_output_exp+="\033[38;5;88m ◻ Experience [$file_name] failed.\033[0m\n"
+        break;
+    else
+        buff_output_exp+="\033[38;5;36m ▣ Experience [$file_name] completed.\033[0m\n"
+        folders_to_analyze+="$DIR_OUTPUT_FINAL"
+    fi
 
     printf "\033[38;5;8m ◻ Output directory creation \033[0m"
-    date=$(date '+%Y-%m-%d-%H.%M')
-    file_name=$(basename "$file" .bs.yaml | tr " " "_")
-    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file"
     mkdir -p "$DIR_OUTPUT_FINAL"
     cp "*$file" "$DIR_OUTPUT_FINAL"
 
@@ -394,10 +419,17 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
     printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
 
     scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL"
-    printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved. \033[0m[$DIR_OUTPUT_FINAL]\n"
-    stty sanes
+    printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved in \033[0m[$DIR_OUTPUT_FINAL]\n"
+    
+    if [ "$is_analyze_mode" = true ]; then
+        printf "\r\033[38;5;36m ▣ Analyze processed in parallel [$file_name]\033[0m\n"
+        {
+            cd $DIR_OUTPUT_FINAL || exit 1
+            "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat*
+            "$SCRIPT_DIR/log_analysis/mtnd-analyze.py" consumer_logs.txt
+        } &
+    fi
 done
-
 
 printf "\033[38;5;8m ◻ Job cleanup \033[0m"
 ssh $SITE_NAME.g5k "ssh root@$master_node \"rm -R /export/logs/*\""
@@ -409,16 +441,14 @@ ssh $SITE_NAME.g5k "oardel $JOB_ID" >/dev/null 2>&1
 printf "\033[2K"
 printf "\r\033[38;5;88m ▣ Job $JOB_ID killed.\033[0m\n"
 
-SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-sed -i 's/\r$//' "$SCRIPT_DIR/log_analysis/*.sh"
-current_path=$PWD
 if [ "$is_analyze_mode" = true ]; then
-    cd "$DIR_OUTPUT_FINAL"
-    $SCRIPT_DIR/log_analysis/extractLogs.sh filebeat*
-    $SCRIPT_DIR/log_analysis/mtnd-analyze.py consumer_logs.txt
-    cd "$current_path"
+    printf "\033[38;5;8m ◻ Waiting for analysis process \033[0m"
+    wait
+    printf "\033[38;5;8m ▣ Analysis process ended \033[0m"
 else
     printf "\033[38;5;8m ◻ You can analyze files by going to folder and execute :
    \033[38;5;8mExtract logs \033[0m[./scripts/log_analysis/extractLogs.sh filebeat*]
    \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-analyze.py consumer_logs.txt] \033[0m\n"
 fi
+
+printf "$buff_output_exp"

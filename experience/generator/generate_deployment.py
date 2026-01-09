@@ -48,7 +48,7 @@ with open("experience/templates/controller.yaml.j2") as f:
     templates[CONTROLLER] = Template(f.read())
 
 ## Load graph
-with open("experience/generator/graphs/" + file_path) as f:
+with open(file_path) as f:
     graph = yaml.safe_load(f)
 
 ### Generate deployment files
