@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: latency-1
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -118,7 +118,7 @@ spec:
     spec:
       containers:
         - name: latency-2
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -196,7 +196,7 @@ spec:
     spec:
       containers:
         - name: latency-3
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -271,7 +271,7 @@ spec:
     spec:
       containers:
         - name: latency-4
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -332,7 +332,7 @@ spec:
     spec:
       containers:
         - name: latency-5
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -383,7 +383,7 @@ spec:
     spec:
       containers:
         - name: latency-6
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:

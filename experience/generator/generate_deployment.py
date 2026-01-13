@@ -7,13 +7,15 @@ LATENCY = "latency"
 CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
+DEFAULT_IMAGE_TAG = "latest"
 
 
 if len(sys.argv) < 2:
-    print("Usage: python generate_deployment.py <file.yaml>")
+    print("Usage: python generate_deployment.py <file.yaml> (optional <image-tag>)>")
     sys.exit(1)
 
 file_path = sys.argv[1]
+image_tag = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_IMAGE_TAG
 
 def is_workload_node(type):
     return type == WORLOAD
@@ -99,9 +101,9 @@ print("✅ Kafka topics generated")
 
 print("🚂 Generating Service nodes...")
 nodes_service_gen = []
+print(f"Debug - image_tag: {image_tag}")
 for node in [v for v in nodes.values() if v["type"] == LATENCY]:
-    nodes_service_gen.append(templates[node["type"]].render(node=node))
-
+    nodes_service_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 nodes_service_gen.append(templates[MONITORING_CONSUMER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY])) # Add monitoring consumer for all latency nodes
 # Output all service nodes in one file in "/generated/latency.yaml"
 with open("experience/generated/latency.yaml", "w") as f:
@@ -112,7 +114,7 @@ print("✅ Service nodes generated")
 print("🚂 Generating Workload nodes...")
 nodes_workload_gen = []
 for node in [v for v in nodes.values() if v["type"] == WORLOAD]:
-    nodes_workload_gen.append(templates[node["type"]].render(node=node))
+    nodes_workload_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 # Output all workload nodes in one file in "/generated/workload.yaml"
 with open("experience/generated/workload.yaml", "w") as f:
     f.write("\n---\n".join(nodes_workload_gen))
@@ -127,7 +129,8 @@ with open("experience/generated/controller.yaml", "w") as f:
     f.write(templates[CONTROLLER].render(controller=controller,
                                          edges={e: edges[e] for e in edges_filter},
                                          edges_full=edges,
-                                         nodes=[v for v in nodes.values() if v["type"] == LATENCY]))
+                                         nodes=[v for v in nodes.values() if v["type"] == LATENCY],
+                                         image_tag=image_tag))
 
 
 print("✅ Controller generated")

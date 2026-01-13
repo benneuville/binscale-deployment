@@ -21,6 +21,7 @@ GIT_REPO=$DEFAULT_GIT_REPO
 QUEUE_NAME=$DEFAULT_QUEUE_NAME
 INPUT_GRAPH_FOLDER=$DEFAULT_INPUT_GRAPH_FOLDER
 USERNAME=""
+IMAGE_TAG=""
 
 master_node=""
 is_analyze_mode=true
@@ -45,6 +46,7 @@ usage() {
     echo "  -na, --no-analyze               Unactive analyze logs"
     echo "  -smc, --skip-merge-check        To force skip git merge check"
     echo "  -cb, --current-branch           Use the current git branch"
+    echo "  -it, --image-tag TAG            Docker image tag to use for deployment (default: latest)"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -98,6 +100,10 @@ while [[ "$#" -gt 0 ]]; do
         -cb|--current-branch)
             BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
             ;;
+        -it|--image-tag)
+            IMAGE_TAG="$2"
+            shift
+            ;;
         -h|--help)
             usage
             ;;
@@ -135,6 +141,7 @@ printf " \033[33m▣\033[1;33m Lifespan (hours)\033[0m [$LIFESPAN]\n"
 printf " \033[33m▣\033[1;33m Grid5000 site name\033[0m [$SITE_NAME]\n"
 printf " \033[33m▣\033[1;33m Grid5000 username\033[0m [$USERNAME]\n"
 printf " \033[33m▣\033[1;33m Grid5000 queue name\033[0m [$QUEUE_NAME]\n"
+printf " \033[33m▣\033[1;33m Docker image tag\033[0m [$IMAGE_TAG]\n"
 
 echo ""
 sleep 1
@@ -395,7 +402,7 @@ buff_output_exp="\033[0m Experience results :\033[0m\n"
 folders_to_analyze=()
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-sed -i 's/\r$//' "$SCRIPT_DIR/log_analysis/*.sh"
+sed -i 's/\r$//' "$SCRIPT_DIR"/log_analysis/*.sh
 
 for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
@@ -405,7 +412,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
     date=$(date '+%Y-%m-%d-%H.%M')
     DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name"
 
-    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh '$file'\""
+    ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh "$file" "$IMAGE_TAG"\""
 
     file_name_escaped="${file_name//\"/\\\"}"
     if [ $? -ne 0 ]; then
