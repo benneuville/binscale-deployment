@@ -7,15 +7,14 @@ LATENCY = "latency"
 CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
-DEFAULT_IMAGE_TAG = "latest"
 
 
 if len(sys.argv) < 2:
-    print("Usage: python generate_deployment.py <file.yaml> (optional <image-tag>)>")
+    print("Usage: python generate_deployment.py <file.yaml> <image-tag>")
     sys.exit(1)
 
 file_path = sys.argv[1]
-image_tag = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_IMAGE_TAG
+image_tag = sys.argv[2]
 
 def is_workload_node(type):
     return type == WORLOAD
