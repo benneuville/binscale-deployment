@@ -10,10 +10,10 @@ data:
     output:
 
     - name: topic-latency-1-to-latency-2
-      ratio: 1 
+      ratio: 0.2 
 
     - name: topic-latency-1-to-latency-3
-      ratio: 1 
+      ratio: 0.8 
 
 ---
 
@@ -81,6 +81,23 @@ spec:
 ---
 
 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: latencygroup2-config
+  namespace: default
+data:
+  latencygroup2.yaml: |
+    output:
+
+    - name: topic-latency-2-to-latency-6
+      ratio: 0.2 
+
+    - name: topic-latency-2-to-latency-5
+      ratio: 0.8 
+
+---
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -129,8 +146,35 @@ spec:
             - name: ASYNC_COMMIT
               value: "False"
 
+            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
+              value: "/config/latencygroup2.yaml"
+          volumeMounts:
+            - name: latencygroup2-config
+              mountPath: /config
+      volumes:
+        - name: latencygroup2-config
+          configMap:
+            name: latencygroup2-config
+
 ---
 
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: latencygroup3-config
+  namespace: default
+data:
+  latencygroup3.yaml: |
+    output:
+
+    - name: topic-latency-3-to-latency-5
+      ratio: 1 
+
+    - name: topic-latency-3-to-latency-4
+      ratio: 0.2 
+
+---
 
 apiVersion: apps/v1
 kind: Deployment
@@ -180,6 +224,193 @@ spec:
             - name: ASYNC_COMMIT
               value: "False"
 
+            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
+              value: "/config/latencygroup3.yaml"
+          volumeMounts:
+            - name: latencygroup3-config
+              mountPath: /config
+      volumes:
+        - name: latencygroup3-config
+          configMap:
+            name: latencygroup3-config
+
+---
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: latencygroup4-config
+  namespace: default
+data:
+  latencygroup4.yaml: |
+    output:
+
+    - name: topic-latency-4-to-latency-5
+      ratio: 1 
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-4
+  namespace: default
+  labels:
+    app: latency
+    instance: latency-4
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency-4
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: topic-latency-3-to-latency-4
+            - name: GROUP_ID
+              value: latencygroup4
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: MAX_POLL_RECORDS
+              value: "200"
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+
+            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
+              value: "/config/latencygroup4.yaml"
+          volumeMounts:
+            - name: latencygroup4-config
+              mountPath: /config
+      volumes:
+        - name: latencygroup4-config
+          configMap:
+            name: latencygroup4-config
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-5
+  namespace: default
+  labels:
+    app: latency
+    instance: latency-5
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency-5
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: topic-latency-4-to-latency-5
+            - name: GROUP_ID
+              value: latencygroup5
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: MAX_POLL_RECORDS
+              value: "200"
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+
+---
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: latency-6
+  namespace: default
+  labels:
+    app: latency
+    instance: latency-6
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: latency
+  template:
+    metadata:
+      labels:
+        app: latency
+    spec:
+      containers:
+        - name: latency-6
+          image: docker.io/benneuville/binscale:hf
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/consumer.jar"]
+          ports:
+            - containerPort: 8080
+              name: brom
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: topic-latency-2-to-latency-6
+            - name: GROUP_ID
+              value: latencygroup6
+            - name: MESSAGE_COUNT
+              value: "1000000"
+            - name: MAX_POLL_RECORDS
+              value: "200"
+            - name: SCALE
+              value: "3"
+            - name: SHAPE
+              value: "2.75"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: WSLA
+              value: "500"
+            - name: ASYNC_COMMIT
+              value: "False"
+
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
@@ -199,6 +430,9 @@ spec:
 #            - "latency-1"
 #            - "latency-2"
 #            - "latency-3"
+#            - "latency-4"
+#            - "latency-5"
+#            - "latency-6"
   namespaceSelector:
     matchNames:
       - default

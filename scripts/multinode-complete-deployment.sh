@@ -403,11 +403,12 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh '$file'\""
 
+    file_name_escaped="${file_name//\"/\\\"}"
     if [ $? -ne 0 ]; then
-        buff_output_exp+="\033[38;5;88m ◻ Experience [$file_name] failed.\033[0m\n"
+        buff_output_exp+="\033[38;5;88m ◻ Experience [$file_name_escaped] failed.\033[0m\n"
         break;
     else
-        buff_output_exp+="\033[38;5;36m ▣ Experience [$file_name] completed.\033[0m\n"
+        buff_output_exp+="\033[38;5;36m ▣ Experience [$file_name_escaped] completed.\033[0m\n"
         folders_to_analyze+="$DIR_OUTPUT_FINAL"
     fi
 
@@ -442,13 +443,15 @@ printf "\033[2K"
 printf "\r\033[38;5;88m ▣ Job $JOB_ID killed.\033[0m\n"
 
 if [ "$is_analyze_mode" = true ]; then
-    printf "\033[38;5;8m ◻ Waiting for analysis process \033[0m"
+    printf "\033[38;5;8m ◻ Waiting for analysis process \033[0m\n"
     wait
-    printf "\033[38;5;8m ▣ Analysis process ended \033[0m"
+    printf "\033[38;5;8m ▣ Analysis process ended \033[0m\n"
 else
     printf "\033[38;5;8m ◻ You can analyze files by going to folder and execute :
    \033[38;5;8mExtract logs \033[0m[./scripts/log_analysis/extractLogs.sh filebeat*]
    \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-analyze.py consumer_logs.txt] \033[0m\n"
 fi
 
-printf "$buff_output_exp"
+printf '%b' "$buff_output_exp"
+
+exit 0
