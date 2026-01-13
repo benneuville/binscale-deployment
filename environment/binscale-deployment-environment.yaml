@@ -1,0 +1,25 @@
+---
+name: binscale-deployment-ubuntu
+version: 2025072816
+arch: x86_64
+description: Environment for Binscale deployment & experiments, based on Ubuntu2204 (jammy) for x86_64 - min
+author: benjamin.neuville-burguiere@univ-cotedazur.fr
+visibility: shared
+destructive: false
+os: linux
+image:
+  file: ~/environment/binscale_environment_image.tar.zst
+  kind: tar
+  compression: zstd
+postinstalls:
+- archive: server:///grid5000/postinstalls/g5k-postinstall.tgz
+  compression: gzip
+  script: g5k-postinstall --net netplan --disk-aliases
+boot:
+  kernel: "/boot/vmlinuz"
+  initrd: "/boot/initrd.img"
+  kernel_params: modprobe.blacklist=nouveau
+filesystem: ext4
+partition_type: 131
+multipart: false
+---

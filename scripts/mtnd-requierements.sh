@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "📖\033[1;31m MULTINODE REQUIEREMENTS INSTALLATION\n\033[0m"
 sudo DEBIAN_FRONTEND=noninteractive apt-get update --y
 sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade --y

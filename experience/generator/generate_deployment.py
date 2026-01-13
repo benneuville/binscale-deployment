@@ -1,12 +1,19 @@
 from jinja2 import Template
 import yaml
+import sys
 
 WORLOAD = "workload"
 LATENCY = "latency"
 CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
-CONTROLLER = "controller"
+
+
+if len(sys.argv) < 2:
+    print("Usage: python generate_deployment.py <file.yaml>")
+    sys.exit(1)
+
+file_path = sys.argv[1]
 
 def is_workload_node(type):
     return type == WORLOAD
@@ -41,7 +48,7 @@ with open("experience/templates/controller.yaml.j2") as f:
     templates[CONTROLLER] = Template(f.read())
 
 ## Load graph
-with open("experience/generator/graph.yaml") as f:
+with open(file_path) as f:
     graph = yaml.safe_load(f)
 
 ### Generate deployment files

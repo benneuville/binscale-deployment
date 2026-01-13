@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "👑\033[1;31m MASTER NODE \n\033[0m"
 printf "\n## (Note you had to launch multinode-requierements file(s) \n"
 

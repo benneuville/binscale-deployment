@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "🚀\033[1;31m LAUNCH MASTER-NODE \033[0m\n"
 sudo kubeadm reset -f
 sudo kubeadm init

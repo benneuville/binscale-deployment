@@ -10,9 +10,24 @@ data:
     topics:
       - from: latency-1
         to: latency-2
-        weight: 1
+        weight: 0.2
       - from: latency-1
         to: latency-3
+        weight: 0.8
+      - from: latency-2
+        to: latency-6
+        weight: 0.2
+      - from: latency-2
+        to: latency-5
+        weight: 0.8
+      - from: latency-3
+        to: latency-5
+        weight: 1
+      - from: latency-3
+        to: latency-4
+        weight: 0.2
+      - from: latency-4
+        to: latency-5
         weight: 1
     nodes:
       - name: latency-1
@@ -33,6 +48,24 @@ data:
         inputTopic: topic-latency-1-to-latency-3
         partitionNumber: 10
         groupId: latencygroup3
+      - name: latency-4
+        wsla: 500
+        maxConsumptionRate: 200
+        inputTopic: topic-latency-3-to-latency-4
+        partitionNumber: 10
+        groupId: latencygroup4
+      - name: latency-5
+        wsla: 500
+        maxConsumptionRate: 200
+        inputTopic: topic-latency-4-to-latency-5
+        partitionNumber: 10
+        groupId: latencygroup5
+      - name: latency-6
+        wsla: 500
+        maxConsumptionRate: 200
+        inputTopic: topic-latency-2-to-latency-6
+        partitionNumber: 10
+        groupId: latencygroup6
 ---
 apiVersion: v1
 kind: Pod

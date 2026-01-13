@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "🦺\033[1;31m WORKER NODE \033[0m\n"
 sleep 1
 printf "\033[1;31m## WARNING : you need to rename the hostname of this node with command \033[1;33m'sudo hostnamectl set-hostname <hostname>'\033[0m\n"

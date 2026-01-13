@@ -1,3 +1,4 @@
+#!/bin/bash
 printf "💾\033[1;31m INSTALL & SETUP NFS SERVER \033[0m\n"
 
 

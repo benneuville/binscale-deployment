@@ -268,7 +268,7 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500):
 
 
         total_events = len(all_events)
-        high_latency_events = [ev for ev in all_events if ev.latency > latency_threshold]
+        high_latency_events = [ev for ev in all_events if ev.latency >= latency_threshold]
         count_high = len(high_latency_events)
         percent_high = (count_high / total_events * 100) if total_events > 0 else 0
 
@@ -307,6 +307,7 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500):
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Latency (ms)", color=color_latency)
         ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency')
+        ax1.axhline(y=latency_threshold, color='red', linestyle='--')
         ax1.tick_params(axis='y', labelcolor=color_latency)
         ax1.grid(True)
         ax1.set_xlim(min_time, max_time)
@@ -357,7 +358,7 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python parse_and_plot.py <file.log>")
+        print("Usage: python3 mtnd-analyse.py <file_log.txt>")
         sys.exit(1)
 
     file_path = sys.argv[1]
