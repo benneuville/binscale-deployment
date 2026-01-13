@@ -44,6 +44,7 @@ usage() {
     echo "  -if, --input-folder PATH        Path to folder of graph defined for experience (default: $DEFAULT_INPUT_GRAPH_FOLDER)"
     echo "  -na, --no-analyze               Unactive analyze logs"
     echo "  -smc, --skip-merge-check        To force skip git merge check"
+    echo "  -cb, --current-branch           Use the current git branch"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -93,6 +94,9 @@ while [[ "$#" -gt 0 ]]; do
         -if|--input-folder)
             INPUT_GRAPH_FOLDER="$2"
             shift
+            ;;
+        -cb|--current-branch)
+            BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
             ;;
         -h|--help)
             usage
