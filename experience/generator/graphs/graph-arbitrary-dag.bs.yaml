@@ -91,11 +91,11 @@ edges:
     partitions: 10
   - from: latency-2
     to: latency-6
-    weight: 0.2
+    weight: 0.8
     partitions: 10
   - from: latency-2
     to: latency-5
-    weight: 0.8
+    weight: 0.2
     partitions: 10
   - from: latency-3
     to: latency-5
