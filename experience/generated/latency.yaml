@@ -9,10 +9,10 @@ data:
   latencygroup1.yaml: |
     output:
 
-    - name: topic-latency-1-to-latency-2
+    - name: topic-latency-2
       ratio: 0.2 
 
-    - name: topic-latency-1-to-latency-3
+    - name: topic-latency-3
       ratio: 0.8 
 
 ---
@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
         - name: latency-1
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -47,7 +47,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-workload-1-to-latency-1
+              value: topic-latency-1
             - name: GROUP_ID
               value: latencygroup1
             - name: MESSAGE_COUNT
@@ -90,10 +90,10 @@ data:
   latencygroup2.yaml: |
     output:
 
-    - name: topic-latency-2-to-latency-6
+    - name: topic-latency-6
       ratio: 0.2 
 
-    - name: topic-latency-2-to-latency-5
+    - name: topic-latency-5
       ratio: 0.8 
 
 ---
@@ -118,7 +118,7 @@ spec:
     spec:
       containers:
         - name: latency-2
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -128,7 +128,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-1-to-latency-2
+              value: topic-latency-2
             - name: GROUP_ID
               value: latencygroup2
             - name: MESSAGE_COUNT
@@ -168,10 +168,10 @@ data:
   latencygroup3.yaml: |
     output:
 
-    - name: topic-latency-3-to-latency-5
+    - name: topic-latency-5
       ratio: 1 
 
-    - name: topic-latency-3-to-latency-4
+    - name: topic-latency-4
       ratio: 0.2 
 
 ---
@@ -196,7 +196,7 @@ spec:
     spec:
       containers:
         - name: latency-3
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -206,7 +206,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-1-to-latency-3
+              value: topic-latency-3
             - name: GROUP_ID
               value: latencygroup3
             - name: MESSAGE_COUNT
@@ -246,7 +246,7 @@ data:
   latencygroup4.yaml: |
     output:
 
-    - name: topic-latency-4-to-latency-5
+    - name: topic-latency-5
       ratio: 1 
 
 ---
@@ -271,7 +271,7 @@ spec:
     spec:
       containers:
         - name: latency-4
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -281,7 +281,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-3-to-latency-4
+              value: topic-latency-4
             - name: GROUP_ID
               value: latencygroup4
             - name: MESSAGE_COUNT
@@ -332,7 +332,7 @@ spec:
     spec:
       containers:
         - name: latency-5
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -342,7 +342,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-4-to-latency-5
+              value: topic-latency-5
             - name: GROUP_ID
               value: latencygroup5
             - name: MESSAGE_COUNT
@@ -383,7 +383,7 @@ spec:
     spec:
       containers:
         - name: latency-6
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/consumer.jar"]
           ports:
@@ -393,7 +393,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-2-to-latency-6
+              value: topic-latency-6
             - name: GROUP_ID
               value: latencygroup6
             - name: MESSAGE_COUNT

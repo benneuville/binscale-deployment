@@ -17,14 +17,14 @@ spec:
     spec:
       containers:
         - name: java-kafka-producer
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/producer.jar"]
           env:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-workload-1-to-latency-1
+              value: topic-latency-1
             - name: PARTITION_WEIGHTS
               value: "1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS
@@ -59,14 +59,14 @@ spec:
     spec:
       containers:
         - name: java-kafka-producer
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/producer.jar"]
           env:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-workload-2-to-latency-2
+              value: topic-latency-2
             - name: PARTITION_WEIGHTS
               value: "1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS

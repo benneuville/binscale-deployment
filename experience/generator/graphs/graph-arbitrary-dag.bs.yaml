@@ -91,11 +91,11 @@ edges:
     partitions: 10
   - from: latency-2
     to: latency-6
-    weight: 0.2
+    weight: 0.8
     partitions: 10
   - from: latency-2
     to: latency-5
-    weight: 0.8
+    weight: 0.2
     partitions: 10
   - from: latency-3
     to: latency-5
@@ -114,7 +114,7 @@ controller:
   params:
   # maybe become a edge parameter
     fup: 0.9
-    fdown: 0.2
+    fdown: 0.4
   # #############################
     rebalancing_time: 0.5
     initial_size: 1

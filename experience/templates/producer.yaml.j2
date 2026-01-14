@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: java-kafka-producer
-          image: docker.io/benneuville/binscale:hf
+          image: docker.io/benneuville/binscale:{{image_tag}}
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/producer.jar"]
           env:

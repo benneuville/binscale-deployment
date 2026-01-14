@@ -17,53 +17,47 @@ data:
       - from: latency-2
         to: latency-6
         weight: 0.2
-      - from: latency-2
-        to: latency-5
-        weight: 0.8
-      - from: latency-3
+      - from: latency-4
         to: latency-5
         weight: 1
       - from: latency-3
         to: latency-4
         weight: 0.2
-      - from: latency-4
-        to: latency-5
-        weight: 1
     nodes:
       - name: latency-1
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-workload-1-to-latency-1
+        inputTopic: topic-latency-1
         partitionNumber: 10
         groupId: latencygroup1
       - name: latency-2
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-1-to-latency-2
+        inputTopic: topic-latency-2
         partitionNumber: 10
         groupId: latencygroup2
       - name: latency-3
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-1-to-latency-3
+        inputTopic: topic-latency-3
         partitionNumber: 10
         groupId: latencygroup3
       - name: latency-4
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-3-to-latency-4
+        inputTopic: topic-latency-4
         partitionNumber: 10
         groupId: latencygroup4
       - name: latency-5
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-4-to-latency-5
+        inputTopic: topic-latency-5
         partitionNumber: 10
         groupId: latencygroup5
       - name: latency-6
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-2-to-latency-6
+        inputTopic: topic-latency-6
         partitionNumber: 10
         groupId: latencygroup6
 ---
@@ -79,7 +73,7 @@ spec:
   restartPolicy: Always
   containers:
     - name: controllerandscaler
-      image: docker.io/benneuville/binscale:hf
+      image: docker.io/benneuville/binscale:latest
       imagePullPolicy: Always
       ports:
         - containerPort: 5002

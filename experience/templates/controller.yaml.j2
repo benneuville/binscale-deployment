@@ -31,7 +31,7 @@ spec:
   restartPolicy: Always
   containers:
     - name: controllerandscaler
-      image: docker.io/benneuville/binscale:hf
+      image: docker.io/benneuville/binscale:{{image_tag}}
       imagePullPolicy: Always
       ports:
         - containerPort: 5002

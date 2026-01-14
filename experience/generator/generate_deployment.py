@@ -10,10 +10,11 @@ MONITORING_CONSUMER = "monitoring-consumer"
 
 
 if len(sys.argv) < 2:
-    print("Usage: python generate_deployment.py <file.yaml>")
+    print("Usage: python generate_deployment.py <file.yaml> <image-tag>")
     sys.exit(1)
 
 file_path = sys.argv[1]
+image_tag = sys.argv[2]
 
 def is_workload_node(type):
     return type == WORLOAD
@@ -71,7 +72,7 @@ for edge in graph["edges"]:
         "to_group_id": nodes[edge["to"]]["params"]["group_id"],
         "weight": edge.get("weight", 1),
         "partitions": edge.get("partitions", 10),
-        "topic_name": f"topic-{edge['from']}-to-{edge['to']}",
+        "topic_name": f"topic-{edge['to']}",
         "to_wsla": nodes[edge["to"]]["params"].get("wsla", None)
     }
     edge_check(tmp_edge, nodes)
@@ -100,8 +101,7 @@ print("✅ Kafka topics generated")
 print("🚂 Generating Service nodes...")
 nodes_service_gen = []
 for node in [v for v in nodes.values() if v["type"] == LATENCY]:
-    nodes_service_gen.append(templates[node["type"]].render(node=node))
-
+    nodes_service_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 nodes_service_gen.append(templates[MONITORING_CONSUMER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY])) # Add monitoring consumer for all latency nodes
 # Output all service nodes in one file in "/generated/latency.yaml"
 with open("experience/generated/latency.yaml", "w") as f:
@@ -112,7 +112,7 @@ print("✅ Service nodes generated")
 print("🚂 Generating Workload nodes...")
 nodes_workload_gen = []
 for node in [v for v in nodes.values() if v["type"] == WORLOAD]:
-    nodes_workload_gen.append(templates[node["type"]].render(node=node))
+    nodes_workload_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 # Output all workload nodes in one file in "/generated/workload.yaml"
 with open("experience/generated/workload.yaml", "w") as f:
     f.write("\n---\n".join(nodes_workload_gen))
@@ -127,7 +127,8 @@ with open("experience/generated/controller.yaml", "w") as f:
     f.write(templates[CONTROLLER].render(controller=controller,
                                          edges={e: edges[e] for e in edges_filter},
                                          edges_full=edges,
-                                         nodes=[v for v in nodes.values() if v["type"] == LATENCY]))
+                                         nodes=[v for v in nodes.values() if v["type"] == LATENCY],
+                                         image_tag=image_tag))
 
 
 print("✅ Controller generated")
