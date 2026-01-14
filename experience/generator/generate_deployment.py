@@ -100,7 +100,6 @@ print("✅ Kafka topics generated")
 
 print("🚂 Generating Service nodes...")
 nodes_service_gen = []
-print(f"Debug - image_tag: {image_tag}")
 for node in [v for v in nodes.values() if v["type"] == LATENCY]:
     nodes_service_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 nodes_service_gen.append(templates[MONITORING_CONSUMER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY])) # Add monitoring consumer for all latency nodes
