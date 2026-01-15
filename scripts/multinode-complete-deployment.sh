@@ -438,7 +438,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
         {
             cd $DIR_OUTPUT_FINAL || exit 1
             "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat* >/dev/null 2>&1
-            python3 "$SCRIPT_DIR/log_analysis/mtnd-analyze.py" consumer_logs.txt
+            python3 "$SCRIPT_DIR/log_analysis/mtnd-consumer-analysis.py" consumer_logs.txt
         } &
     fi
 done
@@ -460,7 +460,7 @@ if [ "$is_analyze_mode" = true ]; then
 else
     printf "\033[38;5;8m ◻ You can analyze files by going to folder and execute :
    \033[38;5;8mExtract logs \033[0m[./scripts/log_analysis/extractLogs.sh filebeat*]
-   \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-analyze.py consumer_logs.txt] \033[0m\n"
+   \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-consumer-analysis.py consumer_logs.txt] \033[0m\n"
 fi
 
 printf '%b' "$buff_output_exp"
