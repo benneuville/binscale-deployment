@@ -10,23 +10,21 @@ if [ $? -ne 0 ]; then
 fi
 
 printf "\n\033[1;36m## Starting the experience [$1]\033[0m\n"
-start_time=$(date --utc --iso-8601=seconds | sed 's/+00:00/Z/')
 ansible-playbook ansible/deploy-app.yaml
 
 printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience [$1]\033[0m\n"
-sleep 600
+sleep 60
 
-# todo: fix
 while true; do
-    desired_replicas=$(kubectl get deployment latency -o=jsonpath='{.spec.replicas}')
-    if [ "$desired_replicas" -ge 2 ]; then
-        echo "Experience [$1] not yet finished, retrying in 1 min"
-        sleep 60
+    producer_pods=$(kubectl get pods -l app=workload --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | wc -w)
+
+    if [ "$producer_pods" -gt 0 ]; then
+        echo "Producers are still running. Retrying in 10s..."
+        sleep 10
     else
-        echo "Experience [$1] finished"
+        echo "All producers have finished. Experience [$1] is complete."
         break
     fi
 done
-
 echo "Removing deployment [$1]"
 ansible-playbook ansible/undeploy-app.yaml

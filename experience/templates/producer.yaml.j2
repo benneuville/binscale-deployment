@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+{# apiVersion: apps/v1
+kind: Pod
 metadata:
   name: {{ node.id }}
   namespace: default
@@ -9,11 +9,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: {{ node.id }}
+      app: workload
   template:
     metadata:
       labels:
-        app: {{ node.id }}
+        app: workload
     spec:
       containers:
         - name: java-kafka-producer
@@ -39,3 +39,43 @@ spec:
 # NOT REQUIERED DECLARED VARIABLES
             - name: WORKLOAD
               value: "{{ node.params.workload }}" # "constant", "biased", "non_uniform"
+      restartPolicy: Never #}
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ node.id }}
+  namespace: default
+  labels:
+    app: workload
+spec:
+  template:
+    metadata:
+      labels:
+        app: workload
+    spec:
+      containers:
+        - name: java-kafka-producer
+          image: docker.io/benneuville/binscale:{{image_tag}}
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/producer.jar"]
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPIC
+              value: {{ node.params.topic_name }}
+            - name: PARTITION_WEIGHTS
+              value: "{{ node.params.partition_weights }}"
+            - name: DELAY_MS
+              value: "{{ node.params.delay_ms }}"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: PRODUCER_ACKS
+              value: "{{ node.params.producer_ack }}"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                retries=100
+            - name: WORKLOAD
+              value: "{{ node.params.workload }}"
+      restartPolicy: Never
+  backoffLimit: 0
