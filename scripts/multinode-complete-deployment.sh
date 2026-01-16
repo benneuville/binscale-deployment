@@ -410,7 +410,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     file_name=$(basename "$file" .bs.yaml | tr " " "_")
     date=$(date '+%Y-%m-%d-%H.%M')
-    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name"
+    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name-$NUM_NODES-nodes"
 
     ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh "$file" "$IMAGE_TAG"\""
 

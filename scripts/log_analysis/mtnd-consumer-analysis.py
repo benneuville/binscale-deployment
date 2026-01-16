@@ -358,7 +358,7 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500):
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python3 mtnd-analyse.py <file_log.txt>")
+        print("Usage: python3 mtnd-consumer-analysis.py <file_log.txt>")
         sys.exit(1)
 
     file_path = sys.argv[1]
