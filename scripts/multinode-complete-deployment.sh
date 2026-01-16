@@ -423,6 +423,8 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
         folders_to_analyze+="$DIR_OUTPUT_FINAL"
     fi
 
+    sleep 20
+
     printf "\033[38;5;8m ◻ Output directory creation \033[0m"
     mkdir -p "$DIR_OUTPUT_FINAL"
     cp "$file" "$DIR_OUTPUT_FINAL"
