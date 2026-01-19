@@ -14,14 +14,16 @@ ansible-playbook ansible/deploy-app.yaml
 
 printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience [$1]\033[0m\n"
 sleep 60
+printf "Producers are still running."
 
 while true; do
     producer_pods=$(kubectl get pods -l app=workload --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | wc -w)
 
     if [ "$producer_pods" -gt 0 ]; then
-        echo "Producers are still running. Retrying in 10s..."
-        sleep 10
+        printf "."
+        sleep 15
     else
+        printf "\n"
         echo "All producers have finished. Experience [$1] is complete."
         break
     fi
