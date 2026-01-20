@@ -1,6 +1,7 @@
 import sys
 import datetime
 import matplotlib.pyplot as plt
+import numpy as np
 
 consumer_latency_events = {}  # { group: { uid: [LatencyEvent] } }
 
@@ -352,6 +353,86 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500):
 
         print(f"➡️ Graphique généré : {filename}")
 
+def plot_events_by_wsla(min_time, max_time, wsla_threshold=500):
+    """
+    Produit un graphe par groupe :
+    - Histogramme du nombre d'événements par tranche de latence (WSLA_LOCAL)
+    - Lignes de seuil : rouge (200), orange (180), bleu (80)
+    - Courbe du nombre de consommateurs actifs (axe secondaire)
+    """
+    for group, uids in consumer_latency_events.items():
+        all_events = []
+        for uid, events in uids.items():
+            all_events.extend(events)
+        all_events = sorted(all_events, key=lambda ev: ev.insertion_date)
+
+        # Calcul des tranches de latence
+        latencies = [ev.latency for ev in all_events]
+        bins = [0, wsla_threshold, wsla_threshold*2, wsla_threshold*3, float('inf')]
+        labels = [f"0-{wsla_threshold}ms", f"{wsla_threshold}-{wsla_threshold*2}ms",
+                  f"{wsla_threshold*2}-{wsla_threshold*3}ms", f">{wsla_threshold*3}ms"]
+        counts, _ = np.histogram(latencies, bins=bins)
+        counts = counts.tolist()
+
+        # Calcul des temps de début/fin des consommateurs
+        uid_start_times = {}
+        uid_end_times = {}
+        for uid, events in uids.items():
+            if events:
+                uid_start_times[uid] = min(e.insertion_date for e in events)
+                uid_end_times[uid] = max(e.insertion_date for e in events)
+
+        all_change_times = []
+        for uid, start in uid_start_times.items():
+            all_change_times.append((start, 'start', uid))
+        for uid, end in uid_end_times.items():
+            all_change_times.append((end, 'end', uid))
+        all_change_times.sort()
+
+        active_uids = set()
+        change_points = []
+        for time, typ, uid in all_change_times:
+            if typ == 'start':
+                active_uids.add(uid)
+            else:
+                active_uids.discard(uid)
+            change_points.append((time, len(active_uids)))
+
+        step_times = [p[0] for p in change_points]
+        step_counts = [p[1] for p in change_points]
+
+        # Création du graphique
+        fig, ax1 = plt.subplots(figsize=(14, 6))
+
+        # Histogramme des événements par tranche de latence
+        colors = ['green', 'orange', 'red', 'purple']
+        ax1.bar(labels, counts, color=colors, alpha=0.7, label='Events per latency range')
+
+        # Lignes de seuil
+        ax1.axhline(y=200, color='red', linestyle='--', label='200 events')
+        ax1.axhline(y=180, color='orange', linestyle='--', label='180 events (90%)')
+        ax1.axhline(y=80, color='blue', linestyle='--', label='80 events (40%)')
+
+        ax1.set_xlabel("Latency Range")
+        ax1.set_ylabel("Number of Events")
+        ax1.set_title(f"Events per Latency Range (WSLA={wsla_threshold}ms) — Group: {group}")
+        ax1.grid(True)
+        ax1.legend(loc='upper left')
+
+        # Courbe du nombre de consommateurs actifs (axe secondaire)
+        ax2 = ax1.twinx()
+        ax2.plot(step_times, step_counts, color='black', linestyle='-', label='Active consumers')
+        ax2.set_ylabel("Number of Consumers")
+        ax2.legend(loc='upper right')
+
+        fig.tight_layout()
+        filename = f"events_by_wsla_group_{group}.png"
+        plt.savefig(filename)
+        plt.close()
+
+        print(f"➡️ Graphique généré : {filename}")
+
+
 # -------------------------------------------------
 # MAIN
 # -------------------------------------------------
@@ -371,10 +452,13 @@ def main():
     sort_all_events_by_timestamp()
 
     # 1. Latence par consommateur (global)
-    plot_latency_by_consumer(min_time, max_time)
+    # plot_latency_by_consumer(min_time, max_time)
 
-    # 2. Latence par groupe
-    plot_latency_by_group(min_time, max_time)
+    # # 2. Latence par groupe
+    # plot_latency_by_group(min_time, max_time)
+
+    # 3. Nb event par pas wsla (par groupe)
+    plot_events_by_wsla(min_time, max_time)
     
 #     # 🌍 Graphes globaux
 #     plot_latency_by_partition_global(min_time, max_time)
