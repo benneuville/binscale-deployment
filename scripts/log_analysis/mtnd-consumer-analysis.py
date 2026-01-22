@@ -6,12 +6,13 @@ import numpy as np
 consumer_latency_events = {}  # { group: { uid: [LatencyEvent] } }
 
 class LatencyEvent:
-    def __init__(self, insertion_date, latency, partition, offset, consumer_id):
+    def __init__(self, insertion_date, latency, partition, offset, consumer_id, proces_time):
         self.insertion_date = insertion_date
         self.latency = latency
         self.partition = partition
         self.offset = offset
         self.consumer_id = consumer_id
+        self.proces_time = proces_time
 
 
 def get_global_time_bounds():
@@ -42,6 +43,8 @@ def parseLatency(line):
         latency = int(line.split("latency is ")[1].split(",")[0])
         partition = int(line.split("event come from partition ")[1].split(" ")[0])
         offset = int(line.split("and position ")[1].split(" ")[0])
+        process_time = int(line.split("time for process ")[1].split(" ")[0])
+
 
         if group not in consumer_latency_events:
             consumer_latency_events[group] = {}
@@ -50,11 +53,11 @@ def parseLatency(line):
             consumer_latency_events[group][uid] = []
 
         consumer_latency_events[group][uid].append(
-            LatencyEvent(parsed_date, latency, partition, offset, uid)
+            LatencyEvent(parsed_date, latency, partition, offset, uid, process_time)
         )
 
     except Exception as e:
-        print(f"Error parsing latency: {e}, line: {line}")
+        print(f"Error parsing latency: {e}, line: {line}")  
 
 
 def parseLine(line):
