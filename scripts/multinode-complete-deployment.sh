@@ -26,6 +26,7 @@ IMAGE_TAG="latest"
 master_node=""
 is_analyze_mode=true
 force_skip_merge_check=false
+keep_alive=false
 
 worker_nodes=()
 
@@ -47,6 +48,7 @@ usage() {
     echo "  -smc, --skip-merge-check        To force skip git merge check"
     echo "  -cb, --current-branch           Use the current git branch"
     echo "  -it, --image-tag TAG            Docker image tag to use for deployment (default: latest)"
+    echo "  -k, --keep-alive                Keep the deployed nodes alive after the experience (for debugging)"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -103,6 +105,9 @@ while [[ "$#" -gt 0 ]]; do
         -it|--image-tag)
             IMAGE_TAG="$2"
             shift
+            ;;
+        -k|--keep-alive)
+            keep_alive=true
             ;;
         -h|--help)
             usage
@@ -449,11 +454,14 @@ printf "\033[38;5;8m ◻ Job cleanup \033[0m"
 ssh $SITE_NAME.g5k "ssh root@$master_node \"rm -R /export/logs/*\""
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Job cleaned up.\033[0m\n"
-
-printf "\033[38;5;8m ◻ Kill job \033[0m"
-ssh $SITE_NAME.g5k "oardel $JOB_ID" >/dev/null 2>&1
-printf "\033[2K"
-printf "\r\033[38;5;88m ▣ Job $JOB_ID killed.\033[0m\n"
+if [ "$keep_alive" = false ]; then
+    printf "\033[38;5;8m ◻ Kill job \033[0m"
+    ssh $SITE_NAME.g5k "oardel $JOB_ID" >/dev/null 2>&1
+    printf "\033[2K"
+    printf "\r\033[38;5;88m ▣ Job $JOB_ID killed.\033[0m\n"
+else
+    printf "\033[38;5;88m ▣ Job $JOB_ID kept alive.\033[0m\n"
+fi
 
 if [ "$is_analyze_mode" = true ]; then
     printf "\033[38;5;8m ◻ Waiting for analysis process \033[0m\n"
