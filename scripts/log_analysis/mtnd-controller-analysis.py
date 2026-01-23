@@ -1,0 +1,228 @@
+import sys
+import datetime
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from typing import List, Dict
+import re
+from datetime import datetime
+import json
+from collections import defaultdict
+
+class Partition:
+    def __init__(self, id, lag=0, arrivalRate=0.0, processingTime=0.0, processingCount=0.0, latency=0.0, processingCapacity=0.0, lagRebalancing=0.0):
+        self.id = id
+        self.lag = lag
+        self.arrivalRate = arrivalRate
+        self.processingTime = processingTime
+        self.processingCount = processingCount
+        self.latency = latency
+        self.processingCapacity = processingCapacity
+        self.lagRebalancing = lagRebalancing
+
+class Consumer:
+    def __init__(self, id, assignedPartitions, avgProcessingCapacity=0.0):
+        self.id = id
+        self.assignedPartitions = assignedPartitions
+        self.avgProcessingCapacity = avgProcessingCapacity
+
+class ConsumerGroup:
+    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, maxDefinedProcessingRate, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName):
+        self.wsla = wsla
+        self.inputTopic = inputTopic
+        self.consumerName = consumerName
+        self.kafkaGroupName = kafkaGroupName
+        self.maxDefinedProcessingRate = maxDefinedProcessingRate
+        self.topicPartitions = topicPartitions
+        self.lastUpScaleDecision = datetime.strptime(lastUpScaleDecision, '%m/%d/%YT%H:%M:%S.%f') if lastUpScaleDecision != "N/A" else None
+        self.assignment = assignment
+        self.fup = fup
+        self.fdown = fdown
+        self.name = name
+        self.groupName = groupName
+
+class PrometheusData:
+    def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, avgEventProcessingRate, totalArrivalRate, maxAverageArrivalRate, avgParentArrivalRate, minAverageArrivalRate, maxLagCapacity, minLagCapacity):
+        self.timestamp = timestamp
+        self.consumerGroup = consumerGroup
+        self.partitionsMetaData = partitionsMetaData
+        self.consumersMetaData = consumersMetaData
+        self.parentArrivalRate = parentArrivalRate
+        self.avgEventProcessingRate = avgEventProcessingRate
+        self.totalArrivalRate = totalArrivalRate
+        self.maxAverageArrivalRate = maxAverageArrivalRate
+        self.avgParentArrivalRate = avgParentArrivalRate
+        self.minAverageArrivalRate = minAverageArrivalRate
+        self.maxLagCapacity = maxLagCapacity
+        self.minLagCapacity = minLagCapacity
+
+def pulled_data_from_prometheus(line):
+    # Extraction du timestamp de la ligne de log
+    log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+    log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+
+    # Extraction de la partie JSON
+    data = line.split("Pulled data from Prometheus :")[1]
+    json_start = data.find('[')
+    json_end = data.rfind(']')
+    json_str = data[json_start:json_end+1]
+    json_str = json_str.replace("\\", "\"")
+    data_list = json.loads(json_str)
+
+    
+    prometheus_data_list = []
+    for data in data_list:
+        # Parsing des partitions
+        partitions = {}
+        for partition_key, partition_data in data["partitionsMetaData"].items():
+            partition_id = partition_data["partition"]["id"]
+            partitions[partition_id] = Partition(
+                id=partition_id,
+                lag=partition_data["lag"],
+                arrivalRate=partition_data["arrivalRate"],
+                processingTime=partition_data["processingTime"],
+                processingCount=partition_data["processingCount"],
+                latency=partition_data["latency"],
+                processingCapacity=partition_data["processingCapacity"],
+                lagRebalancing=partition_data["lagRebalancing"]
+            )
+
+        # Parsing des consumers
+        consumers = {}
+        for consumer_key, consumer_data in data["consumersMetaData"].items():
+            consumer_id = consumer_data["consumer"]["id"]
+            assigned_partitions = [p["id"] for p in consumer_data["consumer"]["assignedPartitions"]]
+            consumers[consumer_id] = Consumer(
+                id=consumer_id,
+                assignedPartitions=assigned_partitions,
+                avgProcessingCapacity=consumer_data["avgProcessingCapacity"]
+            )
+
+        # Parsing du consumerGroup
+        topic_partitions = [p["id"] for p in data["consumerGroup"]["topicPartitions"]]
+        assignment = [a for a in data["consumerGroup"]["assignment"]]
+
+        consumer_group = ConsumerGroup(
+            wsla=data["consumerGroup"]["wsla"],
+            inputTopic=data["consumerGroup"]["inputTopic"],
+            consumerName=data["consumerGroup"]["consumerName"],
+            kafkaGroupName=data["consumerGroup"]["kafkaGroupName"],
+            maxDefinedProcessingRate=data["consumerGroup"]["maxDefinedProcessingRate"],
+            topicPartitions=topic_partitions,
+            lastUpScaleDecision=data["consumerGroup"]["lastUpScaleDecision"],
+            assignment=assignment,
+            fup=data["consumerGroup"]["fup"],
+            fdown=data["consumerGroup"]["fdown"],
+            name=data["consumerGroup"]["name"],
+            groupName=data["consumerGroup"]["groupName"]
+        )
+
+        # Création de l'objet PrometheusData
+        prometheus_data = PrometheusData(
+            timestamp=log_timestamp,
+            consumerGroup=consumer_group,
+            partitionsMetaData=partitions,
+            consumersMetaData=consumers,
+            parentArrivalRate=data["parentArrivalRate"],
+            avgEventProcessingRate=data["avgEventProcessingRate"],
+            totalArrivalRate=data["totalArrivalRate"],
+            maxAverageArrivalRate=data["maxAverageArrivalRate"],
+            avgParentArrivalRate=data["avgParentArrivalRate"],
+            minAverageArrivalRate=data["minAverageArrivalRate"],
+            maxLagCapacity=data["maxLagCapacity"],
+            minLagCapacity=data["minLagCapacity"]
+        )
+        prometheus_data_list.append(prometheus_data)
+
+    return prometheus_data_list
+
+def plot_group_metrics(grouped_data):
+    for group_name, data_list in grouped_data.items():
+        # Préparation des données
+        timestamps = []
+        total_lag = []
+        arrival_rates = []
+        consumer_counts = []
+
+        for data in data_list:
+            # Lag cumulé (somme des lags de toutes les partitions)
+            lag_sum = sum(p.lag for p in data.partitionsMetaData.values())
+            # Arrival rate (moyenne des arrivalRate de toutes les partitions)
+            arrival_rate_sum = sum(p.arrivalRate for p in data.partitionsMetaData.values())
+            arrival_rate_avg = arrival_rate_sum / len(data.partitionsMetaData) if data.partitionsMetaData else 0
+            # Nombre de consommateurs (nombre de clés dans consumersMetaData)
+            consumer_count = len(data.consumersMetaData)
+
+            timestamps.append(data.timestamp)
+            total_lag.append(lag_sum)
+            arrival_rates.append(arrival_rate_avg)
+            consumer_counts.append(consumer_count)
+
+        # Création du graphique
+        fig, ax1 = plt.subplots(figsize=(14, 7))
+
+        # Axe 1 : Lag cumulé
+        color_lag = 'tab:blue'
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Total Lag', color=color_lag)
+        ax1.plot(timestamps, total_lag, color=color_lag, marker='o', label='Total Lag')
+        ax1.tick_params(axis='y', labelcolor=color_lag)
+        ax1.grid(True)
+
+        # Axe 2 : Arrival Rate
+        ax2 = ax1.twinx()
+        color_arrival = 'tab:orange'
+        ax2.set_ylabel('Arrival Rate (avg)', color=color_arrival)
+        ax2.plot(timestamps, arrival_rates, color=color_arrival, marker='x', label='Arrival Rate')
+        ax2.tick_params(axis='y', labelcolor=color_arrival)
+
+        # Axe 3 : Nombre de consommateurs
+        ax3 = ax1.twinx()
+        color_consumers = 'tab:green'
+        ax3.spines['right'].set_position(('outward', 60))
+        ax3.set_ylabel('Consumer Count', color=color_consumers)
+        ax3.set_ylim(-.5, max(consumer_counts) + 0.5)
+        ax3.step(timestamps, consumer_counts, color=color_consumers, label='Consumer Count')
+        ax3.tick_params(axis='y', labelcolor=color_consumers)
+
+        # Légende combinée
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        lines3, labels3 = ax3.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left')
+
+        # Formatage de l'axe X (dates)
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.xticks(rotation=45)
+        plt.title(f"Metrics over Time — Consumer Group: {group_name}")
+        fig.tight_layout()
+
+        # Sauvegarde du graphique
+        filename = f"metrics_consumer_group_{group_name}.png"
+        plt.savefig(filename)
+        plt.close()
+
+        print(f"➡️ Graphique généré : {filename}")
+
+
+if __name__ == "__main__":
+    log_file_path = sys.argv[1]
+
+    with open(log_file_path, 'r') as file:
+        lines = file.readlines()
+
+    prometheus_data_list = []
+    for line in lines:
+        if "Pulled data from Prometheus" in line:
+            prometheus_data_list.append(pulled_data_from_prometheus(line))
+    
+        
+    grouped_data = defaultdict(list)
+    for all_data in prometheus_data_list:
+        for data in all_data:
+            group_name = data.consumerGroup.kafkaGroupName
+            grouped_data[group_name].append(data)
+    
+    for group_name in grouped_data:
+        grouped_data[group_name].sort(key=lambda x: x.timestamp)
+        
+    plot_group_metrics(grouped_data)

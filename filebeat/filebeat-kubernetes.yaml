@@ -125,7 +125,7 @@ data:
       path: "/var/log/experiments"
       filename: filebeat-logs
       rotate_every_kb: 102400
-      number_of_files: 20
+      number_of_files: 200
       rotate_on_startup : true
 
     setup.template:

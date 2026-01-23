@@ -26,6 +26,7 @@ IMAGE_TAG="latest"
 master_node=""
 is_analyze_mode=true
 force_skip_merge_check=false
+keep_alive=false
 
 worker_nodes=()
 
@@ -47,6 +48,7 @@ usage() {
     echo "  -smc, --skip-merge-check        To force skip git merge check"
     echo "  -cb, --current-branch           Use the current git branch"
     echo "  -it, --image-tag TAG            Docker image tag to use for deployment (default: latest)"
+    echo "  -k, --keep-alive                Keep the deployed nodes alive after the experience (for debugging)"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -103,6 +105,9 @@ while [[ "$#" -gt 0 ]]; do
         -it|--image-tag)
             IMAGE_TAG="$2"
             shift
+            ;;
+        -k|--keep-alive)
+            keep_alive=true
             ;;
         -h|--help)
             usage
@@ -410,7 +415,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
     file_name=$(basename "$file" .bs.yaml | tr " " "_")
     date=$(date '+%Y-%m-%d-%H.%M')
-    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name"
+    DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name-$NUM_NODES-nodes"
 
     ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh "$file" "$IMAGE_TAG"\""
 
@@ -422,6 +427,8 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
         buff_output_exp+="\033[38;5;36m ▣ Experience [$file_name_escaped] completed.\033[0m\n"
         folders_to_analyze+="$DIR_OUTPUT_FINAL"
     fi
+
+    sleep 20
 
     printf "\033[38;5;8m ◻ Output directory creation \033[0m"
     mkdir -p "$DIR_OUTPUT_FINAL"
@@ -438,7 +445,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
         {
             cd $DIR_OUTPUT_FINAL || exit 1
             "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat* >/dev/null 2>&1
-            python3 "$SCRIPT_DIR/log_analysis/mtnd-analyze.py" consumer_logs.txt
+            python3 "$SCRIPT_DIR/log_analysis/mtnd-consumer-analysis.py" consumer_logs.txt
         } &
     fi
 done
@@ -447,11 +454,14 @@ printf "\033[38;5;8m ◻ Job cleanup \033[0m"
 ssh $SITE_NAME.g5k "ssh root@$master_node \"rm -R /export/logs/*\""
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Job cleaned up.\033[0m\n"
-
-printf "\033[38;5;8m ◻ Kill job \033[0m"
-ssh $SITE_NAME.g5k "oardel $JOB_ID" >/dev/null 2>&1
-printf "\033[2K"
-printf "\r\033[38;5;88m ▣ Job $JOB_ID killed.\033[0m\n"
+if [ "$keep_alive" = false ]; then
+    printf "\033[38;5;8m ◻ Kill job \033[0m"
+    ssh $SITE_NAME.g5k "oardel $JOB_ID" >/dev/null 2>&1
+    printf "\033[2K"
+    printf "\r\033[38;5;88m ▣ Job $JOB_ID killed.\033[0m\n"
+else
+    printf "\033[38;5;88m ▣ Job $JOB_ID kept alive.\033[0m\n"
+fi
 
 if [ "$is_analyze_mode" = true ]; then
     printf "\033[38;5;8m ◻ Waiting for analysis process \033[0m\n"
@@ -460,7 +470,7 @@ if [ "$is_analyze_mode" = true ]; then
 else
     printf "\033[38;5;8m ◻ You can analyze files by going to folder and execute :
    \033[38;5;8mExtract logs \033[0m[./scripts/log_analysis/extractLogs.sh filebeat*]
-   \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-analyze.py consumer_logs.txt] \033[0m\n"
+   \033[38;5;8mScript to analyze \033[0m[./scripts/log_analysis/mtnd-consumer-analysis.py consumer_logs.txt] \033[0m\n"
 fi
 
 printf '%b' "$buff_output_exp"
