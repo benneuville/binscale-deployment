@@ -373,8 +373,8 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
         ax1.set_xlim(min_time, max_time)
         fig.autofmt_xdate()
 
+        ax2 = ax1.twinx()
         if(nb_consumers_per_group and group in nb_consumers_per_group):
-            ax2 = ax1.twinx()
             color_consumers = 'tab:orange'
             ax2.set_ylabel("Number of consumers", color=color_consumers)
             ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
@@ -485,7 +485,7 @@ def main():
     # plot_latency_by_consumer(min_time, max_time)
 
     # # 2. Latence par groupe
-    # plot_latency_by_group(min_time, max_time)
+    plot_latency_by_group(min_time, max_time, nb_consumers_per_group = nb_consumers_per_group)
 
     # 3. Nb event par pas wsla (par groupe)
 
