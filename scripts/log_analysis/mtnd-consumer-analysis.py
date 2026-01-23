@@ -43,7 +43,7 @@ def parseLatency(line):
         latency = int(line.split("latency is ")[1].split(",")[0])
         partition = int(line.split("event come from partition ")[1].split(" ")[0])
         offset = int(line.split("and position ")[1].split(" ")[0])
-        process_time = int(line.split("time for process ")[1].split(" ")[0])
+        process_time = float(line.split("time for process ")[1].split("\n")[0])
 
 
         if group not in consumer_latency_events:
