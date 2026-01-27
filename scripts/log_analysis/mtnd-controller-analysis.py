@@ -203,6 +203,21 @@ def plot_group_metrics(grouped_data):
 
         print(f"➡️ Graphique généré : {filename}")
 
+def plot_decision_timeline(prometheus_except):
+    timestamps = [entry["timestamp"] for entry in prometheus_except]
+    exceptions = [entry["exception"] for entry in prometheus_except]
+    plt.figure(figsize=(14, 5))
+    # plt.step(timestamps, exceptions, color='red', alpha=0.1)
+    plt.yticks([0, 1], ['No Exception', 'Exception'])
+    plt.fill_between(timestamps, exceptions, color='red', step="pre", alpha=0.1)
+    plt.xlabel('Time')
+    plt.title('Timeline of MetricResultEmptyException Occurrences')
+    plt.grid(True)
+    plt.savefig("metric_result_empty_exception_timeline.png")
+    
+    plt.close()
+
+    print(f"➡️ Graphique généré : metric_result_empty_exception_timeline.png")
 
 if __name__ == "__main__":
     log_file_path = sys.argv[1]
@@ -211,9 +226,18 @@ if __name__ == "__main__":
         lines = file.readlines()
 
     prometheus_data_list = []
+    prometheus_except = []
     for line in lines:
         if "Pulled data from Prometheus" in line:
+            log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+            log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
             prometheus_data_list.append(pulled_data_from_prometheus(line))
+            prometheus_except.append({"timestamp": log_timestamp, "exception": 0})
+        elif "MetricResultEmptyException" in line:
+            log_timestamp_str = line.split(" - ")[0].split("WARN")[0].strip()
+            log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+            prometheus_except.append({"timestamp": log_timestamp, "exception": 1})
+
     
         
     grouped_data = defaultdict(list)
@@ -225,4 +249,8 @@ if __name__ == "__main__":
     for group_name in grouped_data:
         grouped_data[group_name].sort(key=lambda x: x.timestamp)
         
+    prometheus_except.sort(key=lambda x: x["timestamp"])
+        
     plot_group_metrics(grouped_data)
+
+    plot_decision_timeline(prometheus_except)
