@@ -23,6 +23,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
+      partitions: 10
       max_poll_records: 200
       processing_strategy: custom
   - id: latency-2
@@ -33,6 +34,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
+      partitions: 10
       max_poll_records: 200
   - id: latency-3
     type: latency
@@ -42,6 +44,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
+      partitions: 10
       max_poll_records: 200
   - id: latency-4
     type: latency
@@ -51,6 +54,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
+      partitions: 10
       max_poll_records: 200
   - id: latency-5
     type: latency
@@ -60,6 +64,7 @@ nodes:
       scale: 3
       shape: 2.75
       producer_ack: 0
+      partitions: 10
       max_poll_records: 200
 
 # edges
@@ -67,27 +72,21 @@ edges:
   - from: workload-1
     to: latency-1
     weight: 1
-    partitions: 10
   - from: workload-2
     to: latency-2
     weight: 1
-    partitions: 10
   - from: latency-1
     to: latency-3
     weight: 1
-    partitions: 10
   - from: latency-2
     to: latency-3
     weight: 1
-    partitions: 10
   - from: latency-3
     to: latency-4
     weight: 0.5
-    partitions: 10
   - from: latency-3
     to: latency-5
     weight: 0.5
-    partitions: 10
 
 controller:
   params:

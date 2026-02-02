@@ -71,7 +71,7 @@ for edge in graph["edges"]:
         "from_group_id": nodes[edge["from"]]["params"]["group_id"] if is_workload_node(nodes[edge["from"]]["type"]) == False else None,
         "to_group_id": nodes[edge["to"]]["params"]["group_id"],
         "weight": edge.get("weight", 1),
-        "partitions": edge.get("partitions", 10),
+        "partitions": nodes[edge["to"]].get("partitions", 10),
         "topic_name": f"topic-{edge['to']}",
         "to_wsla": nodes[edge["to"]]["params"].get("wsla", None)
     }
