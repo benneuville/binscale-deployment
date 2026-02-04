@@ -231,3 +231,14 @@ scripts/local-cluster.sh
 ```sh
 dos2unix ./scripts/multinode-complete-deployment.sh
 ```
+
+## Access to prometheus from remote
+
+On server:
+```sh
+kubectl port-forward svc/prometheus-service 9090:9090
+```
+
+```sh
+ssh -L 9090:localhost:9090 -J grenoble.g5k root@dahu-2 -l "kubectl port-forward svc/prometheus-service 9090:9090"
+```
