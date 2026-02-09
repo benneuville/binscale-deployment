@@ -9,7 +9,7 @@ import json
 from collections import defaultdict
 
 class Partition:
-    def __init__(self, id, lag=0, arrivalRate=0.0, processingTime=0.0, processingCount=0.0, latency=0.0, processingCapacity=0.0, lagRebalancing=0.0):
+    def __init__(self, id, lag=0, arrivalRate={}, processingTime=0.0, processingCount=0.0, latency=0.0, processingCapacity=0.0, lagRebalancing=0.0):
         self.id = id
         self.lag = lag
         self.arrivalRate = arrivalRate
@@ -41,7 +41,7 @@ class ConsumerGroup:
         self.groupName = groupName
 
 class PrometheusData:
-    def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, avgEventProcessingRate, totalArrivalRate, maxAverageArrivalRate, avgParentArrivalRate, minAverageArrivalRate, maxLagCapacity, minLagCapacity):
+    def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, avgEventProcessingRate, totalArrivalRate, totalExternalArrivalRate, maxAverageArrivalRate, avgParentArrivalRate, minAverageArrivalRate, maxLagCapacity, minLagCapacity):
         self.timestamp = timestamp
         self.consumerGroup = consumerGroup
         self.partitionsMetaData = partitionsMetaData
@@ -49,6 +49,7 @@ class PrometheusData:
         self.parentArrivalRate = parentArrivalRate
         self.avgEventProcessingRate = avgEventProcessingRate
         self.totalArrivalRate = totalArrivalRate
+        self.totalExternalArrivalRate = totalExternalArrivalRate
         self.maxAverageArrivalRate = maxAverageArrivalRate
         self.avgParentArrivalRate = avgParentArrivalRate
         self.minAverageArrivalRate = minAverageArrivalRate
@@ -124,7 +125,8 @@ def pulled_data_from_prometheus(line):
             consumersMetaData=consumers,
             parentArrivalRate=data["parentArrivalRate"],
             avgEventProcessingRate=data["avgEventProcessingRate"],
-            totalArrivalRate=data["totalArrivalRate"],
+            totalArrivalRate=data["totalInputArrivalRate"],
+            totalExternalArrivalRate=data["totalExternalArrivalRate"],
             maxAverageArrivalRate=data["maxAverageArrivalRate"],
             avgParentArrivalRate=data["avgParentArrivalRate"],
             minAverageArrivalRate=data["minAverageArrivalRate"],
@@ -147,7 +149,9 @@ def plot_group_metrics(grouped_data):
             # Lag cumulé (somme des lags de toutes les partitions)
             lag_sum = sum(p.lag for p in data.partitionsMetaData.values())
             # Arrival rate (moyenne des arrivalRate de toutes les partitions)
-            arrival_rate_sum = sum(p.arrivalRate for p in data.partitionsMetaData.values())
+            arrival_rate_sum = 0.
+            for p in data.partitionsMetaData.values() :
+                arrival_rate_sum += sum(a for a in p.arrivalRate.values())
             arrival_rate_avg = arrival_rate_sum / len(data.partitionsMetaData) if data.partitionsMetaData else 0
             # Nombre de consommateurs (nombre de clés dans consumersMetaData)
             consumer_count = len(data.consumersMetaData)
