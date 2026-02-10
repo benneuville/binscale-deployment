@@ -77,7 +77,7 @@ controller:
   # #############################
     rebalancing_time: 0.5
     initial_size: 1
-    scaling_strategy: classic # naive, classic
+    scaling_strategy: ehanced # naive, ehanced
     metrics:
       request_time_range: 5
       request_time_unit: "s" # "s", "m", "h"
