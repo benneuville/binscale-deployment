@@ -143,6 +143,7 @@ def plot_group_metrics(grouped_data):
         timestamps = []
         total_lag = []
         arrival_rates = []
+        parent_arrival_rates = []
         consumer_counts = []
 
         for data in data_list:
@@ -152,13 +153,13 @@ def plot_group_metrics(grouped_data):
             arrival_rate_sum = 0.
             for p in data.partitionsMetaData.values() :
                 arrival_rate_sum += sum(a for a in p.arrivalRate.values())
-            arrival_rate_avg = arrival_rate_sum / len(data.partitionsMetaData) if data.partitionsMetaData else 0
             # Nombre de consommateurs (nombre de clés dans consumersMetaData)
             consumer_count = len(data.consumersMetaData)
 
             timestamps.append(data.timestamp)
             total_lag.append(lag_sum)
-            arrival_rates.append(arrival_rate_avg)
+            arrival_rates.append(data.totalExternalArrivalRate)
+            parent_arrival_rates.append(data.parentArrivalRate)
             consumer_counts.append(consumer_count)
 
         # Création du graphique
@@ -175,24 +176,34 @@ def plot_group_metrics(grouped_data):
         # Axe 2 : Arrival Rate
         ax2 = ax1.twinx()
         color_arrival = 'tab:orange'
-        ax2.set_ylabel('Arrival Rate (avg)', color=color_arrival)
+        ax2.set_ylabel('Arrival Rate (sum)', color=color_arrival)
         ax2.plot(timestamps, arrival_rates, color=color_arrival, marker='x', label='Arrival Rate')
         ax2.tick_params(axis='y', labelcolor=color_arrival)
+
+        # Axe 4 : ParentArrivalRate
+        ax4 = ax1.twinx()
+        color_pArrivalRate = 'tab:red'
+        ax4.spines['right'].set_position(('outward', 60))
+        ax4.set_ylabel('Parent Arrival Rate (sum)', color = color_pArrivalRate)
+        ax4.plot(timestamps, parent_arrival_rates, color_pArrivalRate, marker='x', label='Parent Arrival Rate')
+        ax4.tick_params(axis='y', labelcolor=color_pArrivalRate)
 
         # Axe 3 : Nombre de consommateurs
         ax3 = ax1.twinx()
         color_consumers = 'tab:green'
-        ax3.spines['right'].set_position(('outward', 60))
+        ax3.spines['right'].set_position(('outward', 120))
         ax3.set_ylabel('Consumer Count', color=color_consumers)
         ax3.set_ylim(-.5, max(consumer_counts) + 0.5)
-        ax3.step(timestamps, consumer_counts, color=color_consumers, label='Consumer Count')
+        ax3.step(timestamps, consumer_counts, color=color_consumers, label='Consumer Count', alpha=.05)
+        ax3.fill_between(timestamps, consumer_counts, color=color_consumers, step="pre", alpha=0.05)
         ax3.tick_params(axis='y', labelcolor=color_consumers)
 
         # Légende combinée
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         lines3, labels3 = ax3.get_legend_handles_labels()
-        ax1.legend(lines1 + lines2 + lines3, labels1 + labels2 + labels3, loc='upper left')
+        lines4, labels4 = ax4.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2 + lines3 + lines4, labels1 + labels2 + labels3 + labels4, loc='upper left')
 
         # Formatage de l'axe X (dates)
         ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
