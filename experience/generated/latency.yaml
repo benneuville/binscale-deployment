@@ -91,10 +91,10 @@ data:
     output:
 
     - name: topic-latency-6
-      ratio: 0.2 
+      ratio: 0.8 
 
     - name: topic-latency-5
-      ratio: 0.8 
+      ratio: 0.2 
 
 ---
 

@@ -16,13 +16,19 @@ data:
         weight: 0.8
       - from: latency-2
         to: latency-6
+        weight: 0.8
+      - from: latency-2
+        to: latency-5
         weight: 0.2
-      - from: latency-4
+      - from: latency-3
         to: latency-5
         weight: 1
       - from: latency-3
         to: latency-4
         weight: 0.2
+      - from: latency-4
+        to: latency-5
+        weight: 1
     nodes:
       - name: latency-1
         wsla: 500
@@ -89,11 +95,11 @@ spec:
         - name: INIT_SIZE
           value: "1"
         - name: SCALING_STRATEGY
-          value: "naive"
+          value: "ehanced"
         - name: FUP
           value: "0.9"
         - name: FDOWN
-          value: "0.2"
+          value: "0.4"
         - name: REB_TIME
           value: "0.5"
         - name: DI

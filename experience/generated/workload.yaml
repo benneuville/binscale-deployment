@@ -1,19 +1,17 @@
-apiVersion: apps/v1
-kind: Deployment
+
+
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: workload-1
   namespace: default
   labels:
     app: workload
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: workload-1
   template:
     metadata:
       labels:
-        app: workload-1
+        app: workload
     spec:
       containers:
         - name: java-kafka-producer
@@ -36,26 +34,25 @@ spec:
             - name: ADDITIONAL_CONFIG
               value: |
                 retries=100
-# NOT REQUIERED DECLARED VARIABLES
             - name: WORKLOAD
-              value: "biased" # "constant", "biased", "non_uniform"
+              value: "biased"
+      restartPolicy: Never
+  backoffLimit: 0
 ---
-apiVersion: apps/v1
-kind: Deployment
+
+
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: workload-2
   namespace: default
   labels:
     app: workload
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: workload-2
   template:
     metadata:
       labels:
-        app: workload-2
+        app: workload
     spec:
       containers:
         - name: java-kafka-producer
@@ -78,6 +75,7 @@ spec:
             - name: ADDITIONAL_CONFIG
               value: |
                 retries=100
-# NOT REQUIERED DECLARED VARIABLES
             - name: WORKLOAD
-              value: "biased" # "constant", "biased", "non_uniform"
+              value: "biased"
+      restartPolicy: Never
+  backoffLimit: 0

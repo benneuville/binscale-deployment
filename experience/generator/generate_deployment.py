@@ -56,6 +56,8 @@ with open(file_path) as f:
 edges = {}
 nodes = {}
 
+filtered_edges = []
+
 controller = graph["controller"]
 
 controller["params"]["decision_interval"] = controller["params"]["metrics"]["request_time_range"] * 1000
@@ -84,6 +86,14 @@ for edge in graph["edges"]:
         nodes[tmp_edge["from"]]["params"]["topic_name"] = tmp_edge["topic_name"]
     else:
         nodes[tmp_edge["from"]]["targets"].append({ "topic_name": tmp_edge["topic_name"], "ratio": tmp_edge["weight"] })
+        
+        filtered_edges.append(
+            {
+                'from': edge["from"],
+                "to": edge["to"],
+                "weight": edge.get("weight", 1)
+            }
+        )
 
     edges[tmp_edge["topic_name"]] = tmp_edge
 
@@ -121,11 +131,10 @@ print("✅ Workload nodes generated")
 
 print("🚂 Generating Controller...")
 
-edges_filter = [e for e in edges if(nodes[edges[e]["from"]]["type"]==LATENCY and nodes[edges[e]["to"]]["type"]==LATENCY)]
 
 with open("experience/generated/controller.yaml", "w") as f:
     f.write(templates[CONTROLLER].render(controller=controller,
-                                         edges={e: edges[e] for e in edges_filter},
+                                         edges=filtered_edges,
                                          edges_full=edges,
                                          nodes=[v for v in nodes.values() if v["type"] == LATENCY],
                                          image_tag=image_tag))

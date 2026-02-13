@@ -7,7 +7,7 @@ metadata:
   namespace: default
 data:
   controller-config.yaml: |
-    topics:{% for target in edges.values() %}
+    topics:{% for target in edges %}
       - from: {{ target.from }}
         to: {{ target.to }}
         weight: {{ target.weight }}{% endfor %}
