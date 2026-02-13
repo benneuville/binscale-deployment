@@ -13,7 +13,7 @@ def build_and_draw_dag(edges, nodes):
     G = nx.DiGraph()
 
     for edge in edges:
-        G.add_edge(edge['from'], edge['to'], weight=edge['weight'], partitions=edge['partitions'])
+        G.add_edge(edge['from'], edge['to'], weight=edge['weight'])
 
     # Ajout des attributs Graphviz pour espacer les nœuds
 
