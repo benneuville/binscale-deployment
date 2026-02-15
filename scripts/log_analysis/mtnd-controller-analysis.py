@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from typing import List, Dict
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from collections import defaultdict
 
@@ -158,7 +158,7 @@ def plot_group_metrics(grouped_data):
 
             timestamps.append(data.timestamp)
             total_lag.append(lag_sum)
-            arrival_rates.append(data.totalExternalArrivalRate)
+            arrival_rates.append(arrival_rate_sum)
             parent_arrival_rates.append(data.parentArrivalRate)
             consumer_counts.append(consumer_count)
 
@@ -242,6 +242,8 @@ if __name__ == "__main__":
 
     prometheus_data_list = []
     prometheus_except = []
+    controller_waiting_scale_time = []
+    di_time = []
     for line in lines:
         if "Pulled data from Prometheus" in line:
             log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
@@ -252,6 +254,17 @@ if __name__ == "__main__":
             log_timestamp_str = line.split(" - ")[0].split("WARN")[0].strip()
             log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
             prometheus_except.append({"timestamp": log_timestamp, "exception": 1})
+        elif "Waiting consumers group" in line:
+            log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+            log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+            controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 1})
+        elif "Sleeping for" in line:
+            log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+            log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+            sleep_time = float(line.split('Sleeping for ')[1].split(" millisecond")[0])
+            controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 0})
+            di_time.append({"timestamp": log_timestamp, "sleep": 1})
+            di_time.append({"timestamp": log_timestamp + timedelta(milliseconds=sleep_time), "sleep": 0})
 
     
         
