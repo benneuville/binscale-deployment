@@ -447,7 +447,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
             "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat* >/dev/null 2>&1
             python3 "$SCRIPT_DIR/log_analysis/mtnd-consumer-analysis.py" consumer_logs.txt &
             python3 "$SCRIPT_DIR/log_analysis/mtnd-controller-analysis.py" controller_logs.txt &
-            python3 "$SCRIPT_DIR/../experience/generator/graph_visualizor.py" $DIR_OUTPUT_FINAL/$file_name &
+            python3 "$SCRIPT_DIR/../experience/generator/graph_visualizor.py" $SCRIPT_DIR/../$file &
             wait
         } &
     fi
