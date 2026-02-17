@@ -3,14 +3,9 @@
 rm -f /export/logs/*
 
 printf "\n\033[1;36m Experience\033[0m [$1]"
-sleep 5
+sleep 10
 
 printf "\n\033[1;36m## Waiting filebeat logs file for [$1] experience \033[0m\n"
-
-while [ $(ls -1 /export/logs/ | wc -l) -eq 0 ]; do
-    printf "."
-    sleep 1
-done
 
 python3 experience/generator/generate_deployment.py "$1" "$2"
 if [ $? -ne 0 ]; then
