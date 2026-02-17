@@ -66,6 +66,7 @@ nodes:
       producer_ack: 0
       partitions: 10
       max_poll_records: 200
+      time_before_availability: 2000
   - id: latency-6
     type: latency
     params:
@@ -87,16 +88,16 @@ edges:
     weight: 1
   - from: latency-1
     to: latency-2
-    weight: 0.2
+    weight: 0.5
   - from: latency-1
     to: latency-3
-    weight: 0.8
+    weight: 1
   - from: latency-2
     to: latency-6
     weight: 0.8
   - from: latency-2
     to: latency-5
-    weight: 0.2
+    weight: 1.5
   - from: latency-3
     to: latency-5
     weight: 1
@@ -116,7 +117,7 @@ controller:
   # #############################
     rebalancing_time: 0.5
     initial_size: 1
-    scaling_strategy: ehanced # naive, ehanced
+    scaling_strategy: reactive 
     metrics:
       request_time_range: 5
       request_time_unit: "s" # "s", "m", "h"
