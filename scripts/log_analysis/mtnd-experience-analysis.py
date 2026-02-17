@@ -158,7 +158,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, latency_thresho
         plt.title(f"Latency and Consumer Count over time — Group: {group}")
         fig.tight_layout()
 
-        filename = f"latency_and_consumers_group_{group}.png"
+        filename = f"latency_and_consumers_group_{group}_sleep_wait_time.png"
         plt.savefig(filename)
         plt.close()
 

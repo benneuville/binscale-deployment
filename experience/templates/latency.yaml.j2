@@ -61,6 +61,10 @@ spec:
               value: "{{ node.params.wsla }}"
             - name: ASYNC_COMMIT
               value: "False"
+{% if node.params.time_before_availability %}
+            - name: TIME_BEFORE_AVAILABITITY
+              value: "{{ node.params.time_before_availability }}"
+{% endif %}
 {% if node.targets|length > 0 %}{% if node.params.processing_strategy %}
             - name: PROCESSING_STRATEGY
               value: "{{ node.params.processing_strategy }}"
