@@ -9,7 +9,7 @@
   tasks:
 
     - name: Reset Filebeat
-      command: kubectl rollout restart daemonset/filebeat -n elastic --ignore-not-found
+      command: kubectl rollout restart daemonset/filebeat -n elastic
 
     - name: Waiting for Filebeat
       command: kubectl wait daemonset/filebeat -n elastic --for=condition=Available --timeout={{ timeout }}
