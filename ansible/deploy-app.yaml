@@ -11,11 +11,6 @@
     - name: Reset Filebeat
       command: kubectl rollout restart daemonset/filebeat -n elastic
 
-    - name: Waiting for Filebeat
-      command: kubectl wait daemonset/filebeat -n elastic --for=condition=Available --timeout={{ timeout }}
-      register: filebeat_ready
-      failed_when: filebeat_ready.rc != 0
-
     - name: Apply Admin Service Account for ControllerAndScaler Pod
       command: kubectl apply -f ../kubernetes/service-account.yaml
 
