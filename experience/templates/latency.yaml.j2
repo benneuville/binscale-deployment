@@ -62,7 +62,7 @@ spec:
             - name: ASYNC_COMMIT
               value: "False"
 {% if node.params.time_before_availability %}
-            - name: TIME_BEFORE_AVAILABITITY
+            - name: TIME_BEFORE_AVAILABILITY
               value: "{{ node.params.time_before_availability }}"
 {% endif %}
 {% if node.targets|length > 0 %}{% if node.params.processing_strategy %}

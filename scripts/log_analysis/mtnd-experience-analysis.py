@@ -143,11 +143,13 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, latency_thresho
         timestamps = np.array([e["timestamp"] for e in waiting_scale])
         values = np.array([e["waiting"] for e in waiting_scale])
         ax3.fill_between(timestamps, values, color="red", step="post", alpha=0.1)
+        ax3.axes.get_yaxis().set_visible(False)
 
         ax4 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in di])
         values = np.array([e["sleep"] for e in di])
         ax4.fill_between(timestamps, values, color="orange", step="post", alpha=0.1)
+        ax4.axes.get_yaxis().set_visible(False)
 
 
         # Légende combinée
