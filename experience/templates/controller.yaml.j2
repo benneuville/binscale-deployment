@@ -14,7 +14,7 @@ data:
     nodes:{% for node in nodes %}
       - name: {{ node.id }}
         wsla: {{ edges_full[node.params.topic_name].to_wsla }}
-        maxConsumptionRate: {{ node.params.max_poll_records }}
+        maxConsumptionRate: {{ node.params.consumption_rate }}
         inputTopic: {{ node.params.topic_name }}
         partitionNumber: {{ edges_full[node.params.topic_name].partitions }}
         groupId: {{ node.params.group_id }}{% endfor %}
