@@ -65,8 +65,8 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 150
-      time_before_availability: 1500
+      consumption_rate: 300
+      time_before_availability: 5000
 
 # edges
 edges:
