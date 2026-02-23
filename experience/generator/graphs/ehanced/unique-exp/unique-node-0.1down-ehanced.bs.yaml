@@ -18,7 +18,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      max_poll_records: 200
+      consumption_rate: 200
       processing_strategy: custom
 
 # edges

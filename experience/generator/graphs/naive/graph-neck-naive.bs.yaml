@@ -24,7 +24,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      max_poll_records: 200
+      consumption_rate: 200
       processing_strategy: custom
   - id: latency-2
     type: latency
@@ -35,7 +35,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      max_poll_records: 200
+      consumption_rate: 200
   - id: latency-3
     type: latency
     params:
@@ -45,7 +45,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      max_poll_records: 200
+      consumption_rate: 200
   - id: latency-4
     type: latency
     params:
@@ -55,7 +55,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      max_poll_records: 200
+      consumption_rate: 200
   - id: latency-5
     type: latency
     params:
@@ -65,7 +65,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      max_poll_records: 200
+      consumption_rate: 200
 
 # edges
 edges:

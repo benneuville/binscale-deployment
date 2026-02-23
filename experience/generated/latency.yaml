@@ -10,10 +10,10 @@ data:
     output:
 
     - name: topic-latency-2
-      ratio: 0.2 
+      ratio: 0.5 
 
     - name: topic-latency-3
-      ratio: 0.8 
+      ratio: 1 
 
 ---
 
@@ -52,8 +52,8 @@ spec:
               value: latencygroup1
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: MAX_POLL_RECORDS
-              value: "200"
+            - name: CONSUMPTION_RATE
+              value: ""
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -64,6 +64,7 @@ spec:
               value: "500"
             - name: ASYNC_COMMIT
               value: "False"
+
 
             - name: PROCESSING_STRATEGY
               value: "custom"
@@ -90,11 +91,8 @@ data:
   latencygroup2.yaml: |
     output:
 
-    - name: topic-latency-6
-      ratio: 0.8 
-
     - name: topic-latency-5
-      ratio: 0.2 
+      ratio: 1.5 
 
 ---
 
@@ -133,8 +131,8 @@ spec:
               value: latencygroup2
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: MAX_POLL_RECORDS
-              value: "200"
+            - name: CONSUMPTION_RATE
+              value: ""
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -145,6 +143,7 @@ spec:
               value: "500"
             - name: ASYNC_COMMIT
               value: "False"
+
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
               value: "/config/latencygroup2.yaml"
@@ -211,8 +210,8 @@ spec:
               value: latencygroup3
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: MAX_POLL_RECORDS
-              value: "200"
+            - name: CONSUMPTION_RATE
+              value: ""
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -223,6 +222,7 @@ spec:
               value: "500"
             - name: ASYNC_COMMIT
               value: "False"
+
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
               value: "/config/latencygroup3.yaml"
@@ -286,8 +286,8 @@ spec:
               value: latencygroup4
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: MAX_POLL_RECORDS
-              value: "200"
+            - name: CONSUMPTION_RATE
+              value: ""
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -298,6 +298,7 @@ spec:
               value: "500"
             - name: ASYNC_COMMIT
               value: "False"
+
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
               value: "/config/latencygroup4.yaml"
@@ -347,8 +348,8 @@ spec:
               value: latencygroup5
             - name: MESSAGE_COUNT
               value: "1000000"
-            - name: MAX_POLL_RECORDS
-              value: "200"
+            - name: CONSUMPTION_RATE
+              value: ""
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -360,56 +361,9 @@ spec:
             - name: ASYNC_COMMIT
               value: "False"
 
----
+            - name: TIME_BEFORE_AVAILABILITY
+              value: "10000"
 
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: latency-6
-  namespace: default
-  labels:
-    app: latency
-    instance: latency-6
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: latency
-  template:
-    metadata:
-      labels:
-        app: latency
-    spec:
-      containers:
-        - name: latency-6
-          image: docker.io/benneuville/binscale:latest
-          imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
-          ports:
-            - containerPort: 8080
-              name: brom
-          env:
-            - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
-            - name: TOPIC
-              value: topic-latency-6
-            - name: GROUP_ID
-              value: latencygroup6
-            - name: MESSAGE_COUNT
-              value: "1000000"
-            - name: MAX_POLL_RECORDS
-              value: "200"
-            - name: SCALE
-              value: "3"
-            - name: SHAPE
-              value: "2.75"
-            - name: TIME_TO_COMMIT
-              value: "50"
-            - name: WSLA
-              value: "500"
-            - name: ASYNC_COMMIT
-              value: "False"
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -432,7 +386,6 @@ spec:
 #            - "latency-3"
 #            - "latency-4"
 #            - "latency-5"
-#            - "latency-6"
   namespaceSelector:
     matchNames:
       - default
