@@ -20,10 +20,10 @@ class Partition:
         self.lagRebalancing = lagRebalancing
 
 class Consumer:
-    def __init__(self, id, assignedPartitions, avgProcessingCapacity=0.0):
+    def __init__(self, id, assignedPartitions, dynamicProcessingCapacity=0.0):
         self.id = id
         self.assignedPartitions = assignedPartitions
-        self.avgProcessingCapacity = avgProcessingCapacity
+        self.dynamicProcessingCapacity = dynamicProcessingCapacity
 
 class ConsumerGroup:
     def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, maxDefinedProcessingRate, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName):
@@ -95,7 +95,7 @@ def pulled_data_from_prometheus(line):
             consumers[consumer_id] = Consumer(
                 id=consumer_id,
                 assignedPartitions=assigned_partitions,
-                avgProcessingCapacity=consumer_data["avgProcessingCapacity"]
+                dynamicProcessingCapacity=consumer_data["dynamicProcessingCapacity"]
             )
 
         # Parsing du consumerGroup
