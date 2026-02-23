@@ -29,31 +29,31 @@ data:
     nodes:
       - name: latency-1
         wsla: 500
-        maxConsumptionRate: 200
+        maxConsumptionRate: 
         inputTopic: topic-latency-1
         partitionNumber: 10
         groupId: latencygroup1
       - name: latency-2
         wsla: 500
-        maxConsumptionRate: 200
+        maxConsumptionRate: 
         inputTopic: topic-latency-2
         partitionNumber: 10
         groupId: latencygroup2
       - name: latency-3
         wsla: 500
-        maxConsumptionRate: 200
+        maxConsumptionRate: 
         inputTopic: topic-latency-3
         partitionNumber: 10
         groupId: latencygroup3
       - name: latency-4
         wsla: 500
-        maxConsumptionRate: 200
+        maxConsumptionRate: 
         inputTopic: topic-latency-4
         partitionNumber: 10
         groupId: latencygroup4
       - name: latency-5
         wsla: 500
-        maxConsumptionRate: 150
+        maxConsumptionRate: 
         inputTopic: topic-latency-5
         partitionNumber: 10
         groupId: latencygroup5
