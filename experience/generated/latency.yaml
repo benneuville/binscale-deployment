@@ -53,7 +53,7 @@ spec:
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
-              value: ""
+              value: "200"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -132,7 +132,7 @@ spec:
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
-              value: ""
+              value: "200"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -211,7 +211,7 @@ spec:
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
-              value: ""
+              value: "200"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -287,7 +287,7 @@ spec:
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
-              value: ""
+              value: "200"
             - name: SCALE
               value: "3"
             - name: SHAPE
@@ -349,7 +349,7 @@ spec:
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
-              value: ""
+              value: "150"
             - name: SCALE
               value: "3"
             - name: SHAPE

@@ -66,7 +66,6 @@ if controller["params"].get("decision_interval", None) is None:
 for node in graph["nodes"]:
     node["targets"] = []
     nodes[node["id"]] = node
-    print(node)
 
 
 for edge in graph["edges"]:
