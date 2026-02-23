@@ -66,17 +66,7 @@ nodes:
       producer_ack: 0
       partitions: 10
       max_poll_records: 150
-      time_before_availability: 5000
-  - id: latency-6
-    type: latency
-    params:
-      group_id: latencygroup6
-      wsla: 500
-      scale: 3
-      shape: 2.75
-      producer_ack: 0
-      partitions: 10
-      max_poll_records: 200
+      time_before_availability: 10000
 
 # edges
 edges:
@@ -85,16 +75,13 @@ edges:
     weight: 1
   - from: workload-2
     to: latency-2
-    weight: 1
+    weight: 0.8
   - from: latency-1
     to: latency-2
     weight: 0.5
   - from: latency-1
     to: latency-3
     weight: 1
-  - from: latency-2
-    to: latency-6
-    weight: 0.8
   - from: latency-2
     to: latency-5
     weight: 1.5
@@ -110,7 +97,7 @@ edges:
 
 controller:
   params:
-    decision_interval: 1500
+    decision_interval: 1000
   # maybe become a edge parameter
     fup: 0.9
     fdown: 0.4
