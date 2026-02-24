@@ -65,7 +65,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 250
 
 # edges
 edges:
