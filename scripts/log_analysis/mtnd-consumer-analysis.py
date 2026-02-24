@@ -449,7 +449,6 @@ def plot_events_by_wsla(min_time, max_time, wsla_threshold=500, nb_consumers_per
             ax2.set_ylabel("Number of consumers", color=color_consumers)
             ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
             ax2.tick_params(axis='y', labelcolor=color_consumers)
-
             min_consumers = - 0.5
             max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
             ax2.set_ylim(min_consumers, max_consumers)

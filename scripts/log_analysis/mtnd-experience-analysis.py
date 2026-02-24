@@ -223,6 +223,76 @@ def prefab_nb_consumers_over_time(min_time, max_time):
     print("➡️ Graphique généré : nb_consumers_over_time.png")
     return results
 
+def plot_group_metrics(grouped_data, nb_consumers_per_group):
+    """
+    Crée un graphe par groupe de consommateurs, affichant :
+    - Le nombre de consommateurs actifs (fichier des consommateurs)
+    - Le nombre de consommateurs rapporté par le controller
+    """
+
+    for group_name, data_list in grouped_data.items():
+        # Récupération des timestamps et du nombre de consommateurs depuis le controller
+        controller_timestamps = [data["timestamp"] for data in data_list]
+        controller_consumer_counts = [data["consumer"] for data in data_list]
+
+        # Récupération des timestamps et du nombre de consommateurs depuis le fichier des consommateurs
+        consumer_timestamps = []
+        consumer_counts = []
+        if group_name in nb_consumers_per_group:
+            consumer_timestamps, consumer_counts = nb_consumers_per_group[group_name]
+
+        # Création du graphe
+        fig, ax = plt.subplots(figsize=(14, 6))
+
+        # Courbe du nombre de consommateurs depuis le fichier des consommateurs
+        if consumer_timestamps:
+            ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:blue', alpha=0.7, label='Consumers (log file)')
+
+        # Courbe du nombre de consommateurs depuis le controller
+        if controller_timestamps:
+            ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Consumers (controller)')
+
+        # Légende combinée
+        lines1, labels1 = ax.get_legend_handles_labels()
+        lines2, labels2 = ax.get_legend_handles_labels()
+        ax.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+
+        plt.title(f"Number of consumers over time — Group: {group_name}")
+        fig.tight_layout()
+
+        filename = f"consumers_comparison_group_{group_name}.png"
+        plt.savefig(filename)
+        plt.close()
+
+        print(f"➡️ Graphique généré : {filename}")
+
+
+def pulled_data_from_prometheus(line):
+    # Extraction du timestamp de la ligne de log
+    log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+    log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+
+    # Extraction de la partie JSON
+    data = line.split("Pulled data from Prometheus :")[1]
+    json_start = data.find('[')
+    json_end = data.rfind(']')
+    json_str = data[json_start:json_end+1]
+    json_str = json_str.replace("\\", "\"")
+    data_list = json.loads(json_str)
+
+    
+    prometheus_data_list = []
+    
+    for data in data_list:
+        res = {}
+        res["timestamp"] = log_timestamp
+        res["name"] = data["consumerGroup"]["consumerName"]
+        res["consumer"] = len(data["consumerGroup"]["assignment"])
+        prometheus_data_list.append(res)
+    return prometheus_data_list
+
+    
+
 def sort_all_events_by_timestamp():
     for group in consumer_latency_events:
         for uid in consumer_latency_events[group]:
@@ -258,26 +328,28 @@ if __name__ == "__main__":
 
     ctrl_file_path = sys.argv[2]
 
-    with open(ctrl_file_path, 'r') as file:
-        lines = file.readlines()
-
+    prometheus_data_list = []
+    prometheus_except = []
     controller_waiting_scale_time = []
     di_time = []
 
-    for line in lines:
-        if "Waiting consumers group" in line:
-            log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
-            log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
-            controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 1})
-        elif "Sleeping for" in line:
-            log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
-            log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
-            sleep_time = float(line.split('Sleeping for ')[1].split(" millisecond")[0])
-            controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 0})
-            di_time.append({"timestamp": log_timestamp, "sleep": 1})
-            di_time.append({"timestamp": log_timestamp + timedelta(milliseconds=sleep_time), "sleep": 0})
+    with open(ctrl_file_path, 'r') as file:
+        for line in file:
+            if "Pulled data from Prometheus" in line:
+                log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+                log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+                prometheus_data_list.append(pulled_data_from_prometheus(line))
+                prometheus_except.append({"timestamp": log_timestamp, "exception": 0})
 
+    grouped_data = defaultdict(list)
+    for all_data in prometheus_data_list:
+        for data in all_data:
+            group_name = data["name"]
+            grouped_data[group_name].append(data)
     
+    for group_name in grouped_data:
+        grouped_data[group_name].sort(key=lambda x: x["timestamp"])
+
     min_time, max_time = get_global_time_bounds()
     sort_all_events_by_timestamp()
 
@@ -285,6 +357,8 @@ if __name__ == "__main__":
     di_time.sort(key=lambda x: x["timestamp"])
 
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
+    print(nb_consumers_per_group)
+    plot_group_metrics(grouped_data, nb_consumers_per_group)
 
     # # 2. Latence par groupe
     plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, nb_consumers_per_group = nb_consumers_per_group)
