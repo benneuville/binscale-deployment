@@ -133,6 +133,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, latency_thresho
             min_consumers = - 0.5
             max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
             ax2.set_ylim(min_consumers, max_consumers)
+            ax2.set_xlim(min_time, max_time)
 
         text_str = f"Events > {latency_threshold}ms: {count_high} ({percent_high:.1f}%)"
         ax1.text(0.98, 0.98, text_str, transform=ax1.transAxes,
@@ -144,12 +145,14 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, latency_thresho
         values = np.array([e["waiting"] for e in waiting_scale])
         ax3.fill_between(timestamps, values, color="red", step="post", alpha=0.1)
         ax3.axes.get_yaxis().set_visible(False)
+        ax3.set_xlim(min_time, max_time)
 
         ax4 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in di])
         values = np.array([e["sleep"] for e in di])
         ax4.fill_between(timestamps, values, color="orange", step="post", alpha=0.1)
         ax4.axes.get_yaxis().set_visible(False)
+        ax4.set_xlim(min_time, max_time)
 
 
         # Légende combinée
@@ -340,6 +343,21 @@ if __name__ == "__main__":
                 log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
                 prometheus_data_list.append(pulled_data_from_prometheus(line))
                 prometheus_except.append({"timestamp": log_timestamp, "exception": 0})
+            elif "MetricResultEmptyException" in line:
+                log_timestamp_str = line.split(" - ")[0].split("WARN")[0].strip()
+                log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+                prometheus_except.append({"timestamp": log_timestamp, "exception": 1})
+            elif "Waiting consumers group" in line:
+                log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+                log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+                controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 1})
+            elif "Sleeping for" in line:
+                log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+                log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+                sleep_time = float(line.split('Sleeping for ')[1].split(" millisecond")[0])
+                controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 0})
+                di_time.append({"timestamp": log_timestamp, "sleep": 1})
+                di_time.append({"timestamp": log_timestamp + timedelta(milliseconds=sleep_time), "sleep": 0})
 
     grouped_data = defaultdict(list)
     for all_data in prometheus_data_list:
