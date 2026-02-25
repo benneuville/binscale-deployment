@@ -26,7 +26,7 @@ class Consumer:
         self.dynamicProcessingCapacity = dynamicProcessingCapacity
 
 class ConsumerGroup:
-    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, maxDefinedProcessingRate, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName):
+    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, maxDefinedProcessingRate, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName, upProcessRate, downProcessRate, upLagCapacity, downLagCapacity):
         self.wsla = wsla
         self.inputTopic = inputTopic
         self.consumerName = consumerName
@@ -39,6 +39,10 @@ class ConsumerGroup:
         self.fdown = fdown
         self.name = name
         self.groupName = groupName
+        self.upProcessRate = upProcessRate
+        self.downProcessRate = downProcessRate
+        self.upLagCapacity = upLagCapacity
+        self.downLagCapacity = downLagCapacity
 
 class PrometheusData:
     def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, avgEventProcessingRate, totalArrivalRate, totalExternalArrivalRate, maxAverageArrivalRate, avgParentArrivalRate, minAverageArrivalRate, maxLagCapacity, minLagCapacity):
@@ -114,7 +118,11 @@ def pulled_data_from_prometheus(line):
             fup=data["consumerGroup"]["fup"],
             fdown=data["consumerGroup"]["fdown"],
             name=data["consumerGroup"]["name"],
-            groupName=data["consumerGroup"]["groupName"]
+            groupName=data["consumerGroup"]["groupName"],
+            upProcessRate = data["consumerGroup"]["fup"] * len(assignment) * 200,
+            downProcessRate = data["consumerGroup"]["fdown"] * len(assignment) * 200,
+            upLagCapacity =  data["consumerGroup"]["fup"] * len(assignment) * 200 * 0.5,
+            downLagCapacity = data["consumerGroup"]["fdown"] * len(assignment) * 0.5
         )
 
         # Création de l'objet PrometheusData
@@ -145,6 +153,10 @@ def plot_group_metrics(grouped_data):
         arrival_rates = []
         parent_arrival_rates = []
         consumer_counts = []
+        upProcessRates = []
+        downProcessRates = []
+        upLagCapacities = []
+        downLagCapacities = []
 
         for data in data_list:
             # Lag cumulé (somme des lags de toutes les partitions)
@@ -161,6 +173,10 @@ def plot_group_metrics(grouped_data):
             arrival_rates.append(arrival_rate_sum)
             parent_arrival_rates.append(data.parentArrivalRate)
             consumer_counts.append(consumer_count)
+            upProcessRates.append(data.consumerGroup.upProcessRate)
+            downProcessRates.append(data.consumerGroup.downProcessRate)
+            upLagCapacities.append(data.consumerGroup.upLagCapacity)
+            downLagCapacities.append(data.consumerGroup.downLagCapacity)
 
         # Création du graphique
         fig, ax1 = plt.subplots(figsize=(14, 7))
@@ -170,6 +186,7 @@ def plot_group_metrics(grouped_data):
         ax1.set_xlabel('Time')
         ax1.set_ylabel('Total Lag', color=color_lag)
         ax1.plot(timestamps, total_lag, color=color_lag, marker='o', label='Total Lag')
+        # ax1.fill_between(timestamps, upLagCapacities, downLagCapacities, color=color_lag, alpha=0.1)
         ax1.tick_params(axis='y', labelcolor=color_lag)
         ax1.grid(True)
 
@@ -178,6 +195,7 @@ def plot_group_metrics(grouped_data):
         color_arrival = 'tab:orange'
         ax2.set_ylabel('Arrival Rate (sum)', color=color_arrival)
         ax2.plot(timestamps, arrival_rates, color=color_arrival, marker='x', label='Arrival Rate')
+        ax2.fill_between(timestamps, upProcessRates, downProcessRates, color=color_arrival, alpha=0.1)
         ax2.tick_params(axis='y', labelcolor=color_arrival)
 
         # Axe 4 : ParentArrivalRate

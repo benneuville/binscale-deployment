@@ -62,7 +62,7 @@ def parseLatency(line):
 # -------------------------------------------------
 # 2️⃣ LATENCE PAR GROUPE (un graphe par groupe)
 # -------------------------------------------------
-def plot_latency_by_group(waiting_scale, di, min_time, max_time, latency_threshold=500, nb_consumers_per_group=None):
+def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None):
     """
     Produit un graphe par groupe :
     - courbe de latence fusionnée de tous les consumers du groupe
@@ -226,7 +226,7 @@ def prefab_nb_consumers_over_time(min_time, max_time):
     print("➡️ Graphique généré : nb_consumers_over_time.png")
     return results
 
-def plot_group_metrics(grouped_data, nb_consumers_per_group):
+def plot_nbconsumer(grouped_data, nb_consumers_per_group):
     """
     Crée un graphe par groupe de consommateurs, affichant :
     - Le nombre de consommateurs actifs (fichier des consommateurs)
@@ -293,8 +293,6 @@ def pulled_data_from_prometheus(line):
         res["consumer"] = len(data["consumerGroup"]["assignment"])
         prometheus_data_list.append(res)
     return prometheus_data_list
-
-    
 
 def sort_all_events_by_timestamp():
     for group in consumer_latency_events:
@@ -382,7 +380,7 @@ if __name__ == "__main__":
 
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
     print(nb_consumers_per_group)
-    plot_group_metrics(grouped_data, nb_consumers_per_group)
+    plot_nbconsumer(grouped_data, nb_consumers_per_group)
 
     # # 2. Latence par groupe
-    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, nb_consumers_per_group = nb_consumers_per_group)
+    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group = nb_consumers_per_group)
