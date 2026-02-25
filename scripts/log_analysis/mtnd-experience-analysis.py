@@ -358,6 +358,12 @@ if __name__ == "__main__":
                 controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 0})
                 di_time.append({"timestamp": log_timestamp, "sleep": 1})
                 di_time.append({"timestamp": log_timestamp + timedelta(milliseconds=sleep_time), "sleep": 0})
+            elif "INFO  AdminComponent:66 -  - Deployment" in line:
+                log_timestamp_str = line.split(" - ")[0].split("INFO")[0].strip()
+                log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+                controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 0})
+                di_time.append({"timestamp": log_timestamp, "sleep": 0})
+            
 
     grouped_data = defaultdict(list)
     for all_data in prometheus_data_list:
