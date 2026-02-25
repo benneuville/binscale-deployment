@@ -1,13 +1,13 @@
 
 nodes:
 # producer input workload
-  - id: workload-1
+  - id: workload-ehanced-1
     type: workload
     params:
       workload: biased
       producer_ack: 0
       delay_ms: 600
-  - id: workload-2
+  - id: workload-ehanced-2
     type: workload
     params:
       workload: biased
@@ -15,10 +15,10 @@ nodes:
       delay_ms: 600
 
 # node consumers
-  - id: latency-1
+  - id: latency-ehanced-1
     type: latency
     params:
-      group_id: latencygroup1
+      group_id: latencyehancedgroup1
       wsla: 500
       scale: 3
       shape: 2.75
@@ -26,40 +26,43 @@ nodes:
       partitions: 10
       consumption_rate: 200
       processing_strategy: custom
-  - id: latency-2
+  - id: latency-ehanced-2
     type: latency
     params:
-      group_id: latencygroup2
+      group_id: latencyehancedgroup2
       wsla: 500
       scale: 3
       shape: 2.75
       producer_ack: 0
       partitions: 10
       consumption_rate: 200
-  - id: latency-3
+      processing_strategy: custom
+  - id: latency-ehanced-3
     type: latency
     params:
-      group_id: latencygroup3
+      group_id: latencyehancedgroup3
       wsla: 500
       scale: 3
       shape: 2.75
       producer_ack: 0
       partitions: 10
       consumption_rate: 200
-  - id: latency-4
+      processing_strategy: custom
+  - id: latency-ehanced-4
     type: latency
     params:
-      group_id: latencygroup4
+      group_id: latencyehancedgroup4
       wsla: 500
       scale: 3
       shape: 2.75
       producer_ack: 0
       partitions: 10
       consumption_rate: 200
-  - id: latency-5
+      processing_strategy: custom
+  - id: latency-ehanced-5
     type: latency
     params:
-      group_id: latencygroup5
+      group_id: latencyehancedgroup5
       wsla: 500
       scale: 3
       shape: 2.75
@@ -69,29 +72,29 @@ nodes:
 
 # edges
 edges:
-  - from: workload-1
-    to: latency-1
+  - from: workload-ehanced-1
+    to: latency-ehanced-1
     weight: 1
-  - from: workload-2
-    to: latency-2
+  - from: workload-ehanced-2
+    to: latency-ehanced-2
     weight: 1
-  - from: latency-1
-    to: latency-2
+  - from: latency-ehanced-1
+    to: latency-ehanced-2
     weight: 0.2
-  - from: latency-1
-    to: latency-3
+  - from: latency-ehanced-1
+    to: latency-ehanced-3
     weight: 0.8
-  - from: latency-2
-    to: latency-5
+  - from: latency-ehanced-2
+    to: latency-ehanced-5
     weight: 0.2
-  - from: latency-3
-    to: latency-5
+  - from: latency-ehanced-3
+    to: latency-ehanced-5
     weight: 1
-  - from: latency-3
-    to: latency-4
+  - from: latency-ehanced-3
+    to: latency-ehanced-4
     weight: 0.2
-  - from: latency-4
-    to: latency-5
+  - from: latency-ehanced-4
+    to: latency-ehanced-5
     weight: 1
 
 controller:
