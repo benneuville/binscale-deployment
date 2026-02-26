@@ -2,6 +2,7 @@ import sys
 import datetime
 import matplotlib.pyplot as plt
 import numpy as np
+from collections import defaultdict
 
 consumer_latency_events = {}  # { group: { uid: [LatencyEvent] } }
 
@@ -319,7 +320,8 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
     Produit un graphe par groupe :
     - courbe de latence fusionnée de tous les consumers du groupe
     - courbe en escalier du nombre de consommateurs actifs (axe secondaire, échelle adaptée)
-    - traits rouges pour les downscale, verts pour les upscale
+    - légende avec le nombre et pourcentage d'événements violant la SLA
+    - légende avec le nombre de réplicas (consumers uniques) par minute
     """
     for group, uids in consumer_latency_events.items():
         all_events = []
@@ -327,12 +329,19 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
             all_events.extend(events)
         all_events = sorted(all_events, key=lambda ev: ev.insertion_date)
 
-
         total_events = len(all_events)
         high_latency_events = [ev for ev in all_events if ev.latency >= latency_threshold]
         count_high = len(high_latency_events)
         percent_high = (count_high / total_events * 100) if total_events > 0 else 0
 
+        # Calcul du nombre de réplicas (consumers uniques) par minute
+        replicas_per_minute = defaultdict(set)
+        for ev in all_events:
+            minute_key = ev.insertion_date.replace(second=0, microsecond=0)
+            replicas_per_minute[minute_key].add(ev.consumer_id)
+        avg_replicas_per_minute = sum(len(replicas) for replicas in replicas_per_minute.values()) / len(replicas_per_minute) if replicas_per_minute else 0
+
+        # Rest of your existing code for consumer counts and plotting
         uid_start_times = {}
         uid_end_times = {}
         for uid, events in uids.items():
@@ -381,16 +390,23 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
             ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
             ax2.tick_params(axis='y', labelcolor=color_consumers)
 
-            min_consumers = - 0.5
+            min_consumers = -0.5
             max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
             ax2.set_ylim(min_consumers, max_consumers)
 
-        text_str = f"Events > {latency_threshold}ms: {count_high} ({percent_high:.1f}%)"
-        ax1.text(0.98, 0.98, text_str, transform=ax1.transAxes,
+        # Légende pour les événements violant la SLA
+        text_str_sla = f"Events > {latency_threshold}ms: {count_high} ({percent_high:.1f}%)"
+        ax1.text(0.98, 0.98, text_str_sla, transform=ax1.transAxes,
                  verticalalignment='top', horizontalalignment='right',
                  bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
-        
-        # Légende combinée
+
+        # Légende pour le nombre moyen de réplicas par minute
+        text_str_replicas = f"Avg replicas/min: {avg_replicas_per_minute:.1f}"
+        ax1.text(0.98, 0.92, text_str_replicas, transform=ax1.transAxes,
+                 verticalalignment='top', horizontalalignment='right',
+                 bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+
+        # Légende combinée pour les courbes
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
@@ -403,6 +419,7 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
         plt.close()
 
         print(f"➡️ Graphique généré : {filename}")
+
 
 # -------------------------------------------------
 # 3️⃣ NOMBRE D'ÉVÉNEMENTS PAR PAS WSLA (par groupe)
@@ -438,20 +455,20 @@ def plot_events_by_wsla(min_time, max_time, wsla_threshold=500, nb_consumers_per
         ax1.plot(step_times, step_counts, color='lightblue', alpha=0.7, label='Event count')
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Number of Events")
-        ax1.set_title(f"Number of Events per WSLA Step — Group: {group}")
+        # ax1.set_title(f"Number of Events per WSLA Step — Group: {group}")
         ax1.grid(True)
         ax1.set_xlim(min_time, max_time)
         fig.autofmt_xdate()
 
-        if(nb_consumers_per_group and group in nb_consumers_per_group):
-            ax2 = ax1.twinx()
-            color_consumers = 'tab:orange'
-            ax2.set_ylabel("Number of consumers", color=color_consumers)
-            ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
-            ax2.tick_params(axis='y', labelcolor=color_consumers)
-            min_consumers = - 0.5
-            max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
-            ax2.set_ylim(min_consumers, max_consumers)
+        # if(nb_consumers_per_group and group in nb_consumers_per_group):
+        #     ax2 = ax1.twinx()
+        #     color_consumers = 'tab:orange'
+        #     ax2.set_ylabel("Number of consumers", color=color_consumers)
+        #     ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
+        #     ax2.tick_params(axis='y', labelcolor=color_consumers)
+        #     min_consumers = - 0.5
+        #     max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
+        #     ax2.set_ylim(min_consumers, max_consumers)
 
         fig.tight_layout()
         filename = f"events_by_wsla_group_{group}.png"

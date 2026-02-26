@@ -145,6 +145,76 @@ def pulled_data_from_prometheus(line):
 
     return prometheus_data_list
 
+def plot_group_arrival_rate(grouped_data):
+    for group_name, data_list in grouped_data.items():
+        timestamps = [data.timestamp for data in data_list]
+        nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
+        avg_total_arrival_rates_by_nb_assignment = []
+        for data in data_list:
+            avg_total_arrival_rates_by_nb_assignment.append(data.totalArrivalRate / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+
+        fig, ax1 = plt.subplots(figsize=(14, 7))
+        color_arrival = 'tab:orange'
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Avg Total Arrival Rate per Consumer', color=color_arrival)
+        ax1.axhline(y=(data.consumerGroup.fup * 200), color='red', linestyle='--', label='Up Process Rate')
+        ax1.axhline(y=(data.consumerGroup.fdown * 200), color='red', linestyle='--', label='Down Process Rate')
+        ax1.plot(timestamps, avg_total_arrival_rates_by_nb_assignment, color=color_arrival, marker='x', label='Avg Total Arrival Rate per Consumer')
+        ax1.tick_params(axis='y', labelcolor=color_arrival)
+        ax1.grid(True)
+        ax2 = ax1.twinx()
+        color_consumers = 'tab:green'
+        ax2.set_ylabel('Number of Consumers', color=color_consumers)
+        ax2.step(timestamps, nb_consumers, color=color_consumers, label='Number of Consumers', alpha=.05)
+        ax2.fill_between(timestamps, nb_consumers, color=color_consumers, step="pre", alpha=0.05)
+        ax2.tick_params(axis='y', labelcolor=color_consumers)
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.xticks(rotation=45)
+        plt.title(f"Avg Total Arrival Rate per Consumer over Time — Consumer Group: {group_name}")
+        fig.tight_layout()
+        filename = f"avg_total_arrival_rate_per_consumer_group_{group_name}.png"
+        plt.savefig(filename)
+        plt.close()
+
+        print(f"➡️ Graphique généré : {filename}")
+
+def plot_group_lag(grouped_data):
+    for group_name, data_list in grouped_data.items():
+        timestamps = [data.timestamp for data in data_list]
+        nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
+        avg_lag = []
+        for data in data_list:
+            avg_lag.append(sum(p.lag for p in data.partitionsMetaData.values()) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+
+        fig, ax1 = plt.subplots(figsize=(14, 7))
+        color_arrival = 'tab:orange'
+        ax1.set_xlabel('Time')
+        ax1.set_ylabel('Avg Total Lag per Consumer', color=color_arrival)
+        ax1.axhline(y=(data.consumerGroup.fup * 200 * 0.5), color='red', linestyle='--', label='Avg Up Allowed Lag')
+        ax1.axhline(y=(data.consumerGroup.fdown * 200 * 0.5), color='red', linestyle='--', label='Avg Down Allowed Lag')
+        ax1.plot(timestamps, avg_lag, color=color_arrival, marker='x', label='Total Lag')
+        ax1.tick_params(axis='y', labelcolor=color_arrival)
+        ax1.grid(True)
+        ax2 = ax1.twinx()
+        color_consumers = 'tab:green'
+        ax2.set_ylabel('Number of Consumers', color=color_consumers)
+        ax2.step(timestamps, nb_consumers, color=color_consumers, label='Number of Consumers', alpha=.05)
+        ax2.fill_between(timestamps, nb_consumers, color=color_consumers, step="pre", alpha=0.05)
+        ax2.tick_params(axis='y', labelcolor=color_consumers)
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
+        plt.xticks(rotation=45)
+        plt.title(f"Avg Total Lag per Consumer over Time — Consumer Group: {group_name}")
+        fig.tight_layout()
+        filename = f"avg_total_lag_per_consumer_group_{group_name}.png"
+        plt.savefig(filename)
+        plt.close()
+
 def plot_group_metrics(grouped_data):
     for group_name, data_list in grouped_data.items():
         # Préparation des données
@@ -200,11 +270,11 @@ def plot_group_metrics(grouped_data):
 
         # Axe 4 : ParentArrivalRate
         ax4 = ax1.twinx()
-        color_pArrivalRate = 'tab:red'
-        ax4.spines['right'].set_position(('outward', 60))
-        ax4.set_ylabel('Parent Arrival Rate (sum)', color = color_pArrivalRate)
-        ax4.plot(timestamps, parent_arrival_rates, color_pArrivalRate, marker='x', label='Parent Arrival Rate')
-        ax4.tick_params(axis='y', labelcolor=color_pArrivalRate)
+        # color_pArrivalRate = 'tab:red'
+        # ax4.spines['right'].set_position(('outward', 60))
+        # ax4.set_ylabel('Parent Arrival Rate (sum)', color = color_pArrivalRate)
+        # ax4.plot(timestamps, parent_arrival_rates, color_pArrivalRate, marker='x', label='Parent Arrival Rate')
+        # ax4.tick_params(axis='y', labelcolor=color_pArrivalRate)
 
         # Axe 3 : Nombre de consommateurs
         ax3 = ax1.twinx()
@@ -300,3 +370,7 @@ if __name__ == "__main__":
     plot_group_metrics(grouped_data)
 
     plot_decision_timeline(prometheus_except)
+
+    plot_group_arrival_rate(grouped_data)
+
+    plot_group_lag(grouped_data)
