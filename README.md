@@ -10,7 +10,6 @@ The goal of this repository is to experiment the Bin Pack autoscaler solution in
 - Kafka
 - Ansible
 - Prometheus
-- Grafana
 - Python
 - Kibana
 - NFS server (for multinode solution)
@@ -19,11 +18,13 @@ The goal of this repository is to experiment the Bin Pack autoscaler solution in
 
 ## Project structure
 
-- [/ansible](https://github.com/benneuville/binscale-deployment/tree/no_elastic/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
-- [/kubernetes](https://github.com/benneuville/binscale-deployment/tree/no_elastic/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
-- [/scripts](https://github.com/benneuville/binscale-deployment/tree/no_elastic/scripts) folder which contains the following `.sh` files
+- [/ansible](https://github.com/benneuville/binscale-deployment/tree/master/ansible) folder which contains the `.yaml` files to automatically deploy the application and its environment
+- [/kubernetes](https://github.com/benneuville/binscale-deployment/tree/master/kubernetes) folder which contains the `.yaml` files used by the Ansible scripts to deploy all the Kubernetes ressources
+- [/scripts](https://github.com/benneuville/binscale-deployment/tree/master/scripts) folder which contains the following `.sh` files
+- [/experience](https://github.com/benneuville/binscale-deployment/tree/master/experience) contains [/generator/graphs](https://github.com/benneuville/binscale-deployment/tree/master/experience/generator/graphs) which define the graph toplogy and branching factor of experiments
 
 ### MULTI-NODES cluster scripts
+- `multinode-complete-deployment.sh`: deploy complete experimentations on Grid'5000, and analyse results (logs)
 - `multinode-master.sh`: deploy master-node
 - `multinode-worker.sh`: deploy worker
 - `multinode-launchExperience.sh`: launch experience on master-node
@@ -46,9 +47,17 @@ Other scripts could be common to master and workers deployment, and are called i
 
 ---
 
+## Automatic experimentation on Grid'5000
+
+To lunch a fully automatic experiments on Grid'5000, use the command below :
+```sh
+./scripts/multinode-complete-deployment.sh -u <user>
+```
+More paramters with `-h` or `--help` option.
+
 ## Link to Experience
-* [Source Experience Repository](https://github.com/fatimazahraelaaziz/Experience/tree/main)
-* [Experience Repository](https://github.com/benneuville/binscale-experience/tree/no_elastic) for this repository
+* [Experience Repository](https://github.com/benneuville/binscale-experience/tree/main) for this repository
+* *[Source Experience Repository](https://github.com/fatimazahraelaaziz/Experience/tree/main)*
 
  
 ## First configuration with Minikube on a single, clean machine
@@ -63,6 +72,7 @@ NB: You must be in the root folder to use the scripts.
 Here are some instructions on useful procedures and commands on [Grid5000](https://www.grid5000.fr/) and is based on the [Getting Started](https://www.grid5000.fr/w/Getting_Started) section
 #### Create an account
 Refer to [Get an account](https://www.grid5000.fr/w/Grid5000:Get_an_account) section of the website
+
 
 #### Access to Grid5000
 ```bash

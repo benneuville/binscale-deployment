@@ -374,11 +374,11 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
         fig, ax1 = plt.subplots(figsize=(14, 6))
 
         color_latency = 'tab:blue'
-        ax1.set_xlabel("Time")
-        ax1.set_ylabel("Latency (ms)", color=color_latency)
+        ax1.set_xlabel("Time",  fontsize=17)
+        ax1.set_ylabel("Latency (ms)", color=color_latency, fontsize=17)
         ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency')
         ax1.axhline(y=latency_threshold, color='red', linestyle='--')
-        ax1.tick_params(axis='y', labelcolor=color_latency)
+        ax1.tick_params(axis='y', labelcolor=color_latency, labelsize=14)
         ax1.grid(True)
         ax1.set_xlim(min_time, max_time)
         fig.autofmt_xdate()
@@ -386,9 +386,9 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
         ax2 = ax1.twinx()
         if(nb_consumers_per_group and group in nb_consumers_per_group):
             color_consumers = 'tab:orange'
-            ax2.set_ylabel("Number of consumers", color=color_consumers)
+            ax2.set_ylabel("Number of consumers", color=color_consumers, fontsize=17)
             ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
-            ax2.tick_params(axis='y', labelcolor=color_consumers)
+            ax2.tick_params(axis='y', labelcolor=color_consumers, labelsize=14)
 
             min_consumers = -0.5
             max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
@@ -397,19 +397,19 @@ def plot_latency_by_group(min_time, max_time, latency_threshold=500, nb_consumer
         # Légende pour les événements violant la SLA
         text_str_sla = f"Events > {latency_threshold}ms: {count_high} ({percent_high:.1f}%)"
         ax1.text(0.98, 0.98, text_str_sla, transform=ax1.transAxes,
-                 verticalalignment='top', horizontalalignment='right',
-                 bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
 
         # Légende pour le nombre moyen de réplicas par minute
         text_str_replicas = f"Avg replicas/min: {avg_replicas_per_minute:.1f}"
-        ax1.text(0.98, 0.92, text_str_replicas, transform=ax1.transAxes,
-                 verticalalignment='top', horizontalalignment='right',
-                 bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+        ax1.text(0.75, 0.98, text_str_replicas, transform=ax1.transAxes,
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
 
         # Légende combinée pour les courbes
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
-        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left', fontsize=13)
 
         plt.title(f"Latency and Consumer Count over time — Group: {group}")
         fig.tight_layout()
@@ -508,6 +508,8 @@ def main():
 
     plot_events_by_wsla(min_time, max_time, nb_consumers_per_group = nb_consumers_per_group)
 
+    duration = (max_time - min_time).total_seconds()
+    print(f"⏱️ Durée totale de l'analyse : {duration:.2f} secondes")
     
 #     # 🌍 Graphes globaux
 #     plot_latency_by_partition_global(min_time, max_time)
