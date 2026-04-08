@@ -9,14 +9,13 @@ import json
 from collections import defaultdict
 
 class Partition:
-    def __init__(self, id, lag=0, arrivalRate={}, processingTime=0.0, processingCount=0.0, latency=0.0, processingCapacity=0.0, lagRebalancing=0.0):
+    def __init__(self, id, lag=0, arrivalRate={}, processingTime=0.0, processingCount=0.0, latency=0.0, lagRebalancing=0.0):
         self.id = id
         self.lag = lag
         self.arrivalRate = arrivalRate
         self.processingTime = processingTime
         self.processingCount = processingCount
         self.latency = latency
-        self.processingCapacity = processingCapacity
         self.lagRebalancing = lagRebalancing
 
 class Consumer:
@@ -45,20 +44,15 @@ class ConsumerGroup:
         self.downLagCapacity = downLagCapacity
 
 class PrometheusData:
-    def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, avgEventProcessingRate, totalArrivalRate, totalExternalArrivalRate, maxAverageArrivalRate, avgParentArrivalRate, minAverageArrivalRate, maxLagCapacity, minLagCapacity):
+    def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, totalArrivalRate, totalExternalArrivalRate, avgParentArrivalRate):
         self.timestamp = timestamp
         self.consumerGroup = consumerGroup
         self.partitionsMetaData = partitionsMetaData
         self.consumersMetaData = consumersMetaData
         self.parentArrivalRate = parentArrivalRate
-        self.avgEventProcessingRate = avgEventProcessingRate
         self.totalArrivalRate = totalArrivalRate
         self.totalExternalArrivalRate = totalExternalArrivalRate
-        self.maxAverageArrivalRate = maxAverageArrivalRate
         self.avgParentArrivalRate = avgParentArrivalRate
-        self.minAverageArrivalRate = minAverageArrivalRate
-        self.maxLagCapacity = maxLagCapacity
-        self.minLagCapacity = minLagCapacity
 
 def pulled_data_from_prometheus(line):
     # Extraction du timestamp de la ligne de log
@@ -87,7 +81,6 @@ def pulled_data_from_prometheus(line):
                 processingTime=partition_data["processingTime"],
                 processingCount=partition_data["processingCount"],
                 latency=partition_data["latency"],
-                processingCapacity=partition_data["processingCapacity"],
                 lagRebalancing=partition_data["lagRebalancing"]
             )
 
@@ -132,14 +125,9 @@ def pulled_data_from_prometheus(line):
             partitionsMetaData=partitions,
             consumersMetaData=consumers,
             parentArrivalRate=data["parentArrivalRate"],
-            avgEventProcessingRate=data["avgEventProcessingRate"],
             totalArrivalRate=data["totalInputArrivalRate"],
             totalExternalArrivalRate=data["totalExternalArrivalRate"],
-            maxAverageArrivalRate=data["maxAverageArrivalRate"],
-            avgParentArrivalRate=data["avgParentArrivalRate"],
-            minAverageArrivalRate=data["minAverageArrivalRate"],
-            maxLagCapacity=data["maxLagCapacity"],
-            minLagCapacity=data["minLagCapacity"]
+            avgParentArrivalRate=data["avgParentArrivalRate"]
         )
         prometheus_data_list.append(prometheus_data)
 
