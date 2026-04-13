@@ -133,9 +133,6 @@ data:
     setup.template:
       name: "filebeat-aks-devops-prod"
       pattern: "filebeat-aks-devops-prod-%{[agent.version]}"
-    # setup.template:
-    #   name: "filebeat-aks-devops-prod"
-    #   pattern: "filebeat-aks-devops-prod-%{[agent.version]}"
 
 ---
 apiVersion: apps/v1
@@ -166,22 +163,6 @@ spec:
           "-e",
         ]
         env:
-        # - name: ELASTICSEARCH_HOST
-        #   value: elastic-cluster-es-http.elastic.SVC
-        # - name: ELASTICSEARCH_PORT
-        #   value: "9200"
-        # - name: ELASTICSEARCH_USERNAME
-        #   value: elastic
-        # - name: ELASTICSEARCH_PASSWORD
-        #   #value: FPQ8y8b90juV8LaV88KB12k8
-        #   valueFrom:
-        #     secretKeyRef:
-        #       name: elastic-cluster-es-elastic-user
-        #       key: elastic
-        # - name: ELASTIC_CLOUD_ID
-        #   value:
-        # - name: ELASTIC_CLOUD_AUTH
-        #   value:
         - name: NODE_NAME
           valueFrom:
             fieldRef:
