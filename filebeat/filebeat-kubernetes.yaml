@@ -117,12 +117,14 @@ data:
       enabled: true
       paths:
         - /var/log/containers/*.log
+      parsers:
+        - container: ~
       processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
             matchers:
-            - logs_path:
-                logs_path: "/var/log/containers/"
+              - logs_path:
+                  logs_path: "/var/log/containers/"
       harvester_buffer_size: 32768
       scan_frequency: 2s
     output.file:
@@ -130,11 +132,19 @@ data:
       filename: filebeat-logs
       rotate_every_kb: 102400
       number_of_files: 200
-      rotate_on_startup : true
+      rotate_on_startup: true
 
     setup.template:
       name: "filebeat-aks-devops-prod"
       pattern: "filebeat-aks-devops-prod-%{[agent.version]}"
+
+    logging.level: debug
+    logging.to_files: true
+    logging.files:
+      path: /var/log/filebeat
+      name: filebeat.log
+      keepfiles: 7
+      permissions: 0644
 
 ---
 apiVersion: apps/v1
