@@ -117,6 +117,7 @@ data:
       enabled: true
       paths:
         - /var/log/containers/*.log
+      symlinks: true
       parsers:
         - container: ~
       processors:
