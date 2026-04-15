@@ -116,7 +116,7 @@ data:
       id: container-logs
       enabled: true
       paths:
-        - /var/log/pods/*/*/*.log
+        - /var/log/containers/*.log
       parsers:
         - container: ~
       symlinks: true
@@ -125,7 +125,7 @@ data:
             host: ${NODE_NAME}
             matchers:
               - logs_path:
-                  logs_path: "/var/log/pods/"
+                  logs_path: "/var/log/containers/"
         - drop_event:
             when:
               or:
@@ -195,6 +195,7 @@ spec:
               fieldPath: spec.nodeName
         securityContext:
           runAsUser: 0
+          privileged: true
         resources:
           limits:
             memory: 500Mi
