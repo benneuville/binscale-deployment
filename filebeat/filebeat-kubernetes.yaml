@@ -118,9 +118,6 @@ data:
       paths:
         - /var/log/pods/*/*/*.log
       symlinks: true
-      parsers:
-        - container: 
-            stream: stdout
       processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
