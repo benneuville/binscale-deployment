@@ -116,15 +116,28 @@ data:
       id: container-logs
       enabled: true
       paths:
-        - /var/log/containers/*.log
+        - "/var/log/pods/*/*/*.log"
       parsers:
         - container: 
+            stream: stdout
       processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
             matchers:
               - logs_path:
-                  logs_path: "/var/log/containers/"
+                  logs_path: "/var/log/pods/"
+        - drop_event:
+            when:
+              or:
+                - not:
+                    equals:
+                      kubernetes.labels.app: "latency"
+                - not:
+                    equals:
+                      kubernetes.labels.app: "controllerandscaler"
+                - not:
+                    equals:
+                      kubernetes.labels.app: "workload"
       harvester_buffer_size: 32768
       scan_frequency: 2s
 
