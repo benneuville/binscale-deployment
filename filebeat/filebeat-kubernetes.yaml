@@ -149,6 +149,7 @@ data:
       rotate_on_startup: true
 
     setup.template:
+      enabled: false
       name: "filebeat-aks-devops-prod"
       pattern: "filebeat-aks-devops-prod-%{[agent.version]}"
 
