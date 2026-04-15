@@ -116,15 +116,15 @@ data:
       id: container-logs
       enabled: true
       paths:
-        - /var/log/pods/*/*/*.log  # Read directly from /var/log/pods/
+        - /var/log/containers/*.log
       parsers:
-        - container: ~
+        - container: 
       processors:
         - add_kubernetes_metadata:
             host: ${NODE_NAME}
             matchers:
               - logs_path:
-                  logs_path: "/var/log/pods/"
+                  logs_path: "/var/log/containers/"
       harvester_buffer_size: 32768
       scan_frequency: 2s
 
@@ -198,7 +198,7 @@ spec:
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
-        - name: varlogpods  # New volume mount for /var/log/pods/
+        - name: varlogpods
           mountPath: /var/log/pods
           readOnly: true
         - name: varlog
@@ -215,7 +215,7 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
-      - name: varlogpods  # New volume for /var/log/pods/
+      - name: varlogpods
         hostPath:
           path: /var/log/pods
       - name: varlog
