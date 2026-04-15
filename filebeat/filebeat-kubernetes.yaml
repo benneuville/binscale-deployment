@@ -116,7 +116,8 @@ data:
       id: container-logs
       enabled: true
       paths:
-        - "/var/log/pods/*/*/*.log"
+        - /var/log/pods/*/*/*.log
+      symlinks: true
       parsers:
         - container: 
             stream: stdout
