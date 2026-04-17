@@ -417,6 +417,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
     date=$(date '+%Y-%m-%d-%H.%M')
     DIR_OUTPUT_FINAL="$OUTPUT_DIR/$date-$file_name-$NUM_NODES-nodes"
 
+    printf "\033[38;5;8m ◻ SSH connection \033[0m[$file]"
     ssh $SITE_NAME.g5k "ssh root@$master_node \"cd binscale-deployment && scripts/multinode-launchExperience.sh "$file" "$IMAGE_TAG"\""
 
     file_name_escaped="${file_name//\"/\\\"}"
