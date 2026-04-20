@@ -63,4 +63,4 @@
       ignore_errors: yes
 
     - name: Apply Filebeat
-      command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
+      command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n kube-system

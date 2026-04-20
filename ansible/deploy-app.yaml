@@ -9,7 +9,7 @@
   tasks:
 
     - name: Reset Filebeat
-      command: kubectl rollout restart daemonset/filebeat -n elastic
+      command: kubectl rollout restart daemonset/filebeat -n kube-system
 
     - name: Apply Admin Service Account for ControllerAndScaler Pod
       command: kubectl apply -f ../kubernetes/service-account.yaml
