@@ -23,4 +23,3 @@ sudo DEBIAN_FRONTEND=noninteractive apt install -y python3-pandas
 printf "\033[1;31m## you have to launch the command you get from the master node \033[0m\n"
 printf "\033[1;31m## to join the cluster \033[0m\n"
 printf "\033[1;31m## format : sudo kubeadm join [master-node-ip]:6443 --token [token] --discovery-token-ca-cert-hash sha256:[hash] \033[0m\n"
-
