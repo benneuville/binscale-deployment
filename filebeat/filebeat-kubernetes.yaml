@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: filebeat
-  namespace: kube-system
+  namespace: elastic
   labels:
     k8s-app: filebeat
 ---
@@ -36,7 +36,7 @@ kind: Role
 metadata:
   name: filebeat
   # should be the namespace where filebeat is running
-  namespace: kube-system
+  namespace: elastic
   labels:
     k8s-app: filebeat
 rules:
@@ -50,7 +50,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: filebeat-kubeadm-config
-  namespace: kube-system
+  namespace: elastic
   labels:
     k8s-app: filebeat
 rules:
@@ -68,7 +68,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: filebeat
-  namespace: kube-system
+  namespace: elastic
 roleRef:
   kind: ClusterRole
   name: filebeat
@@ -78,11 +78,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: filebeat
-  namespace: kube-system
+  namespace: elastic
 subjects:
   - kind: ServiceAccount
     name: filebeat
-    namespace: kube-system
+    namespace: elastic
 roleRef:
   kind: Role
   name: filebeat
@@ -92,11 +92,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: filebeat-kubeadm-config
-  namespace: kube-system
+  namespace: elastic
 subjects:
   - kind: ServiceAccount
     name: filebeat
-    namespace: kube-system
+    namespace: elastic
 roleRef:
   kind: Role
   name: filebeat-kubeadm-config
@@ -106,7 +106,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: filebeat-config
-  namespace: kube-system
+  namespace: elastic
   labels:
     k8s-app: filebeat
 data:
@@ -129,77 +129,47 @@ data:
               matchers:
                 - logs_path:
                     logs_path: "/var/log/containers/"
-          
-          ## To enable collection of rotated logs, replace the above `filebeat.inputs` configuration with this.
-          ## WARNING:
-          ##    - enabling rotated pod logs ingestion might cause data re-ingestion, refer to the docs for details: https://www.elastic.co/docs/reference/beats/filebeat/running-on-kubernetes#_kubernetes_deploy_manifests
-          ##    - container metadata isn't available when collecting logs from /var/log/pods/. Refer to add_kubernetes_metadata docs for details: https://www.elastic.co/docs/reference/beats/filebeat/add-kubernetes-metadata#_logs_path
-          #- type: filestream
-          #  id: kubernetes-container-logs
-          #  compression: auto # enable gzip decompression. Refer to the docs for details: https://www.elastic.co/docs/reference/beats/filebeat/filebeat-input-filestream#reading-gzip-files
-          #  parsers:
-          #    - container: ~
-          #  paths:
-          #    - /var/log/pods/*/*/*.log*
-          #  prospector:
-          #    scanner:
-          #      fingerprint.enabled: true
-          #  file_identity.fingerprint: ~
-          #  processors:
-          #    - add_kubernetes_metadata:
-          #        host: ${NODE_NAME}
-          #        default_indexers.enabled: false
-          #        default_matchers.enabled: false
-          #        indexers:
-          #          - pod_uid:
-          #        matchers:
-          #          - logs_path:
-          #              logs_path: "/var/log/pods/"
-          #              resource_type: "pod"
-          #
+        # - drop_event:
+        #     when:
+        #       or:
+        #         - not:
+        #             equals:
+        #               kubernetes.labels.app: "latency"
+        #         - not:
+        #             equals:
+        #               kubernetes.labels.app: "controllerandscaler"
+        #         - not:
+        #             equals:
+        #               kubernetes.labels.app: "workload"
+      harvester_buffer_size: 32768
+      scan_frequency: 2s
 
-    # To enable hints based autodiscover, remove `filebeat.inputs` configuration and uncomment this:
-    # filebeat.autodiscover:
-    #  providers:
-    #    - type: kubernetes
-    #      node: ${NODE_NAME}
-    #      hints.enabled: true
-    #      hints.default_config:
-    #        type: filestream
-    #        id: kubernetes-container-logs-${data.kubernetes.pod.name}-${data.kubernetes.container.id}
-    #        paths:
-    #        - /var/log/containers/*-${data.kubernetes.container.id}.log
-    # # To enable collection of rotated logs, use the following configuration instead. WARNING: It might cause data re-ingestion for existing deployments. Refer to the docs for details: https://www.elastic.co/docs/reference/beats/filebeat/running-on-kubernetes#ingesting-rotated-log-files
-    # #         id: kubernetes-container-logs-${data.kubernetes.pod.uid}-${data.kubernetes.container.name}
-    # #         compression: auto # enable gzip decompression. Refer to the docs for details: https://www.elastic.co/docs/reference/beats/filebeat/filebeat-input-filestream#reading-gzip-files
-    # #         paths:
-    # #           - /var/log/pods/${data.kubernetes.namespace}_${data.kubernetes.pod.name}_${data.kubernetes.pod.uid}/${data.kubernetes.container.name}/*.log*
+    output.file:
+      path: "/var/log/experiments"
+      filename: filebeat-logs
+      rotate_every_kb: 102400
+      number_of_files: 200
+      rotate_on_startup: true
 
-    #        parsers:
-    #        - container: ~
-    #        prospector:
-    #         scanner:
-    #           fingerprint.enabled: true
-    #           symlinks: true # it can be removed if collecting logs from /var/log/pods/
-    #        file_identity.fingerprint: ~
-    
-    processors:
-      - add_cloud_metadata:
-      - add_host_metadata:
+    setup.template:
+      enabled: false
+      name: "filebeat"
+      pattern: "filebeat-*"
 
-    cloud.id: ${ELASTIC_CLOUD_ID}
-    cloud.auth: ${ELASTIC_CLOUD_AUTH}
+    logging.level: debug
+    logging.to_files: true
+    logging.files:
+      path: /var/log/filebeat
+      name: filebeat.log
+      keepfiles: 7
+      permissions: 0644
 
-    output.elasticsearch:
-      hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
-      username: ${ELASTICSEARCH_USERNAME}
-      password: ${ELASTICSEARCH_PASSWORD}
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: filebeat
-  namespace: kube-system
+  namespace: elastic
   labels:
     k8s-app: filebeat
 spec:
@@ -223,32 +193,19 @@ spec:
           "-e",
         ]
         env:
-        - name: ELASTICSEARCH_HOST
-          value: elasticsearch
-        - name: ELASTICSEARCH_PORT
-          value: "9200"
-        - name: ELASTICSEARCH_USERNAME
-          value: elastic
-        - name: ELASTICSEARCH_PASSWORD
-          value: changeme
-        - name: ELASTIC_CLOUD_ID
-          value:
-        - name: ELASTIC_CLOUD_AUTH
-          value:
         - name: NODE_NAME
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
         securityContext:
           runAsUser: 0
-          # If using Red Hat OpenShift uncomment this:
-          #privileged: true
+          privileged: true
         resources:
           limits:
-            memory: 400Mi
+            memory: 500Mi
           requests:
             cpu: 200m
-            memory: 100Mi
+            memory: 200Mi
         volumeMounts:
         - name: config
           mountPath: /etc/filebeat.yml
@@ -259,9 +216,15 @@ spec:
         - name: varlibdockercontainers
           mountPath: /var/lib/docker/containers
           readOnly: true
+        - name: varlogpods
+          mountPath: /var/log/pods
+          readOnly: true
         - name: varlog
           mountPath: /var/log
-          readOnly: true
+          readOnly: false
+        - name: varlogexperiments
+          mountPath: /var/log/experiments
+          readOnly: false
       volumes:
       - name: config
         configMap:
@@ -270,13 +233,16 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
+      - name: varlogpods
+        hostPath:
+          path: /var/log/pods
       - name: varlog
         hostPath:
           path: /var/log
-      # data folder stores a registry of read status for all files, so we don't send everything again on a Filebeat pod restart
+      - name: varlogexperiments
+        hostPath:
+          path: /var/log/experiments
       - name: data
         hostPath:
-          # When filebeat runs as non-root user, this directory needs to be writable by group (g+w).
           path: /var/lib/filebeat-data
           type: DirectoryOrCreate
----
