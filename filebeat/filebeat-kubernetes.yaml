@@ -222,6 +222,9 @@ spec:
         - name: varlog
           mountPath: /var/log
           readOnly: false
+        - name: varlogcontainers
+          mountPath: /var/log/containers
+          readOnly: false
         - name: varlogexperiments
           mountPath: /var/log/experiments
           readOnly: false
@@ -236,6 +239,9 @@ spec:
       - name: varlogpods
         hostPath:
           path: /var/log/pods
+      - name: varlogcontainers
+        hostPath:
+          path: /var/log/containers
       - name: varlog
         hostPath:
           path: /var/log
