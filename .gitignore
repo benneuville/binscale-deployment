@@ -6,3 +6,4 @@ get_helm.sh
 *.log
 logs_test/
 .vscode/
+filebeat-kubernetes.yaml

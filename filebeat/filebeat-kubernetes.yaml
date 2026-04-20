@@ -112,22 +112,23 @@ metadata:
 data:
   filebeat.yml: |-
     filebeat.inputs:
-    - type: filestream
-      id: container-logs
-      enabled: true
-      paths:
-        - '/var/log/containers/*.log'
-      parsers:
-        - container:
-            stream: stdout
-      prospector.scanner.symlinks: true
-      processors:
-        - add_kubernetes_metadata:
-            host: ${NODE_NAME}
-            matchers:
-              - logs_path:
-                  logs_path: "/var/log/pods/"
-                  resource_type: "pod"
+      - type: filestream
+        id: kubernetes-container-logs
+        paths:
+          - /var/log/containers/*.log
+        parsers:
+          - container: ~
+        prospector:
+          scanner:
+            fingerprint.enabled: true
+            symlinks: true
+        file_identity.fingerprint: ~
+        processors:
+          - add_kubernetes_metadata:
+              host: ${NODE_NAME}
+              matchers:
+                - logs_path:
+                    logs_path: "/var/log/containers/"
         # - drop_event:
         #     when:
         #       or:
