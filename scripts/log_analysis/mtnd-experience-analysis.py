@@ -257,8 +257,7 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group):
 
         # Légende combinée
         lines1, labels1 = ax.get_legend_handles_labels()
-        lines2, labels2 = ax.get_legend_handles_labels()
-        ax.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+        ax.legend(lines1, labels1, loc='upper left')
 
         plt.title(f"Number of consumers over time — Group: {group_name}")
         fig.tight_layout()
