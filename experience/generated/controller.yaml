@@ -8,55 +8,55 @@ metadata:
 data:
   controller-config.yaml: |
     topics:
-      - from: latency-1
-        to: latency-2
-        weight: 0.5
-      - from: latency-1
-        to: latency-3
-        weight: 1
-      - from: latency-2
-        to: latency-5
-        weight: 1.5
-      - from: latency-3
-        to: latency-5
-        weight: 1
-      - from: latency-3
-        to: latency-4
+      - from: latency-ehanced-1
+        to: latency-ehanced-2
         weight: 0.2
-      - from: latency-4
-        to: latency-5
+      - from: latency-ehanced-1
+        to: latency-ehanced-3
+        weight: 0.8
+      - from: latency-ehanced-2
+        to: latency-ehanced-5
+        weight: 0.2
+      - from: latency-ehanced-3
+        to: latency-ehanced-5
+        weight: 1
+      - from: latency-ehanced-3
+        to: latency-ehanced-4
+        weight: 0.2
+      - from: latency-ehanced-4
+        to: latency-ehanced-5
         weight: 1
     nodes:
-      - name: latency-1
+      - name: latency-ehanced-1
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-1
+        inputTopic: topic-latency-ehanced-1
         partitionNumber: 10
-        groupId: latencygroup1
-      - name: latency-2
+        groupId: latencyehancedgroup1
+      - name: latency-ehanced-2
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-2
+        inputTopic: topic-latency-ehanced-2
         partitionNumber: 10
-        groupId: latencygroup2
-      - name: latency-3
+        groupId: latencyehancedgroup2
+      - name: latency-ehanced-3
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-3
+        inputTopic: topic-latency-ehanced-3
         partitionNumber: 10
-        groupId: latencygroup3
-      - name: latency-4
+        groupId: latencyehancedgroup3
+      - name: latency-ehanced-4
         wsla: 500
         maxConsumptionRate: 200
-        inputTopic: topic-latency-4
+        inputTopic: topic-latency-ehanced-4
         partitionNumber: 10
-        groupId: latencygroup4
-      - name: latency-5
+        groupId: latencyehancedgroup4
+      - name: latency-ehanced-5
         wsla: 500
-        maxConsumptionRate: 150
-        inputTopic: topic-latency-5
+        maxConsumptionRate: 200
+        inputTopic: topic-latency-ehanced-5
         partitionNumber: 10
-        groupId: latencygroup5
+        groupId: latencyehancedgroup5
 ---
 apiVersion: v1
 kind: Pod
@@ -64,7 +64,7 @@ metadata:
   name: controllerandscaler
   namespace: default
   labels:
-    app: grpcassignmentserver
+    app: controllerandscaler
 spec:
   serviceAccountName: admin-service-account
   restartPolicy: Always
@@ -86,15 +86,15 @@ spec:
         - name: INIT_SIZE
           value: "1"
         - name: SCALING_STRATEGY
-          value: "reactive"
+          value: "ehanced"
         - name: FUP
           value: "0.9"
         - name: FDOWN
-          value: "0.4"
+          value: "1"
         - name: REB_TIME
           value: "0.5"
         - name: DI
-          value: "1000"
+          value: "1500"
         - name: REQUEST_TIME_RANGE
           value: "5"
         - name: REQUEST_TIME_UNIT
@@ -117,7 +117,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: grpcassignmentserver
+  name: controllerandscaler
   namespace: default
 spec:
   selector:

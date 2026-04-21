@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-1
+  name: topic-latency-ehanced-1
   labels:
     strimzi.io/cluster: my-cluster
 spec:
@@ -16,7 +16,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-2
+  name: topic-latency-ehanced-2
   labels:
     strimzi.io/cluster: my-cluster
 spec:
@@ -31,7 +31,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-3
+  name: topic-latency-ehanced-3
   labels:
     strimzi.io/cluster: my-cluster
 spec:
@@ -46,7 +46,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-5
+  name: topic-latency-ehanced-5
   labels:
     strimzi.io/cluster: my-cluster
 spec:
@@ -61,7 +61,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-4
+  name: topic-latency-ehanced-4
   labels:
     strimzi.io/cluster: my-cluster
 spec:

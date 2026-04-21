@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: workload-1
+  name: workload-ehanced-1
   namespace: default
   labels:
     app: workload
@@ -22,7 +22,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-1
+              value: topic-latency-ehanced-1
             - name: PARTITION_WEIGHTS
               value: "1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS
@@ -44,7 +44,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: workload-2
+  name: workload-ehanced-2
   namespace: default
   labels:
     app: workload
@@ -63,7 +63,7 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: TOPIC
-              value: topic-latency-2
+              value: topic-latency-ehanced-2
             - name: PARTITION_WEIGHTS
               value: "1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS
