@@ -33,7 +33,7 @@ controller:
     fup: 0.9
     fdown: 1
   # #############################
-    rebalancing_time: 0.5
+    rebalancing_time: 0.1
     initial_size: 1
     scaling_strategy: naive
     metrics:
