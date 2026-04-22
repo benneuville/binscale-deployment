@@ -411,7 +411,7 @@ sed -i 's/\r$//' "$SCRIPT_DIR"/log_analysis/*.sh
 
 for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
 
-    printf "\033[38;5;8m ◻ Run experience \033[0m[$file]"
+    printf "\033[38;5;8m ◻ Run experience \033[0m[$file]\n"
 
     file_name=$(basename "$file" .bs.yaml | tr " " "_")
     date=$(date '+%Y-%m-%d-%H.%M')
