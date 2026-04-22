@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: pre-pull-image
+  labels:
+    app: pre-pull-image
+spec:
+  selector:
+    matchLabels:
+      app: pre-pull-image
+  template:
+    metadata:
+      labels:
+        app: pre-pull-image
+    spec:
+      containers:
+      - name: pre-pull
+        image: docker.io/benneuville/binscale:latest
+        command: ["sh", "-c", "echo 'Image pulled and cached' && exit 0"]
+      terminationGracePeriodSeconds: 0

@@ -44,7 +44,7 @@ spec:
         - name: INIT_SIZE
           value: "1"
         - name: SCALING_STRATEGY
-          value: "naive"
+          value: "ehanced"
         - name: FUP
           value: "0.9"
         - name: FDOWN
@@ -52,7 +52,7 @@ spec:
         - name: REB_TIME
           value: "0.5"
         - name: DI
-          value: "5000"
+          value: "1500"
         - name: REQUEST_TIME_RANGE
           value: "5"
         - name: REQUEST_TIME_UNIT
