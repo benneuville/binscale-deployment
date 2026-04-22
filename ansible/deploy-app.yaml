@@ -12,7 +12,7 @@
       command: kubectl rollout restart daemonset/filebeat -n elastic
 
     - name: WARM UP - Pre-pull Image
-      command: kubectl apply ../experience/generated/pre-pull-image.yaml
+      command: kubectl apply -f ../experience/generated/pre-pull-image.yaml
 
     - name: Apply Admin Service Account for ControllerAndScaler Pod
       command: kubectl apply -f ../kubernetes/service-account.yaml
