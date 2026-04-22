@@ -138,7 +138,7 @@ with open("experience/generated/controller.yaml", "w") as f:
                                          edges=filtered_edges,
                                          edges_full=edges,
                                          nodes=[v for v in nodes.values() if v["type"] == LATENCY],
-                                         image_tag=image_tag))=
+                                         image_tag=image_tag))
 print("✅ Controller generated")
 
 print("🚂 Generating pre-pull image job...")
