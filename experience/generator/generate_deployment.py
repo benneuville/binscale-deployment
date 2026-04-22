@@ -7,6 +7,7 @@ LATENCY = "latency"
 CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
+PRE_PULL_IMAGE = "pre-pull-image"
 
 
 if len(sys.argv) < 2:
@@ -47,6 +48,9 @@ with open("experience/templates/monitoring-consumer.yaml.j2") as f:
 
 with open("experience/templates/controller.yaml.j2") as f:
     templates[CONTROLLER] = Template(f.read())
+
+with open("experience/templates/pre-pull-image.yaml.j2") as f:
+    templates[PRE_PULL_IMAGE] = Template(f.read())
 
 ## Load graph
 with open(file_path) as f:
@@ -107,7 +111,6 @@ for edge in edges.values():
 # Output all topics in one file in "/generated/kafka-topics.yaml"
 with open("experience/generated/kafka-topics.yaml", "w") as f:
     f.write("\n---\n".join(edges_topic_gen))
-
 print("✅ Kafka topics generated")
 
 print("🚂 Generating Service nodes...")
@@ -118,7 +121,6 @@ nodes_service_gen.append(templates[MONITORING_CONSUMER].render(nodes=[v for v in
 # Output all service nodes in one file in "/generated/latency.yaml"
 with open("experience/generated/latency.yaml", "w") as f:
     f.write("\n---\n".join(nodes_service_gen))
-
 print("✅ Service nodes generated")
 
 print("🚂 Generating Workload nodes...")
@@ -128,18 +130,18 @@ for node in [v for v in nodes.values() if v["type"] == WORLOAD]:
 # Output all workload nodes in one file in "/generated/workload.yaml"
 with open("experience/generated/workload.yaml", "w") as f:
     f.write("\n---\n".join(nodes_workload_gen))
-
 print("✅ Workload nodes generated")
 
 print("🚂 Generating Controller...")
-
-
 with open("experience/generated/controller.yaml", "w") as f:
     f.write(templates[CONTROLLER].render(controller=controller,
                                          edges=filtered_edges,
                                          edges_full=edges,
                                          nodes=[v for v in nodes.values() if v["type"] == LATENCY],
-                                         image_tag=image_tag))
-
-
+                                         image_tag=image_tag))=
 print("✅ Controller generated")
+
+print("🚂 Generating pre-pull image job...")
+with open("experience/generated/pre-pull-image.yaml", "w") as f:
+    f.write(templates[PRE_PULL_IMAGE].render(image_tag=image_tag))
+print("✅ Pre-pull image job generated")
