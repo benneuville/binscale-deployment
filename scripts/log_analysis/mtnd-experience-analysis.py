@@ -226,7 +226,7 @@ def prefab_nb_consumers_over_time(min_time, max_time):
     print("➡️ Graphique généré : nb_consumers_over_time.png")
     return results
 
-def plot_nbconsumer(grouped_data, nb_consumers_per_group):
+def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_decision_taked):
     """
     Crée un graphe par groupe de consommateurs, affichant :
     - Le nombre de consommateurs actifs (fichier des consommateurs)
@@ -243,17 +243,27 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group):
         consumer_counts = []
         if group_name in nb_consumers_per_group:
             consumer_timestamps, consumer_counts = nb_consumers_per_group[group_name]
+        
+        decision_timestamp = []
+        decision_count = []
+        if group_name in nb_cons_controller_decision_taked:
+            decision_timestamp = [data["timestamp"] for data in nb_cons_controller_decision_taked]
+            decision_count = [data["size"] for data in nb_cons_controller_decision_taked]
+
 
         # Création du graphe
         fig, ax = plt.subplots(figsize=(14, 6))
 
         # Courbe du nombre de consommateurs depuis le fichier des consommateurs
         if consumer_timestamps:
-            ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:blue', alpha=0.7, label='Consumers (log file)')
+            ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Number of Consumers (log file)')
 
         # Courbe du nombre de consommateurs depuis le controller
         if controller_timestamps:
-            ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Consumers (controller)')
+            ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:blue', alpha=0.2, label='Number of Consumers detected (controller)')
+
+        if decision_timestamp:
+            ax.step(decision_timestamp, decision_count, where='post', color='tab:green', alpha=0.7, label='Number of Consumers choosen (controller)')
 
         # Légende combinée
         lines1, labels1 = ax.get_legend_handles_labels()
@@ -332,6 +342,7 @@ if __name__ == "__main__":
     prometheus_except = []
     controller_waiting_scale_time = []
     di_time = []
+    nb_cons_controller_decision_taked = {}
 
     with open(ctrl_file_path, 'r') as file:
         for line in file:
@@ -360,6 +371,18 @@ if __name__ == "__main__":
                 log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
                 controller_waiting_scale_time.append({"timestamp": log_timestamp, "waiting": 0})
                 di_time.append({"timestamp": log_timestamp, "sleep": 0})
+            elif "AssignmentComponent" in line:
+                log_timestamp_str = line.split("INFO")[0].strip()
+                log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
+                info_cons_gr = line.split("Decision for ")[1].split(" : ")
+                name_gr = info_cons_gr[0]
+                size_gr = info_cons_gr[1]
+                if(name_gr in nb_cons_controller_decision_taked):
+                    nb_cons_controller_decision_taked.get(name_gr).append({"timestamp": log_timestamp, "size": size_gr})
+                else:
+                    nb_cons_controller_decision_taked.get(name_gr) = [{"timestamp": log_timestamp, "size": size_gr}]
+
+
             
 
     grouped_data = defaultdict(list)
@@ -378,8 +401,7 @@ if __name__ == "__main__":
     di_time.sort(key=lambda x: x["timestamp"])
 
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
-    print(nb_consumers_per_group)
-    plot_nbconsumer(grouped_data, nb_consumers_per_group)
+    plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_decision_taked)
 
     # # 2. Latence par groupe
     plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group = nb_consumers_per_group)
