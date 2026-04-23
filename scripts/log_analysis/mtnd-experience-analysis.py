@@ -247,9 +247,11 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
         decision_timestamp = []
         decision_count = []
         if group_name in nb_cons_controller_decision_taked:
-            decision_timestamp = [data["timestamp"] for data in nb_cons_controller_decision_taked]
-            decision_count = [data["size"] for data in nb_cons_controller_decision_taked]
 
+            decision_timestamp = [data["timestamp"] for data in nb_cons_controller_decision_taked[group_name]]
+            decision_count = [data["size"] for data in nb_cons_controller_decision_taked[group_name]]
+
+        print(group_name)
 
         # Création du graphe
         fig, ax = plt.subplots(figsize=(14, 6))
@@ -377,12 +379,10 @@ if __name__ == "__main__":
                 info_cons_gr = line.split("Decision for ")[1].split(" : ")
                 name_gr = info_cons_gr[0]
                 size_gr = info_cons_gr[1]
-                if(name_gr in nb_cons_controller_decision_taked):
-                    nb_cons_controller_decision_taked.get(name_gr).append({"timestamp": log_timestamp, "size": size_gr})
-                else:
-                    nb_cons_controller_decision_taked.get(name_gr) = [{"timestamp": log_timestamp, "size": size_gr}]
+                if(name_gr not in nb_cons_controller_decision_taked):
+                    nb_cons_controller_decision_taked[name_gr] = []
 
-
+                nb_cons_controller_decision_taked.get(name_gr).append({"timestamp": log_timestamp, "size": size_gr})
             
 
     grouped_data = defaultdict(list)
