@@ -31,8 +31,8 @@ controller:
   params:
     decision_interval: 1500
   # maybe become a edge parameter
-    fup: 1
-    fdown: 1
+    fup: 0.9
+    fdown: 0.5
   # #############################
     rebalancing_time: 0.5
     initial_size: 1

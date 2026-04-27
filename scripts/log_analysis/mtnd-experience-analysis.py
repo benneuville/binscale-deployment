@@ -257,8 +257,8 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
             ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Nombre de consommateurs (fichier)')
         if controller_timestamps:
             ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:blue', alpha=0.7, label='Nombre de consommateurs (controller)')
-        # if decision_timestamp:
-        #     ax.step(decision_timestamp, decision_count, where='post', color='tab:green', alpha=0.7, label='Nombre de consommateurs choisis (controller)')
+        if decision_timestamp:
+            ax.step(decision_timestamp, decision_count, where='post', color='tab:green', alpha=0.7, label='Nombre de consommateurs choisis (controller)')
 
         ax.set_ylim(bottom=0)
         ax.legend(loc='upper left')
