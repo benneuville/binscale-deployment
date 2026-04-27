@@ -13,9 +13,9 @@
     - name: Launch Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
 
-    - name: Wait 120s
+    - name: Wait 100s
       pause:
-        seconds: 120
+        seconds: 100
 
     - name: WARM UP - Pre-pull Image
       command: kubectl apply -f ../experience/generated/pre-pull-image.yaml
