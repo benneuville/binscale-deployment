@@ -12,7 +12,7 @@
       command: kubectl rollout restart daemonset/filebeat -n elastic
 
     - name: Wainting for Filebeat
-      command: kubectl wait pod -l app=filebeat --for=condition=Ready --timeout={{ timeout }} -n elastic
+      command: kubectl wait pod -l k8s-app=filebeat --for=condition=Ready --timeout={{ timeout }} -n elastic
       register: filebeat_ready
       failed_when: filebeat_ready.rc != 0
 
