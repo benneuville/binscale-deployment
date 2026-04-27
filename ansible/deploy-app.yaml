@@ -11,10 +11,14 @@
     - name: Reset Filebeat
       command: kubectl rollout restart daemonset/filebeat -n elastic
 
-    - name: Wainting for Filebeat
-      command: kubectl wait pod -l k8s-app=filebeat --for=condition=Ready --timeout={{ timeout }} -n elastic
-      register: filebeat_ready
-      failed_when: filebeat_ready.rc != 0
+    - name: Waiting for Filebeat pods to be Running
+      shell: >
+        kubectl get pods -l k8s-app=filebeat -n elastic -o jsonpath='{.items[*].status.phase}' | grep -q Running
+      register: filebeat_running
+      until: filebeat_running.rc == 0
+      retries: 10
+      delay: 10
+      changed_when: false
 
     - name: WARM UP - Pre-pull Image
       command: kubectl apply -f ../experience/generated/pre-pull-image.yaml
