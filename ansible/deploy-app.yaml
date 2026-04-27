@@ -11,11 +11,12 @@
     - name: Reset Filebeat
       command: kubectl rollout restart daemonset/filebeat -n elastic
 
-    - name: Waiting for Filebeat pods to be Running
+    - name: Wait for Filebeat pods to be Running
       shell: >
-        kubectl get pods -l k8s-app=filebeat -n elastic -o jsonpath='{.items[*].status.phase}' | grep -q Running
-      register: filebeat_running
-      until: filebeat_running.rc == 0
+        kubectl get pods -l k8s-app=filebeat -n elastic -o json |
+        jq -e '.items | any(.status.phase == "Running" and (.metadata.deletionTimestamp == null))'
+      register: filebeat_truly_running
+      until: filebeat_truly_running.rc == 0
       retries: 10
       delay: 10
       changed_when: false
