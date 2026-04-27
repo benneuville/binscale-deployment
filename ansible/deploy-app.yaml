@@ -9,9 +9,9 @@
   tasks:
 
     - name: Delete Filebeat
-      command: kubectl delete ../filebeat/filebeat-kubernetes.yaml -n elastic
+      command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic
     - name: Launch Filebeat
-      command: kubectl delete ../filebeat/filebeat-kubernetes.yaml -n elastic
+      command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
 
     - name: Wait 45s
       pause:
