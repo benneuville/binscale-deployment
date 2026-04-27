@@ -32,7 +32,7 @@
       command: kubectl apply -f ../experience/generated/controller.yaml
 
     - name: Waiting for Controller
-      command: kubectl wait pod -l app=controllerandscaler --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
+      command: kubectl wait pod -l app=controllerandscaler --for=condition=Ready --timeout={{ timeout }} -n elastic
       register: controller_ready
       failed_when: controller_ready.rc != 0
 
