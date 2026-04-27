@@ -8,18 +8,14 @@
 
   tasks:
 
-    - name: Reset Filebeat
-      command: kubectl rollout restart daemonset/filebeat -n elastic
+    - name: Delete Filebeat
+      command: kubectl delete ../filebeat/filebeat-kubernetes.yaml -n elastic
+    - name: Launch Filebeat
+      command: kubectl delete ../filebeat/filebeat-kubernetes.yaml -n elastic
 
-    - name: Wait for Filebeat pods to be Running
-      shell: >
-        kubectl get pods -l k8s-app=filebeat -n elastic -o json |
-        jq -e '.items | any(.status.phase == "Running" and (.metadata.deletionTimestamp == null))'
-      register: filebeat_truly_running
-      until: filebeat_truly_running.rc == 0
-      retries: 10
-      delay: 10
-      changed_when: false
+    - name: Wait 45s
+      pause:
+        seconds: 45
 
     - name: WARM UP - Pre-pull Image
       command: kubectl apply -f ../experience/generated/pre-pull-image.yaml
