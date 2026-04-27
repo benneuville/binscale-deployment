@@ -231,51 +231,44 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
     Crée un graphe par groupe de consommateurs, affichant :
     - Le nombre de consommateurs actifs (fichier des consommateurs)
     - Le nombre de consommateurs rapporté par le controller
+    - Le nombre de consommateurs choisis par le controller
     """
 
     for group_name, data_list in grouped_data.items():
-        # Récupération des timestamps et du nombre de consommateurs depuis le controller
         controller_timestamps = [data["timestamp"] for data in data_list]
         controller_consumer_counts = [data["consumer"] for data in data_list]
 
-        # Récupération des timestamps et du nombre de consommateurs depuis le fichier des consommateurs
         consumer_timestamps = []
         consumer_counts = []
         if group_name in nb_consumers_per_group:
             consumer_timestamps, consumer_counts = nb_consumers_per_group[group_name]
-        
+
         decision_timestamp = []
         decision_count = []
         if group_name in nb_cons_controller_decision_taked:
-
             decision_timestamp = [data["timestamp"] for data in nb_cons_controller_decision_taked[group_name]]
             decision_count = [data["size"] for data in nb_cons_controller_decision_taked[group_name]]
 
-        print(group_name)
+        print(f"Génération du graphique pour le groupe : {group_name}")
 
-        # Création du graphe
         fig, ax = plt.subplots(figsize=(14, 6))
 
-        # Courbe du nombre de consommateurs depuis le fichier des consommateurs
         if consumer_timestamps:
-            ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Number of Consumers (log file)')
-
-        # Courbe du nombre de consommateurs depuis le controller
+            ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Nombre de consommateurs (fichier)')
         if controller_timestamps:
-            ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:blue', alpha=0.2, label='Number of Consumers detected (controller)')
+            ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:blue', alpha=0.7, label='Nombre de consommateurs (controller)')
+        # if decision_timestamp:
+        #     ax.step(decision_timestamp, decision_count, where='post', color='tab:green', alpha=0.7, label='Nombre de consommateurs choisis (controller)')
 
-        if decision_timestamp:
-            ax.step(decision_timestamp, decision_count, where='post', color='tab:green', alpha=0.7, label='Number of Consumers choosen (controller)')
-
-        # Légende combinée
-        lines1, labels1 = ax.get_legend_handles_labels()
-        ax.legend(lines1, labels1, loc='upper left')
-
-        plt.title(f"Number of consumers over time — Group: {group_name}")
+        ax.set_ylim(bottom=0)
+        ax.legend(loc='upper left')
+        plt.title(f"Évolution du nombre de consommateurs — Groupe : {group_name}")
+        plt.xlabel("Temps")
+        plt.ylabel("Nombre de consommateurs")
         fig.tight_layout()
 
         filename = f"consumers_comparison_group_{group_name}.png"
-        plt.savefig(filename)
+        plt.savefig(filename, dpi=200, bbox_inches='tight')
         plt.close()
 
         print(f"➡️ Graphique généré : {filename}")
@@ -399,6 +392,8 @@ if __name__ == "__main__":
 
     controller_waiting_scale_time.sort(key=lambda x: x["timestamp"])
     di_time.sort(key=lambda x: x["timestamp"])
+    for group in nb_cons_controller_decision_taked:
+        nb_cons_controller_decision_taked[group].sort(key=lambda x: x["timestamp"])
 
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
     plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_decision_taked)
