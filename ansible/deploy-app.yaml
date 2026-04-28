@@ -9,7 +9,7 @@
   tasks:
 
     - name: Delete Filebeat
-      command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic
+      command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic  --ignore-not-found=true
     - name: Launch Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
 
