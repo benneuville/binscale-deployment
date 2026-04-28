@@ -141,7 +141,7 @@ data:
           ### drop events if not "latency", "controllerandscaler" or "workload" labelized
     output.file:
       path: "/var/log/experiments"
-      filename: filebeat-logs
+      filename: filebeat-logs-${kubernetes.pod.name}
       rotate_every_kb: 102400
       number_of_files: 200
       rotate_on_startup : true
