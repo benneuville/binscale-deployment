@@ -27,7 +27,7 @@ while true; do
         sleep 15
     else
         printf "\n"
-        echo "All producers have finished. Experience [$1] is complete."
+        echo "All producers have finished. \nExperience [$1] is complete."
         break
     fi
 done
