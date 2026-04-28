@@ -6,6 +6,8 @@
     namespace: default
 
   tasks:
+    - name: Delete Filebeat
+      command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic
     - name: Delete Controller Pod and Service
       command: kubectl delete -f ../experience/controller.yaml -n {{ namespace }} --ignore-not-found=true
 
