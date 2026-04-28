@@ -129,6 +129,15 @@ data:
               matchers:
                 - logs_path:
                     logs_path: "/var/log/containers/"
+          - drop_event:
+              when:
+                not:
+                  has_fields: ['kubernetes.labels.app']
+          - drop_event:
+              when:
+                not:
+                  equals:
+                    kubernetes.labels.context: "experience"
           ### drop events if not "latency", "controllerandscaler" or "workload" labelized
     output.file:
       path: "/var/log/experiments"
