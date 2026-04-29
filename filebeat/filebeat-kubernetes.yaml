@@ -138,7 +138,6 @@ data:
                 not:
                   equals:
                     kubernetes.labels.context: "experience"
-          ### drop events if not "latency", "controllerandscaler" or "workload" labelized
     output.file:
       path: "/var/log/experiments"
       filename: filebeat-logs-${kubernetes.pod.name}
