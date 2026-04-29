@@ -138,6 +138,7 @@ data:
           #       not:
           #         equals:
           #           kubernetes.labels.context: "experience"
+          
     output.file:
       path: "/var/log/experiments"
       filename: filebeat-logs-${kubernetes.pod.name}
