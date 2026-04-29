@@ -143,9 +143,9 @@ data:
     output.file:
       path: "/var/log/experiments"
       filename: "filebeat-logs"
-      rotate_every_kb: 102400
-      number_of_files: 200
-      rotate_on_startup : true
+      # rotate_every_kb: 102400
+      # number_of_files: 200
+      # rotate_on_startup : true
 
     setup.template:
       name: "filebeat-aks-devops-prod"
