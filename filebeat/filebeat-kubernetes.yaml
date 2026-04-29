@@ -129,15 +129,15 @@ data:
               matchers:
                 - logs_path:
                     logs_path: "/var/log/containers/"
-          - drop_event:
-              when:
-                not:
-                  has_fields: ['kubernetes.labels.app']
-          - drop_event:
-              when:
-                not:
-                  equals:
-                    kubernetes.labels.context: "experience"
+          # - drop_event:
+          #     when:
+          #       not:
+          #         has_fields: ['kubernetes.labels.app']
+          # - drop_event:
+          #     when:
+          #       not:
+          #         equals:
+          #           kubernetes.labels.context: "experience"
     output.file:
       path: "/var/log/experiments"
       filename: filebeat-logs-${kubernetes.pod.name}
