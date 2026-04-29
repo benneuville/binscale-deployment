@@ -116,6 +116,7 @@ data:
         id: kubernetes-container-logs
         paths:
           - /var/log/containers/*.log
+        max_bytes: 1048576
         parsers:
           - container: ~
         prospector:
@@ -129,22 +130,22 @@ data:
               matchers:
                 - logs_path:
                     logs_path: "/var/log/containers/"
-          # - drop_event:
-          #     when:
-          #       not:
-          #         has_fields: ['kubernetes.labels.app']
-          # - drop_event:
-          #     when:
-          #       not:
-          #         equals:
-          #           kubernetes.labels.context: "experience"
+          - drop_event:
+              when:
+                not:
+                  has_fields: ['kubernetes.labels.app']
+          - drop_event:
+              when:
+                not:
+                  equals:
+                    kubernetes.labels.context: "experience"
 
-    # output.file:
-    #   path: "/var/log/experiments"
-    #   filename: "filebeat-logs"
-    #   rotate_every_kb: 102400
-    #   number_of_files: 200
-    #   rotate_on_startup : true
+    output.file:
+      path: "/var/log/experiments"
+      filename: "filebeat-logs"
+      rotate_every_kb: 102400
+      number_of_files: 200
+      rotate_on_startup : true
 
     setup.template:
       name: "filebeat-aks-devops-prod"
