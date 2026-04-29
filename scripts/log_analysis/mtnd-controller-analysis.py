@@ -354,7 +354,7 @@ if __name__ == "__main__":
         grouped_data[group_name].sort(key=lambda x: x.timestamp)
         
     prometheus_except.sort(key=lambda x: x["timestamp"])
-        
+
     plot_group_metrics(grouped_data)
 
     plot_decision_timeline(prometheus_except)
