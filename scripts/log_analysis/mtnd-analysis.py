@@ -560,13 +560,15 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
 
         ax2 = ax1.twinx()
         if(nb_consumers_per_group and group in nb_consumers_per_group):
-            color_consumers = 'tab:orange'
+            nb_cons_timestamps = [data["timestamp"] for data in nb_consumers_per_group[group]]
+            nb_cons_size = [data["size"] for data in nb_consumers_per_group[group]]
+            color_consumers = 'tab:green'
             ax2.set_ylabel("Number of consumers", color=color_consumers)
-            ax2.step(nb_consumers_per_group[group][0], nb_consumers_per_group[group][1], where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
+            ax2.step(nb_cons_timestamps, nb_cons_size, where='post', color=color_consumers, alpha=0.7, label='Active consumers', linewidth=2)
             ax2.tick_params(axis='y', labelcolor=color_consumers)
 
             min_consumers = - 0.5
-            max_consumers = max(nb_consumers_per_group[group][1]) + 0.5
+            max_consumers = max(nb_cons_size) + 0.5
             ax2.set_ylim(min_consumers, max_consumers)
             ax2.set_xlim(min_time, max_time)
 
@@ -575,6 +577,16 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
                  verticalalignment='top', horizontalalignment='right',
                  bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
         
+        lines1, labels1 = ax1.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
+
+        plt.title(f"Latency and Consumer Count over time — Group: {group}")
+        fig.tight_layout()
+
+        filename = f"latency_and_consumers_group_{group}.png"
+        plt.savefig(filename)
+
         ax3 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in waiting_scale])
         values = np.array([e["waiting"] for e in waiting_scale])
@@ -752,7 +764,7 @@ if __name__ == "__main__":
                 log_timestamp = datetime.strptime(log_timestamp_str, '%Y-%m-%d %H:%M:%S')
                 info_cons_gr = line.split("Decision for ")[1].split(" : ")
                 name_gr = info_cons_gr[0]
-                size_gr = info_cons_gr[1]
+                size_gr = int(info_cons_gr[1])
                 if(name_gr not in nb_cons_controller_decision_taked):
                     nb_cons_controller_decision_taked[name_gr] = []
 
@@ -791,11 +803,11 @@ if __name__ == "__main__":
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
     plot_nbconsumer(grouped_data_for_nb_consumer, nb_consumers_per_group, nb_cons_controller_decision_taked)
     
-    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_consumers_per_group)
+    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_cons_controller_decision_taked)
     
     plot_decision_timeline(prometheus_except)
     plot_latency_by_consumer(min_time, max_time)
-    plot_events_by_wsla(min_time, max_time, nb_consumers_per_group=nb_consumers_per_group)
+    plot_events_by_wsla(min_time, max_time, nb_consumers_per_group=nb_cons_controller_decision_taked)
     plot_group_arrival_rate(grouped_data)
     plot_group_lag(grouped_data)
     
