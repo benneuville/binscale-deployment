@@ -5,9 +5,9 @@ metadata:
   namespace: default
 data:
   e2e-analyzer-config.yaml: |
-    topics{% for node in nodes %}
-        - name: {{node.params.topic_name}}
-        {% endfor %}
+    topics
+        - name: topic-latency-1
+        
 ---
 apiVersion: v1
 kind: Pod
@@ -21,7 +21,7 @@ spec:
   restartPolicy: Always
   containers:
     - name: e2e-analyzer
-      image: docker.io/benneuville/binscale:{{image_tag}}
+      image: docker.io/benneuville/binscale:
       imagePullPolicy: Always
       env:
         - name: BOOTSTRAP_SERVERS

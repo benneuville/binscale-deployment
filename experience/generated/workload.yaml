@@ -7,11 +7,13 @@ metadata:
   namespace: default
   labels:
     app: workload
+    context: experience
 spec:
   template:
     metadata:
       labels:
         app: workload
+        context: experience
     spec:
       containers:
         - name: java-kafka-producer

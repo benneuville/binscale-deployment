@@ -8,6 +8,7 @@ CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
 PRE_PULL_IMAGE = "pre-pull-image"
+E2E_ANALYZER = "e2e-analyzer"
 
 
 if len(sys.argv) < 2:
@@ -51,6 +52,10 @@ with open("experience/templates/controller.yaml.j2") as f:
 
 with open("experience/templates/pre-pull-image.yaml.j2") as f:
     templates[PRE_PULL_IMAGE] = Template(f.read())
+
+with open("experience/templates/e2e-analyzer.yaml.j2") as f:
+    templates[E2E_ANALYZER] = Template(f.read())
+
 
 ## Load graph
 with open(file_path) as f:
@@ -140,6 +145,12 @@ with open("experience/generated/controller.yaml", "w") as f:
                                          nodes=[v for v in nodes.values() if v["type"] == LATENCY],
                                          image_tag=image_tag))
 print("✅ Controller generated")
+
+print("🚂 Generating E2E Analyzer...")
+with open("experience/generated/e2e-analyzer.yaml", "w") as f:
+    f.write(templates[E2E_ANALYZER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY]))
+
+print("✅ E2E Analyzer generated")
 
 print("🚂 Generating pre-pull image job...")
 with open("experience/generated/pre-pull-image.yaml", "w") as f:

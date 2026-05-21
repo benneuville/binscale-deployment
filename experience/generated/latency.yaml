@@ -7,16 +7,19 @@ metadata:
   namespace: default
   labels:
     app: latency
+    context: experience
     instance: latency-1
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: latency
+      context: experience
   template:
     metadata:
       labels:
         app: latency
+        context: experience
     spec:
       containers:
         - name: latency-1

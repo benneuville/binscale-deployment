@@ -23,6 +23,7 @@ metadata:
   namespace: default
   labels:
     app: controllerandscaler
+    context: experience
 spec:
   serviceAccountName: admin-service-account
   restartPolicy: Always
@@ -48,7 +49,7 @@ spec:
         - name: FUP
           value: "0.9"
         - name: FDOWN
-          value: "0.4"
+          value: "0.5"
         - name: REB_TIME
           value: "0.5"
         - name: DI

@@ -16,5 +16,5 @@ spec:
       containers:
       - name: pre-pull
         image: docker.io/benneuville/binscale:latest
-        command: ["sh", "-c", "echo 'Image pulled and cached' && exit 0"]
+        command: ["sh", "-c", "echo 'Image pulled and cached'"]
       terminationGracePeriodSeconds: 0
