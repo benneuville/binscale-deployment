@@ -21,7 +21,7 @@ spec:
   restartPolicy: Always
   containers:
     - name: e2e-analyzer
-      image: docker.io/benneuville/binscale:
+      image: docker.io/benneuville/binscale:latest
       imagePullPolicy: Always
       env:
         - name: BOOTSTRAP_SERVERS

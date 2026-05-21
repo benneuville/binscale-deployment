@@ -9,7 +9,7 @@
   tasks:
 
     - name: Delete Filebeat
-      command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic  --ignore-not-found=true
+      command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic --ignore-not-found=true
     - name: Launch Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
 
@@ -28,6 +28,14 @@
 
     - name: Apply Topics Definition
       command: kubectl apply -f ../experience/generated/kafka-topics.yaml
+
+    - name: E2E Analyzer Deployment
+      command: kubectl apply -f ../experience/generated/e2e-analyzer.yaml
+
+    - name: Waiting for E2E Analyzer
+      command: kubectl wait pod -l app=e2e-analyzer --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
+      register: analyzer_ready
+      failed_when: analyzer_ready.rc != 0
 
     - name: Controller Deployment
       command: kubectl apply -f ../experience/generated/controller.yaml
