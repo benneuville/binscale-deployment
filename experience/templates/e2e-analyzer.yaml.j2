@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: e2e-analyzer-config
+  namespace: default
+data:
+  e2e-analyzer-config.yaml: |
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: e2e-analyzer
+  namespace: default
+  labels:
+    app: e2e-analyzer
+    context: experience
+spec:
+  restartPolicy: Always
+  containers:
+    - name: e2e-analyzer
+      image: docker.io/benneuville/binscale:{{image_tag}}
+      imagePullPolicy: Always
+      env:
+        - name: BOOTSTRAP_SERVERS
+          value: my-cluster-kafka-bootstrap:9092
+          
+      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
+      volumeMounts:
+        - name: e2e-analyzer-config
+          mountPath: /config
+  volumes:
+    - name: e2e-analyzer-config
+      configMap:
+        name: e2e-analyzer-config
