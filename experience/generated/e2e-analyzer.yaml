@@ -5,7 +5,7 @@ metadata:
   namespace: default
 data:
   e2e-analyzer-config.yaml: |
-    topics
+    topics:
         - name: topic-latency-1
         
 ---
