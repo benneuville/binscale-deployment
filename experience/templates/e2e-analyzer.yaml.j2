@@ -5,7 +5,7 @@ metadata:
   namespace: default
 data:
   e2e-analyzer-config.yaml: |
-    topics{% for node in nodes %}
+    topics:{% for node in nodes %}
         - name: {{node.params.topic_name}}
         {% endfor %}
 ---
