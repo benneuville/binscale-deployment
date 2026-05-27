@@ -28,6 +28,10 @@ spec:
           value: my-cluster-kafka-bootstrap:9092
         - name: TOPICS_CONFIG_PATH
           value: "/config/e2e-analyzer-config.yaml"
+        - name: ASYNC_COMMIT
+          value: "False"
+        - name: TIME_TO_COMMIT
+          value: "50"
           
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
       volumeMounts:
