@@ -35,7 +35,7 @@ spec:
         
         # Postgres related
         - name: DB_URL
-          value: "jdbc:postgresql://postgres:5432/event_analysis?currentSchema=public"
+          value: "jdbc:postgresql://postgres:5432/event_analysis"
         - name: DB_USER
           value: "analyzer"
         - name: DB_PASSWORD
