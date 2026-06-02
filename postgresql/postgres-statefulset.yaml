@@ -6,7 +6,7 @@ metadata:
     app: postgres
 spec:
   serviceName: postgres
-  replicas: 1  # PostgreSQL en mode standalone (pour un cluster HA, utilisez 3+ réplicas avec Patroni)
+  replicas: 1
   selector:
     matchLabels:
       app: postgres
@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:15-alpine  # Image légère et maintenue
+        image: postgres:15-alpine
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5432
