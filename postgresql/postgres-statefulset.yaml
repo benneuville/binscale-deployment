@@ -55,12 +55,7 @@ spec:
           limits:
             memory: "1Gi"
             cpu: "1"
-  volumeClaimTemplates:
-  - metadata:
-      name: postgres-persistent-storage
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      resources:
-        requests:
-          storage: 10Gi
-      storageClassName: standard  # Même StorageClass que le PVC
+      volumes:
+      - name: postgres-persistent-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc-nfs 

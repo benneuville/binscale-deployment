@@ -1,13 +1,26 @@
 apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-pv-nfs
+spec:
+  capacity:
+    storage: 10Gi 
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: master-node
+    path: "/export/postgres"
+---
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc
+  name: postgres-pvc-nfs
   labels:
     app: postgres
 spec:
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteMany
   resources:
     requests:
-      storage: 10Gi  # Ajustez selon vos besoins
-  storageClassName: standard  # À adapter à votre cluster (ex: "gp2" sur AWS, "standard" sur GKE)
+      storage: 10Gi
