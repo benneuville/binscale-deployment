@@ -36,10 +36,6 @@ spec:
       env:
         - name: BOOTSTRAP_SERVERS
           value: my-cluster-kafka-bootstrap:9092
-        - name: TOPIC
-          value: testtopic1
-        - name: GROUP_ID
-          value: testgroup1
         - name: NUMBER_PARTITIONS
           value: "20"
         - name: INIT_SIZE

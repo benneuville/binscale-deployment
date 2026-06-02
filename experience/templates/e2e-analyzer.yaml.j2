@@ -32,7 +32,17 @@ spec:
           value: "False"
         - name: TIME_TO_COMMIT
           value: "50"
-          
+        
+        # Postgres related
+        - name: DB_URL
+          value: "jdbc:postgresql://postgres:5432/event_analysis"
+        - name: DB_USER
+          value: "analyzer"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
       command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
       volumeMounts:
         - name: e2e-analyzer-config
