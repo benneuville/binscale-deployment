@@ -5,6 +5,6 @@ metadata:
   labels:
     app: postgres
 data:
-  POSTGRES_DB: "event_analysis"
+  POSTGRES_DB: "analyzer"
   POSTGRES_USER: "analyzer"
   PGDATA: "/var/lib/postgresql/data/pgdata"  # Répertoire des données
