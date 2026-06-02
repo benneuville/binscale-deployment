@@ -13,7 +13,7 @@
     - name: Launch Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
     - name: Deploy Postgres (E2EAnalyzer DB)
-      command: kubectl apply -f ../postgresql/ -n elastic
+      command: kubectl apply -f ../postgresql/
 
     - name: Wait 100s
       pause:
