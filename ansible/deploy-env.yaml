@@ -27,11 +27,6 @@
     - name: Check Kafka Cluster Readiness
       command: kubectl wait kafka/my-cluster --for=condition=Ready --timeout=300s -n {{ namespace }}
 
-    - name: External Kafka Service
-      command: kubectl apply -f ../kafka/kafka-external-service.yaml -n {{ namespace }} 
-
-# [UNACTIVE] CAUSE : NOT USED ON EXPERIMENTS FOR NOW 
-# ------------------ In future case study, Prometheus could be used for data collection and 
 
 - name: Deploy Prometheus
   hosts: localhost
