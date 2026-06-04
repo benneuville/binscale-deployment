@@ -25,6 +25,17 @@ if ! grep -qF "/export/postgres" /etc/exports; then
     echo "/export/postgres    *(rw,sync,no_subtree_check,no_root_squash)" | sudo tee -a /etc/exports
 fi
 
+# export e2e analyzer
+
+sudo mkdir -p /export/analyzer
+
+sudo chown nobody:nogroup /export/analyzer
+sudo chmod 777 /export/analyzer
+
+if ! grep -qF "/export/analyzer" /etc/exports; then
+    echo "/export/postgres    *(rw,sync,no_subtree_check,no_root_squash)" | sudo tee -a /etc/exports
+fi
+
 sudo exportfs -ra
 
 showmount -e localhost

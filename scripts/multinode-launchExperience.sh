@@ -1,6 +1,7 @@
 #!/bin/bash
 
 rm -f /export/logs/*
+rm -f /export/analyzer/*
 
 printf "\n\033[1;36m Experience\033[0m [$1]"
 sleep 10
@@ -31,7 +32,23 @@ while true; do
         break
     fi
 done
+
+sleep 15
 sh ./e2e-start-exporting-request.sh
+printf "Waiting for e2e Analyzer to finish."
+
+while true; do
+    e2e_analyzer_pod=$(kubectl get pods -l app=e2e-analyzer --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | wc -w)
+
+    if [ "$e2e_analyzer_pod" -gt 0]; then
+        printf "."
+        sleep 10
+    else
+        printf "\n"
+        echo "Analyze finished. \nAnalyze of experience [$1] is complete."
+        break
+    fi
+done
 
 echo "Removing deployment [$1]"
 ansible-playbook ansible/undeploy-app.yaml

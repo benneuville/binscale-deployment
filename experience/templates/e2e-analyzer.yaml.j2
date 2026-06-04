@@ -64,7 +64,13 @@ spec:
       volumeMounts:
         - name: e2e-analyzer-config
           mountPath: /config
+        - name: e2e-analyzer-export
+          mountPath: /export
   volumes:
     - name: e2e-analyzer-config
       configMap:
         name: e2e-analyzer-config
+    - name: e2e-analyzer-export
+      nfs:
+        server: master-node
+        path: "/export/analyzer"

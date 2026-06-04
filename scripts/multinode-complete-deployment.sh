@@ -438,6 +438,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
     printf "\033[2K"
     printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
 
+    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/analyzer/*" "$DIR_OUTPUT_FINAL"
     scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL"
     printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved in \033[0m[$DIR_OUTPUT_FINAL]\n"
     
