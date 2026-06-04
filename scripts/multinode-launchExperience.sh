@@ -34,7 +34,7 @@ while true; do
 done
 
 sleep 15
-sh ./e2e-start-exporting-request.sh
+sh ./scripts/e2e-start-exporting-request.sh
 printf "Waiting for e2e Analyzer to finish."
 
 while true; do
