@@ -33,7 +33,7 @@ sudo chown nobody:nogroup /export/analyzer
 sudo chmod 777 /export/analyzer
 
 if ! grep -qF "/export/analyzer" /etc/exports; then
-    echo "/export/postgres    *(rw,sync,no_subtree_check,no_root_squash)" | sudo tee -a /etc/exports
+    echo "/export/analyzer    *(rw,sync,no_subtree_check,no_root_squash)" | sudo tee -a /etc/exports
 fi
 
 sudo exportfs -ra
