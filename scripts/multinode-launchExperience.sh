@@ -40,7 +40,7 @@ printf "Waiting for e2e Analyzer to finish."
 while true; do
     e2e_analyzer_pod=$(kubectl get pods -l app=e2e-analyzer --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | wc -w)
 
-    if [ "$e2e_analyzer_pod" -gt 0]; then
+    if [ "$e2e_analyzer_pod" -gt 0 ]; then
         printf "."
         sleep 10
     else
