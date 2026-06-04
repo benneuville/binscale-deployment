@@ -10,6 +10,21 @@ data:
         {% endfor %}
 ---
 apiVersion: v1
+kind: Service
+metadata:
+  name: e2e-analyzer
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
+    app: e2e-analyzer
+    context: experience
+---
+apiVersion: v1
 kind: Pod
 metadata:
   name: e2e-analyzer
@@ -23,6 +38,8 @@ spec:
     - name: e2e-analyzer
       image: docker.io/benneuville/binscale:{{image_tag}}
       imagePullPolicy: Always
+      ports:
+        - containerPort: 8080
       env:
         - name: BOOTSTRAP_SERVERS
           value: my-cluster-kafka-bootstrap:9092
