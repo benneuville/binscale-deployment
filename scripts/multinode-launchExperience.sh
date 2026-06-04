@@ -31,5 +31,7 @@ while true; do
         break
     fi
 done
+sh ./e2e-start-exporting-request.sh
+
 echo "Removing deployment [$1]"
 ansible-playbook ansible/undeploy-app.yaml

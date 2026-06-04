@@ -113,7 +113,6 @@ edges_topic_gen = []
 for edge in edges.values():
     edges_topic_gen.append(templates[KAFKA_TOPIC].render(edge))
 
-edges_topic_gen.append(templates[KAFKA_TOPIC].render({"topic_name" : "e2e-state", "partitions": 10}))
 edges_topic_gen.append(templates[KAFKA_TOPIC].render({"topic_name" : "final-queue", "partitions": 10}))
 
 # Output all topics in one file in "/generated/kafka-topics.yaml"
