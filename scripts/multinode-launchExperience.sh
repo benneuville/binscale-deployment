@@ -16,7 +16,7 @@ fi
 printf "\n\033[1;36m## Starting the experience [$1]\033[0m\n"
 ansible-playbook ansible/deploy-app.yaml
 
-printf "\n\033[1;36m## Waiting 10 minutes for the end of the experience [$1]\033[0m\n"
+printf "\n\033[1;36m## Waiting for the end of the experience [$1]\033[0m\n"
 sleep 60
 printf "Producers are still running."
 
@@ -28,7 +28,7 @@ while true; do
         sleep 15
     else
         printf "\n"
-        echo "All producers have finished. \nExperience [$1] is complete."
+        printf "All producers have finished. \nExperience [$1] is complete."
         break
     fi
 done
@@ -45,7 +45,7 @@ while true; do
         sleep 10
     else
         printf "\n"
-        echo "Analyze finished. \nAnalyze of experience [$1] is complete."
+        printf "\nAnalyze finished. \nAnalyze of experience [$1] is complete."
         break
     fi
 done
