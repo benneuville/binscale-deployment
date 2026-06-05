@@ -434,12 +434,13 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
     printf "\033[38;5;8m ◻ Output directory creation \033[0m"
     mkdir -p "$DIR_OUTPUT_FINAL"
     cp "$file" "$DIR_OUTPUT_FINAL"
+    mkdir -p "$DIR_OUTPUT_FINAL/logs"
 
     printf "\033[2K"
     printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
 
     scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/analyzer/*" "$DIR_OUTPUT_FINAL"
-    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL/logs"
+    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL/logs/"
     printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved in \033[0m[$DIR_OUTPUT_FINAL]\n"
     
     if [ "$is_analyze_mode" = true ]; then
