@@ -116,7 +116,7 @@ for edge in edges.values():
 
 for node in [v for v in nodes.values() if v["type"] == LATENCY]:
     if len(node["targets"]) == 0:
-        nodes[node["id"]]["targets"].append({{"topic_name": FINAL_QUEUE, "ratio": 1}})
+        node["targets"].append({{"topic_name": FINAL_QUEUE, "ratio": 1}})
 
 edges_topic_gen.append(templates[KAFKA_TOPIC].render({"topic_name" : FINAL_QUEUE, "partitions": 10}))
 
