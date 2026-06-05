@@ -12,3 +12,18 @@ spec:
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime
+---
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: final-queue
+  labels:
+    strimzi.io/cluster: my-cluster
+spec:
+  partitions: 10
+  replicas: 1
+  config:
+    retention.ms: 7200000
+    segment.bytes: 1073741824
+    min.insync.replicas: 1
+    message.timestamp.type: CreateTime

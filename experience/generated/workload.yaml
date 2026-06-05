@@ -23,6 +23,8 @@ spec:
           env:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
+            - name: PRODUCER_ID
+              value: "workload-1"
             - name: TOPIC
               value: topic-latency-1
             - name: PARTITION_WEIGHTS

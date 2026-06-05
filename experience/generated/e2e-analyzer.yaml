@@ -8,46 +8,73 @@ data:
     topics:
         - name: topic-latency-1
         
+
 ---
 apiVersion: v1
-kind: Pod
+kind: Service
 metadata:
   name: e2e-analyzer
   namespace: default
-  labels:
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+      name: http
+  selector:
     app: e2e-analyzer
     context: experience
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: e2e-analyzer-job
+  namespace: default
 spec:
-  restartPolicy: Never
-  containers:
-    - name: e2e-analyzer
-      image: docker.io/benneuville/binscale:latest
-      imagePullPolicy: Always
-      env:
-        - name: BOOTSTRAP_SERVERS
-          value: my-cluster-kafka-bootstrap:9092
-        - name: TOPICS_CONFIG_PATH
-          value: "/config/e2e-analyzer-config.yaml"
-        - name: ASYNC_COMMIT
-          value: "False"
-        - name: TIME_TO_COMMIT
-          value: "50"
-          
-        # Postgres related
-        - name: DB_URL
-          value: "jdbc:postgresql://postgres:5432/event_analysis"
-        - name: DB_USER
-          value: "analyzer"
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: postgres-secret
-              key: POSTGRES_PASSWORD
-      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
-      volumeMounts:
+  template:
+    metadata:
+      labels:
+        app: e2e-analyzer
+        context: experience
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: e2e-analyzer
+          image: docker.io/benneuville/binscale:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPICS_CONFIG_PATH
+              value: "/config/e2e-analyzer-config.yaml"
+            - name: ASYNC_COMMIT
+              value: "False"
+            - name: TIME_TO_COMMIT
+              value: "50"
+          # POSTGRES RELATED
+            - name: DB_URL
+              value: "jdbc:postgresql://postgres:5432/analyzer"
+            - name: DB_USER
+              value: "analyzer"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
+          volumeMounts:
+            - name: e2e-analyzer-config
+              mountPath: /config
+            - name: e2e-analyzer-export
+              mountPath: /export
+      volumes:
         - name: e2e-analyzer-config
-          mountPath: /config
-  volumes:
-    - name: e2e-analyzer-config
-      configMap:
-        name: e2e-analyzer-config
+          configMap:
+            name: e2e-analyzer-config
+        - name: e2e-analyzer-export
+          nfs:
+            server: master-node
+            path: "/export/analyzer"

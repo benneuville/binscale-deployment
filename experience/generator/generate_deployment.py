@@ -155,7 +155,7 @@ print("✅ Controller generated")
 
 print("🚂 Generating E2E Analyzer...")
 with open("experience/generated/e2e-analyzer.yaml", "w") as f:
-    f.write(templates[E2E_ANALYZER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY], image_tag=image_tag))
+    f.write(templates[E2E_ANALYZER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY], image_tag=image_tag, end_queue=FINAL_QUEUE))
 
 print("✅ E2E Analyzer generated")
 

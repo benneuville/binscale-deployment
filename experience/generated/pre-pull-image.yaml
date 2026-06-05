@@ -18,4 +18,30 @@ spec:
         image: docker.io/benneuville/binscale:latest
         command: ["sh", "-c", "echo 'Image pulled and cached'"]
       terminationGracePeriodSeconds: 0
-      restartPolicy: Never
+      serviceAccountName: pre-pull-sa
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: pre-pull-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: daemonset-deleter
+rules:
+- apiGroups: ["apps"]
+  resources: ["daemonsets"]
+  verbs: ["get", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: daemonset-deleter
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: daemonset-deleter
+subjects:
+- kind: ServiceAccount
+  name: pre-pull-sa
