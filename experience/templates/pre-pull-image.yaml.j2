@@ -18,3 +18,4 @@ spec:
         image: docker.io/benneuville/binscale:{{image_tag}}
         command: ["sh", "-c", "echo 'Image pulled and cached'"]
       terminationGracePeriodSeconds: 0
+      restartPolicy: Never
