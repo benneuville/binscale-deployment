@@ -8,6 +8,7 @@ data:
     topics:
         - name: topic-latency-1
         
+        - name: final-queue
 
 ---
 apiVersion: v1
