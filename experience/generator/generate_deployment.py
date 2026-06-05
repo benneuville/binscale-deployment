@@ -9,6 +9,7 @@ KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
 PRE_PULL_IMAGE = "pre-pull-image"
 E2E_ANALYZER = "e2e-analyzer"
+FINAL_QUEUE = "final-queue"
 
 
 if len(sys.argv) < 2:
@@ -113,7 +114,11 @@ edges_topic_gen = []
 for edge in edges.values():
     edges_topic_gen.append(templates[KAFKA_TOPIC].render(edge))
 
-edges_topic_gen.append(templates[KAFKA_TOPIC].render({"topic_name" : "final-queue", "partitions": 10}))
+for node in [v for v in nodes.values() if v["type"] == LATENCY]:
+    if len(node["targets"]) == 0:
+        nodes[node["id"]]["targets"].append({{"topic_name": FINAL_QUEUE, "ratio": 1}})
+
+edges_topic_gen.append(templates[KAFKA_TOPIC].render({"topic_name" : FINAL_QUEUE, "partitions": 10}))
 
 # Output all topics in one file in "/generated/kafka-topics.yaml"
 with open("experience/generated/kafka-topics.yaml", "w") as f:
