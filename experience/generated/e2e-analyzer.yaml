@@ -6,7 +6,15 @@ metadata:
 data:
   e2e-analyzer-config.yaml: |
     topics:
-        - name: topic-latency-1
+        - name: topic-latency-ehanced-1
+        
+        - name: topic-latency-ehanced-2
+        
+        - name: topic-latency-ehanced-3
+        
+        - name: topic-latency-ehanced-4
+        
+        - name: topic-latency-ehanced-5
         
         - name: final-queue
 
