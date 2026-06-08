@@ -34,7 +34,8 @@ while true; do
 done
 
 sleep 15
-sh ./scripts/e2e-start-exporting-request.sh
+printf "Deploying e2e Analyzer [$1]"
+kubectl apply -f experience/generated/e2e-analyzer.yaml
 printf "Waiting for e2e Analyzer to finish."
 
 while true; do

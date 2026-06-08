@@ -33,6 +33,8 @@ metadata:
   name: e2e-analyzer-job
   namespace: default
 spec:
+  parallelism: 10
+  completions: 10
   template:
     metadata:
       labels:
@@ -55,6 +57,68 @@ spec:
               value: "False"
             - name: TIME_TO_COMMIT
               value: "50"
+            - name: MODE
+              value: "CONSUME"
+          # POSTGRES RELATED
+            - name: DB_URL
+              value: "jdbc:postgresql://postgres:5432/analyzer"
+            - name: DB_USER
+              value: "analyzer"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+          command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
+          volumeMounts:
+            - name: e2e-analyzer-config
+              mountPath: /config
+            - name: e2e-analyzer-export
+              mountPath: /export
+      volumes:
+        - name: e2e-analyzer-config
+          configMap:
+            name: e2e-analyzer-config
+        - name: e2e-analyzer-export
+          nfs:
+            server: master-node
+            path: "/export/analyzer"
+            
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: e2e-analyzer-job
+  namespace: default
+spec:
+  template:
+    metadata:
+      labels:
+        app: e2e-analyzer
+        context: experience
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-consumer
+          image: bitnami/kubectl
+          command: ["sh", "-c", "kubectl wait --for=condition=complete job/e2e-consumer-job --timeout=3600s"]
+      containers:
+        - name: e2e-analyzer
+          image: docker.io/benneuville/binscale:{{image_tag}}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: TOPICS_CONFIG_PATH
+              value: "/config/e2e-analyzer-config.yaml"
+            - name: ASYNC_COMMIT
+              value: "False"
+            - name: TIME_TO_COMMIT
+              value: "50"
+            - name: MODE
+              value: "EXPORT" 
           # POSTGRES RELATED
             - name: DB_URL
               value: "jdbc:postgresql://postgres:5432/analyzer"
