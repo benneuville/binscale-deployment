@@ -18,7 +18,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 5 # rate of consumption : 200 events/second -> 5ms for a event
       processing_strategy: custom
   - id: latency-2
     type: latency
@@ -29,7 +29,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 5 # rate of consumption : 200 events/second -> 5ms for a event
   - id: latency-3
     type: latency
     params:
@@ -39,7 +39,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 5 # rate of consumption : 200 events/second -> 5ms for a event
   - id: latency-4
     type: latency
     params:
@@ -49,7 +49,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 5 # rate of consumption : 200 events/second -> 5ms for a event
 
 # edges
 edges:
