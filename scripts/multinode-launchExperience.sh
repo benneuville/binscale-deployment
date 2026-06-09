@@ -36,6 +36,7 @@ done
 sleep 15
 printf "Deploying e2e Analyzer [$1]"
 ansible-playbook ansible/deploy-e2e-analyzer.yaml
+ansible-playbook ansible/undeploy-app.yaml
 printf "Waiting for e2e Analyzer to finish."
 
 while true; do
@@ -53,4 +54,3 @@ done
 
 echo "Removing e2e analyzer & deployment [$1]"
 ansible-playbook ansible/undeploy-e2e-analyzer.yaml
-ansible-playbook ansible/undeploy-app.yaml
