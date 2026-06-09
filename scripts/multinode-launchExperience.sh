@@ -35,7 +35,7 @@ done
 
 sleep 15
 printf "Deploying e2e Analyzer [$1]"
-kubectl apply -f experience/generated/e2e-analyzer.yaml
+ansible-playbook ansible/deploy-e2e-analyzer.yaml
 printf "Waiting for e2e Analyzer to finish."
 
 while true; do
@@ -51,5 +51,6 @@ while true; do
     fi
 done
 
-echo "Removing deployment [$1]"
+echo "Removing e2e analyzer & deployment [$1]"
+ansible-playbook ansible/undeploy-e2e-analyzer.yaml
 ansible-playbook ansible/undeploy-app.yaml

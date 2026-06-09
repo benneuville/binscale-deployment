@@ -1,0 +1,11 @@
+---
+- name: Clean up E2E Analyzer
+  hosts: localhost
+  become: false
+  vars:
+    namespace: default
+  tasks:
+    - name: Delete E2E Analyzer Component
+      command: kubectl delete -f ../experience/generated/e2e-analyzer.yaml -n {{ namespace }}  --ignore-not-found=true
+    - name: Delete Postgres (E2EAnalyzer DB)
+      command: kubectl delete -f ../postgresql/ -n {{ namespace }}  --ignore-not-found=true

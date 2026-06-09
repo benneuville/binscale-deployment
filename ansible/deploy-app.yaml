@@ -12,9 +12,6 @@
       command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic --ignore-not-found=true
     - name: Launch Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
-    - name: Deploy Postgres (E2EAnalyzer DB)
-      command: kubectl apply -f ../postgresql/
-
     - name: Wait 100s
       pause:
         seconds: 100
