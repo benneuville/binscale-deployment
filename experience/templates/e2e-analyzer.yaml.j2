@@ -83,7 +83,40 @@ spec:
           nfs:
             server: master-node
             path: "/export/analyzer"
-            
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: e2e-analyzer-sa
+  namespace: default
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: job-reader
+  namespace: default
+rules:
+- apiGroups: ["batch"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: job-reader-binding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: job-reader
+subjects:
+- kind: ServiceAccount
+  name: e2e-analyzer-sa
+  namespace: default
+
 ---
 apiVersion: batch/v1
 kind: Job
@@ -91,6 +124,8 @@ metadata:
   name: e2e-analyzer-job
   namespace: default
 spec:
+  parallelism: 1
+  completions: 1
   template:
     metadata:
       labels:
@@ -98,6 +133,7 @@ spec:
         context: experience
     spec:
       restartPolicy: Never
+      serviceAccountName: e2e-analyzer-sa
       initContainers:
         - name: wait-for-consumer
           image: bitnami/kubectl
