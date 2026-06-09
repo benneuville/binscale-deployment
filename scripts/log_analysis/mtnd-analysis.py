@@ -500,7 +500,7 @@ def prefab_nb_consumers_over_time(min_time, max_time):
 def plot_processing_rate_by_group(grouped_data):
     for group_name, data_list in grouped_data.items():
         timestamps = [data.timestamp for data in data_list]
-        fallback_processing_rates = [1000 / (data.consumerGroup.processingRateFallBack / len(data.consumerGroup.topicPartitions)) for data in data_list]
+        fallback_processing_rates = [data.consumerGroup.processingRateFallBack for data in data_list]
 
         plt.figure(figsize=(14, 7))
         plt.plot(timestamps, fallback_processing_rates, label='Up Process Rate', color='green')
