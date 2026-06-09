@@ -30,12 +30,12 @@ class Consumer:
         self.dynamicProcessingCapacity = dynamicProcessingCapacity
 
 class ConsumerGroup:
-    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, maxDefinedProcessingRate, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName, upProcessRate, downProcessRate, upLagCapacity, downLagCapacity):
+    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, processingRateFallBack, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName, upProcessRate, downProcessRate, upLagCapacity, downLagCapacity):
         self.wsla = wsla
         self.inputTopic = inputTopic
         self.consumerName = consumerName
         self.kafkaGroupName = kafkaGroupName
-        self.maxDefinedProcessingRate = maxDefinedProcessingRate
+        self.processingRateFallBack = processingRateFallBack
         self.topicPartitions = topicPartitions
         self.lastUpScaleDecision = datetime.strptime(lastUpScaleDecision, '%m/%d/%YT%H:%M:%S.%f') if lastUpScaleDecision != "N/A" else None
         self.assignment = assignment
@@ -128,7 +128,7 @@ def pulled_data_from_prometheus(line):
             inputTopic=data["consumerGroup"]["inputTopic"],
             consumerName=data["consumerGroup"]["consumerName"],
             kafkaGroupName=data["consumerGroup"]["kafkaGroupName"],
-            maxDefinedProcessingRate=data["consumerGroup"]["maxDefinedProcessingRate"],
+            processingRateFallBack=data["consumerGroup"]["processingRateFallBack"],
             topicPartitions=topic_partitions,
             lastUpScaleDecision=data["consumerGroup"]["lastUpScaleDecision"],
             assignment=assignment,
@@ -497,6 +497,26 @@ def prefab_nb_consumers_over_time(min_time, max_time):
     print("➡️ Graphique généré : nb_consumers_over_time.png")
     return results
 
+def plot_processing_rate_by_group(grouped_data):
+    for group_name, data_list in grouped_data.items():
+        timestamps = [data.timestamp for data in data_list]
+        fallback_processing_rates = [1000 / (data.consumerGroup.processingRateFallBack / len(data.consumerGroup.topicPartitions)) for data in data_list]
+
+        plt.figure(figsize=(14, 7))
+        plt.plot(timestamps, fallback_processing_rates, label='Up Process Rate', color='green')
+        plt.xlabel('Time')
+        plt.ylabel('Processing Rate (events/s)')
+        plt.title(f"Processing Rates over Time — Consumer Group: {group_name}")
+        plt.grid(True)
+        plt.legend()
+        plt.xlim(min(timestamps), max(timestamps))
+        plt.gcf().autofmt_xdate()
+        filename = f"processing_rate_group_{group_name}.png"
+        plt.savefig(filename)
+        plt.close()
+
+        print(f"➡️ Graphique généré : {filename}")
+
 def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None):
     """
     Produit un graphe par groupe :
@@ -810,6 +830,7 @@ if __name__ == "__main__":
     plot_events_by_wsla(min_time, max_time, nb_consumers_per_group=nb_cons_controller_decision_taked)
     plot_group_arrival_rate(grouped_data)
     plot_group_lag(grouped_data)
+    plot_processing_rate_by_group(grouped_data)
     
     print("\n✅ All plots generated successfully!")
     duration = (max_time - min_time).total_seconds()
