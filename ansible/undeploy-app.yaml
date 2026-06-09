@@ -10,8 +10,6 @@
       command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic --ignore-not-found=true
     - name: Delete Controller Pod and Service
       command: kubectl delete -f ../experience/controller.yaml -n {{ namespace }} --ignore-not-found=true
-    - name: Deploy Postgres (E2EAnalyzer DB)
-      command: kubectl delete -f ../postgresql/ --ignore-not-found=true
 
     - name: Delete Latency Deployment and PodMonitor
       command: kubectl delete -f ../experience/generated/latency.yaml -n {{ namespace }} --ignore-not-found=true
