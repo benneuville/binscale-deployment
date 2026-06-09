@@ -18,6 +18,3 @@
 
     - name: Delete Producer Deployment and Service
       command: kubectl delete -f ../experience/generated/workload.yaml -n {{ namespace }} --ignore-not-found=true
-
-    - name: Delete E2E Analyzer Deployment
-      command: kubectl delete -f ../experience/generated/e2e-analyzer.yaml -n {{ namespace }} --ignore-not-found=true
