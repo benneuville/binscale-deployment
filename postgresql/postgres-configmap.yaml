@@ -7,11 +7,7 @@ metadata:
 data:
   POSTGRES_DB: "analyzer"
   POSTGRES_USER: "analyzer"
-  PGDATA: "/var/lib/postgresql/data/pgdata"  # Répertoire des données
-  postgresql.conf: |
-    max_connections = 200
-    shared_buffers = 4GB
-    effective_cache_size = 12GB
-    work_mem = 16MB
-    maintenance_work_mem = 512MB
-    random_page_cost = 1.1
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+  POSTGRESQL_MAX_CONNECTIONS: "200"
+  POSTGRESQL_SHARED_BUFFERS: "4GB"
+  POSTGRESQL_EFFECTIVE_CACHE_SIZE: "12GB"
