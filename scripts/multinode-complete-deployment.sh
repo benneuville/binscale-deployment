@@ -450,6 +450,7 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
             "$SCRIPT_DIR/log_analysis/extractLogs.sh" ./logs/filebeat* >/dev/null 2>&1
             python3 "$SCRIPT_DIR/log_analysis/mtnd-analysis.py" consumer_logs.txt controller_logs.txt &
             python3 "$SCRIPT_DIR/../experience/generator/graph_visualizor.py" $SCRIPT_DIR/../$file &
+            python3 "$SCRIPT_DIR/log_analysis/e2e-analysis.py" export-e2e-analyze.json &
             wait
         } &
     fi

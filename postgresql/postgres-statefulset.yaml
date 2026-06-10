@@ -30,6 +30,9 @@ spec:
         volumeMounts:
         - name: postgres-persistent-storage
           mountPath: /var/lib/postgresql/data
+        - name: postgres-config
+          mountPath: /etc/postgresql/postgresql.conf
+          subPath: postgresql.conf 
         livenessProbe:
           exec:
             command:
@@ -59,3 +62,6 @@ spec:
       - name: postgres-persistent-storage
         persistentVolumeClaim:
           claimName: postgres-pvc-nfs 
+      - name: postgres-config
+        configMap:
+          name: postgres-config
