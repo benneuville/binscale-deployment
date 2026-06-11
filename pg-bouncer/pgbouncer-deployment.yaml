@@ -21,6 +21,8 @@ spec:
         env:
         - name: LISTEN_ADDR
           value: "*"
+        - name: LISTEN_PORT
+          value: "6432"
         - name: DB_HOST
           value: "postgres"
         - name: DB_PORT
