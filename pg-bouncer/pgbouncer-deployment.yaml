@@ -51,7 +51,6 @@ spec:
         configMap:
           name: pgbouncer-userlist
 ---
-# ConfigMap pour les identifiants
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -59,4 +58,4 @@ metadata:
   namespace: default
 data:
   userlist.txt: |
-    "analyzer" "md5$(echo -n 'analyzer:POSTGRES_PASSWORD' | md5sum | cut -d' ' -f1)"
+    "analyzer" "md5$(echo -n 'analyzer:$(kubectl get secret postgres-secret -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d)' | md5sum | awk '{print $1}')"
