@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgbouncer
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgbouncer
+  template:
+    metadata:
+      labels:
+        app: pgbouncer
+    spec:
+      containers:
+      - name: pgbouncer
+        image: edoburu/pgbouncer:latest
+        ports:
+        - containerPort: 6432
+        env:
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "analyzer"
+        - name: DB_USER
+          value: "analyzer"
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: POOL_MODE
+          value: "transaction"
+        - name: MAX_CLIENT_CONN
+          value: "200"
+        - name: DEFAULT_POOL_SIZE
+          value: "20"
+        volumeMounts:
+        - name: pgbouncer-config
+          mountPath: /etc/pgbouncer/userlist.txt
+          subPath: userlist.txt
+      volumes:
+      - name: pgbouncer-config
+        configMap:
+          name: pgbouncer-userlist
+---
+# ConfigMap pour les identifiants
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgbouncer-userlist
+  namespace: default
+data:
+  userlist.txt: |
+    "analyzer" "md5$(echo -n 'analyzer:POSTGRES_PASSWORD' | md5sum | cut -d' ' -f1)"

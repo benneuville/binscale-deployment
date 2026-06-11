@@ -61,7 +61,7 @@ spec:
               value: "CONSUME"
           # POSTGRES RELATED
             - name: DB_URL
-              value: "jdbc:postgresql://postgres:5432/analyzer"
+              value: "jdbc:postgresql://pgbouncer:6432/analyzer"
             - name: DB_USER
               value: "analyzer"
             - name: DB_PASSWORD
@@ -157,7 +157,7 @@ spec:
               value: "EXPORT" 
           # POSTGRES RELATED
             - name: DB_URL
-              value: "jdbc:postgresql://postgres:5432/analyzer"
+              value: "jdbc:postgresql://pgbouncer:6432/analyzer"
             - name: DB_USER
               value: "analyzer"
             - name: DB_PASSWORD
