@@ -8,6 +8,6 @@
     - name: Delete E2E Analyzer Component
       command: kubectl delete -f ../experience/generated/e2e-analyzer.yaml -n {{ namespace }}  --ignore-not-found=true
     - name: Delete Postgres (E2EAnalyzer DB)
-      command: kubectl delete -f ../pgbouncer/ -n {{ namespace }}  --ignore-not-found=true
+      command: kubectl delete -f ../pg-bouncer/ -n {{ namespace }}  --ignore-not-found=true
     - name: Delete Topics Definition
       command: kubectl delete -f ../experience/generated/kafka-topics.yaml -n {{ namespace }} --ignore-not-found=true

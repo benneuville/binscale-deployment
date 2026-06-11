@@ -7,7 +7,7 @@
   
   tasks:
     - name: Deploy Postgres (E2EAnalyzer DB)
-      command: kubectl apply -f ../pgbouncer/ -n {{ namespace }}
+      command: kubectl apply -f ../pg-bouncer/ -n {{ namespace }}
     - name: Wait for DB readiness
       command: kubectl wait --for=condition=Ready pod -l app=pgbouncer -n {{ namespace }} --timeout=180s
     - name: Deploy E2E Analyzer Component
