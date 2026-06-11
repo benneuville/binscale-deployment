@@ -31,7 +31,7 @@ spec:
           value: "analyzer"
         - name: DB_USER
           value: "analyzer"
-        - name: DB_PASSWORD
+        - name: PGBOUNCER_AUTH_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret
@@ -51,6 +51,7 @@ spec:
         configMap:
           name: pgbouncer-userlist
 ---
+# ConfigMap pour les identifiants
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -58,4 +59,4 @@ metadata:
   namespace: default
 data:
   userlist.txt: |
-    "analyzer" "md5$(echo -n 'analyzer:$(kubectl get secret postgres-secret -o jsonpath='{.data.POSTGRES_PASSWORD}' | base64 -d)' | md5sum | awk '{print $1}')"
+    "analyzer" "password123"
