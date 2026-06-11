@@ -2,6 +2,7 @@
 
 rm -f /export/logs/*
 rm -f /export/analyzer/*
+rm -R /export/postgres/*
 
 printf "\n\033[1;36m Experience\033[0m [$1]"
 sleep 10

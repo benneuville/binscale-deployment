@@ -37,11 +37,15 @@ spec:
               name: postgres-secret
               key: POSTGRES_PASSWORD
         - name: POOL_MODE
-          value: "transaction"
+          value: "session"
         - name: MAX_CLIENT_CONN
-          value: "200"
+          value: "500"
         - name: DEFAULT_POOL_SIZE
-          value: "20"
+          value: "100"
+        - name: RESERVE_POOL_SIZE
+          value: "50"
+        - name: RESERVE_POOL_TIMEOUT
+          value: "5"
         volumeMounts:
         - name: pgbouncer-config
           mountPath: /etc/pgbouncer/userlist.txt
