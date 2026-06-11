@@ -19,6 +19,8 @@ spec:
         ports:
         - containerPort: 6432
         env:
+        - name: LISTEN_ADDR
+          value: "*
         - name: DB_HOST
           value: "postgres"
         - name: DB_PORT
