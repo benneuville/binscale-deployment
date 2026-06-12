@@ -43,7 +43,6 @@ if __name__ == "__main__":
     plt.figure(figsize=(16, 6))
 
     # --- GRAPHIQUE 1 : Durée end-to-end en fonction du timestamp de fin ---
-    plt.subplot(1, 2, 1)
     plt.scatter(finish_times, durations, alpha=0.3, s=5)
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
     plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
@@ -52,9 +51,11 @@ if __name__ == "__main__":
     plt.title('Durée end-to-end par événement')
     plt.grid(True, alpha=0.3)
     plt.xticks(rotation=45)
+    plt.savefig('e2e_latency.png', dpi=300, bbox_inches='tight')
+    plt.close()
 
+    plt.figure(figsize=(16, 6))
     # --- GRAPHIQUE 2 : Courbe cumulative ---
-    plt.subplot(1, 2, 2)
     sorted_durations = np.sort(durations)
     cumulative_counts = np.arange(1, len(sorted_durations) + 1)
     plt.plot(sorted_durations, cumulative_counts)
@@ -71,6 +72,5 @@ if __name__ == "__main__":
                        label=f'{percentile}th percentile')
         plt.legend()
 
-    plt.tight_layout()
-    plt.savefig('e2e_analysis.png', dpi=300, bbox_inches='tight')
+    plt.savefig('e2e_percentile_distribution.png', dpi=300, bbox_inches='tight')
     plt.close()
