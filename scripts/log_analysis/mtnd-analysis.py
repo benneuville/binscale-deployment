@@ -581,7 +581,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
 
         fig, ax1 = plt.subplots(figsize=(16, 6))
 
-        color_latency = 'tab:blue'
+        color_latency = '#5C669F'
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Latency (ms)", color=color_latency)
         ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency')
