@@ -530,7 +530,7 @@ def plot_processing_rate_by_group(grouped_data):
 
         print(f"➡️ Graphique généré : {filename}")
 
-def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None):
+def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None, total_time_exp=0):
     """
     Produit un graphe par groupe :
     - courbe de latence fusionnée de tous les consumers du groupe
@@ -581,6 +581,13 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
 
         fig, ax1 = plt.subplots(figsize=(16, 6))
 
+        
+        replicas_per_minute = defaultdict(set)
+        for ev in all_events:
+            minute_key = ev.insertion_date.replace(second=0, microsecond=0)
+            replicas_per_minute[minute_key].add(ev.consumer_id)
+        total_replicas_minute = sum(len(replicas) for replicas in replicas_per_minute.values()) / len(replicas_per_minute) * (total_time_exp / 60) if replicas_per_minute else 0
+
         color_latency = '#5C669F'
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Latency (ms)", color=color_latency)
@@ -609,6 +616,11 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         ax1.text(0.98, 0.98, text_str, transform=ax1.transAxes,
                  verticalalignment='top', horizontalalignment='right',
                  bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+        
+        text_str_replicas = f"total RM: {total_replicas_minute:.1f}"
+        ax1.text(0.75, 0.98, text_str_replicas, transform=ax1.transAxes,
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
         
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
@@ -836,7 +848,8 @@ if __name__ == "__main__":
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
     plot_nbconsumer(grouped_data_for_nb_consumer, nb_consumers_per_group, nb_cons_controller_decision_taked)
     
-    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_cons_controller_decision_taked)
+    duration = (max_time - min_time).total_seconds()
+    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_cons_controller_decision_taked, total_time_exp=duration)
     
     plot_decision_timeline(prometheus_except)
     plot_latency_by_consumer(min_time, max_time)
@@ -846,5 +859,4 @@ if __name__ == "__main__":
     plot_processing_rate_by_group(grouped_data)
     
     print("\n✅ All plots generated successfully!")
-    duration = (max_time - min_time).total_seconds()
     print(f"⏱️ Total analysis duration: {duration:.2f} seconds")
