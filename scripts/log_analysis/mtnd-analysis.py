@@ -9,6 +9,19 @@ import json
 from collections import defaultdict
 import numpy as np
 
+X_SMALL_SIZE = 10
+SMALL_SIZE = 14
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 26
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=SMALL_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+# plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 # ============================================
 # CLASSES
 # ============================================
@@ -566,7 +579,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         step_times = [p[0] for p in change_points]
         step_counts = [p[1] for p in change_points]
 
-        fig, ax1 = plt.subplots(figsize=(14, 6))
+        fig, ax1 = plt.subplots(figsize=(16, 6))
 
         color_latency = 'tab:blue'
         ax1.set_xlabel("Time")
@@ -605,7 +618,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         fig.tight_layout()
 
         filename = f"latency_and_consumers_group_{group}.png"
-        plt.savefig(filename)
+        plt.savefig(filename, transparent=True)
 
         ax3 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in waiting_scale])
@@ -662,7 +675,7 @@ def plot_events_by_wsla(min_time, max_time, wsla_threshold=500, nb_consumers_per
             step_counts.append(count)
             current_time = next_time
 
-        fig, ax1 = plt.subplots(figsize=(14, 6))
+        fig, ax1 = plt.subplots(figsize=(16, 6))
         ax1.plot(step_times, step_counts, color='lightblue', alpha=0.7, label='Event count')
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Number of Events")
@@ -700,7 +713,7 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
             decision_timestamp = [data["timestamp"] for data in nb_cons_controller_decision_taked[group_name]]
             decision_count = [data["size"] for data in nb_cons_controller_decision_taked[group_name]]
             
-        fig, ax = plt.subplots(figsize=(14, 6))
+        fig, ax = plt.subplots(figsize=(16, 6))
 
         if consumer_timestamps:
             ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Nombre de consommateurs (fichier)')
