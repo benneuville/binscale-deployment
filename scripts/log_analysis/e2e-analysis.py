@@ -5,6 +5,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.dates as mdates
 
+X_SMALL_SIZE = 10
+SMALL_SIZE = 14
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 26
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=SMALL_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python3 e2e-analysis.py <e2e-analyzer.json>")
@@ -41,9 +53,11 @@ if __name__ == "__main__":
 
     # Créer la figure avec 2 sous-graphiques
     plt.figure(figsize=(16, 6))
+    
+    color = '#5C669F'
 
     # --- GRAPHIQUE 1 : Durée end-to-end en fonction du timestamp de fin ---
-    plt.scatter(finish_times, durations, alpha=0.3, s=5)
+    plt.scatter(finish_times, durations, alpha=0.3, s=5, color=color)
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
     plt.gca().xaxis.set_major_locator(mdates.AutoDateLocator())
     plt.xlabel('Heure de fin')
@@ -51,7 +65,19 @@ if __name__ == "__main__":
     plt.title('Durée end-to-end par événement')
     plt.grid(True, alpha=0.3)
     plt.xticks(rotation=45)
-    plt.savefig('e2e_latency.png', dpi=300, bbox_inches='tight')
+
+    nb_events = data["metadata"]["count"]
+
+    text_str_replicas = f"total events: {nb_events}"
+    plt.text(0.99, 0.98, text_str_replicas, transform=plt.axes().transAxes,
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
+    frame1 = plt.gca()
+    frame1.axes.get_xaxis().set_visible(False)
+    frame1.axes.get_yaxis().set_visible(False)
+
+
+    plt.savefig('e2e_latency.png', dpi=300, bbox_inches='tight', transparent=True)
     plt.close()
 
     plt.figure(figsize=(16, 6))
