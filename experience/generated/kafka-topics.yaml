@@ -8,7 +8,7 @@ spec:
   partitions: 10
   replicas: 1
   config:
-    retention.ms: 7200000
+    retention.ms: 14400000
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime
@@ -23,7 +23,7 @@ spec:
   partitions: 10
   replicas: 1
   config:
-    retention.ms: 7200000
+    retention.ms: 14400000
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime
@@ -38,7 +38,7 @@ spec:
   partitions: 10
   replicas: 1
   config:
-    retention.ms: 7200000
+    retention.ms: 14400000
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime
@@ -53,7 +53,7 @@ spec:
   partitions: 10
   replicas: 1
   config:
-    retention.ms: 7200000
+    retention.ms: 14400000
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime
@@ -68,7 +68,7 @@ spec:
   partitions: 10
   replicas: 1
   config:
-    retention.ms: 7200000
+    retention.ms: 14400000
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime
@@ -83,7 +83,7 @@ spec:
   partitions: 10
   replicas: 1
   config:
-    retention.ms: 7200000
+    retention.ms: 14400000
     segment.bytes: 1073741824
     min.insync.replicas: 1
     message.timestamp.type: CreateTime

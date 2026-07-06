@@ -15,6 +15,9 @@ data:
     - name: topic-latency-ehanced-3
       ratio: 0.8 
 
+    - name: final-queue
+      ratio: 1 
+
 ---
 
 apiVersion: apps/v1
@@ -96,6 +99,9 @@ data:
 
     - name: topic-latency-ehanced-5
       ratio: 0.2 
+
+    - name: final-queue
+      ratio: 1 
 
 ---
 
@@ -182,6 +188,9 @@ data:
     - name: topic-latency-ehanced-4
       ratio: 0.2 
 
+    - name: final-queue
+      ratio: 1 
+
 ---
 
 apiVersion: apps/v1
@@ -262,6 +271,9 @@ data:
     output:
 
     - name: topic-latency-ehanced-5
+      ratio: 1 
+
+    - name: final-queue
       ratio: 1 
 
 ---
