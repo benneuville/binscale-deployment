@@ -115,8 +115,7 @@ for edge in edges.values():
     edges_topic_gen.append(templates[KAFKA_TOPIC].render(edge))
 
 for node in [v for v in nodes.values() if v["type"] == LATENCY]:
-    if len(node["targets"]) == 0:
-        nodes[node["id"]]["targets"].append({"topic_name": FINAL_QUEUE, "ratio": 1})
+    nodes[node["id"]]["targets"].append({"topic_name": FINAL_QUEUE, "ratio": 1})
 
 edges_topic_gen.append(templates[KAFKA_TOPIC].render({"topic_name" : FINAL_QUEUE, "partitions": 10}))
 
@@ -155,7 +154,7 @@ print("✅ Controller generated")
 
 print("🚂 Generating E2E Analyzer...")
 with open("experience/generated/e2e-analyzer.yaml", "w") as f:
-    f.write(templates[E2E_ANALYZER].render(nodes=[v for v in nodes.values() if v["type"] == LATENCY], image_tag=image_tag, end_queue=FINAL_QUEUE))
+    f.write(templates[E2E_ANALYZER].render(image_tag=image_tag, end_queue=FINAL_QUEUE))
 
 print("✅ E2E Analyzer generated")
 
