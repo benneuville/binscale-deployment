@@ -5,7 +5,9 @@ metadata:
   namespace: default
 data:
   e2e-analyzer-config.yaml: |
-    topics:
+    topics: {% for input in nodes %}
+        - name: {{input}}
+    {% endfor %}
         - name: {{end_queue}}
 
 ---

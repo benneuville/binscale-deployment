@@ -2,7 +2,7 @@ from jinja2 import Template
 import yaml
 import sys
 
-WORLOAD = "workload"
+WORKLOAD = "workload"
 LATENCY = "latency"
 CONTROLLER = "controller"
 KAFKA_TOPIC = "kafka-topic"
@@ -20,14 +20,14 @@ file_path = sys.argv[1]
 image_tag = sys.argv[2]
 
 def is_workload_node(type):
-    return type == WORLOAD
+    return type == WORKLOAD
 
 def edge_check(edge, graph):
     if graph[edge["to"]] is None:
         raise ValueError(f"Node {edge['to']} not found in graph")
     if graph[edge["from"]] is None:
         raise ValueError(f"Node {edge['from']} not found in graph")
-    if graph[edge["to"]]["type"] == WORLOAD:
+    if graph[edge["to"]]["type"] == WORKLOAD:
         raise ValueError("Workload nodes cannot be destination nodes")
 
 templates = {}
@@ -37,7 +37,7 @@ with open("experience/templates/latency.yaml.j2") as f:
     templates[LATENCY] = Template(f.read())
 
 with open("experience/templates/producer.yaml.j2") as f:
-    templates[WORLOAD] = Template(f.read())
+    templates[WORKLOAD] = Template(f.read())
 
 with open("experience/templates/controller.yaml.j2") as f:
     templates[CONTROLLER] = Template(f.read())
@@ -136,7 +136,7 @@ print("✅ Service nodes generated")
 
 print("🚂 Generating Workload nodes...")
 nodes_workload_gen = []
-for node in [v for v in nodes.values() if v["type"] == WORLOAD]:
+for node in [v for v in nodes.values() if v["type"] == WORKLOAD]:
     nodes_workload_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 # Output all workload nodes in one file in "/generated/workload.yaml"
 with open("experience/generated/workload.yaml", "w") as f:
@@ -154,7 +154,7 @@ print("✅ Controller generated")
 
 print("🚂 Generating E2E Analyzer...")
 with open("experience/generated/e2e-analyzer.yaml", "w") as f:
-    f.write(templates[E2E_ANALYZER].render(image_tag=image_tag, end_queue=FINAL_QUEUE))
+    f.write(templates[E2E_ANALYZER].render(image_tag=image_tag, nodes=[v["params"]["topic_name"] for v in nodes.values() if v["type"] == WORKLOAD], end_queue=FINAL_QUEUE))
 
 print("✅ E2E Analyzer generated")
 

@@ -5,7 +5,11 @@ metadata:
   namespace: default
 data:
   e2e-analyzer-config.yaml: |
-    topics:
+    topics: 
+        - name: topic-latency-ehanced-1
+    
+        - name: topic-latency-ehanced-2
+    
         - name: final-queue
 
 ---
