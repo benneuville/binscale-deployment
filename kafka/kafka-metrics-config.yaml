@@ -172,6 +172,13 @@ data:
       name: kafka_server_brokermetadatametrics_$1
       type: GAUGE
 
+    # === Kafka Messages Count per Topic and Headers ===
+    - pattern: kafka.server<type=BrokerTopicMetrics, name=(.+), topic=(.+), header=(.+)><>Count
+      name: kafka_server_brokertopicmetrics_$1_total
+      labels:
+        topic: "$2"
+        header: "$3"
+
   zookeeper-metrics-config.yml: |
     # Zookeeper metrics configuration (ignored in KRaft)
     lowercaseOutputName: true

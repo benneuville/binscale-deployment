@@ -3,15 +3,17 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: workload-1
+  name: workload-ehanced-1
   namespace: default
   labels:
     app: workload
+    context: experience
 spec:
   template:
     metadata:
       labels:
         app: workload
+        context: experience
     spec:
       containers:
         - name: java-kafka-producer
@@ -21,8 +23,55 @@ spec:
           env:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
+            - name: PRODUCER_ID
+              value: "workload-ehanced-1"
             - name: TOPIC
-              value: topic-latency-1
+              value: topic-latency-ehanced-1
+            - name: PARTITION_WEIGHTS
+              value: "1,1,1,1,1,1,1,1,1,1"
+            - name: DELAY_MS
+              value: "600"
+            - name: LOG_LEVEL
+              value: "INFO"
+            - name: PRODUCER_ACKS
+              value: "0"
+            - name: ADDITIONAL_CONFIG
+              value: |
+                retries=100
+            - name: WORKLOAD
+              value: "biased"
+      restartPolicy: Never
+  backoffLimit: 0
+---
+
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: workload-ehanced-2
+  namespace: default
+  labels:
+    app: workload
+    context: experience
+spec:
+  template:
+    metadata:
+      labels:
+        app: workload
+        context: experience
+    spec:
+      containers:
+        - name: java-kafka-producer
+          image: docker.io/benneuville/binscale:latest
+          imagePullPolicy: Always
+          command: ["java", "-jar", "/app/producer.jar"]
+          env:
+            - name: BOOTSTRAP_SERVERS
+              value: my-cluster-kafka-bootstrap:9092
+            - name: PRODUCER_ID
+              value: "workload-ehanced-2"
+            - name: TOPIC
+              value: topic-latency-ehanced-2
             - name: PARTITION_WEIGHTS
               value: "1,1,1,1,1,1,1,1,1,1"
             - name: DELAY_MS

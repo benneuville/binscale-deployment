@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: "analyzer"
+  POSTGRES_USER: "analyzer"
+  PGDATA: "/var/lib/postgresql/data/pgdata"
+  POSTGRESQL_MAX_CONNECTIONS: "300"
+  POSTGRESQL_SHARED_BUFFERS: "4GB"
+  POSTGRESQL_EFFECTIVE_CACHE_SIZE: "12GB"

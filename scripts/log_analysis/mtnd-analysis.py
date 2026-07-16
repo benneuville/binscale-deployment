@@ -9,6 +9,19 @@ import json
 from collections import defaultdict
 import numpy as np
 
+X_SMALL_SIZE = 10
+SMALL_SIZE = 14
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 26
+
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=SMALL_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+# plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+
 # ============================================
 # CLASSES
 # ============================================
@@ -30,12 +43,12 @@ class Consumer:
         self.dynamicProcessingCapacity = dynamicProcessingCapacity
 
 class ConsumerGroup:
-    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, maxDefinedProcessingRate, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName, upProcessRate, downProcessRate, upLagCapacity, downLagCapacity):
+    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, processingRateFallBack, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName, upProcessRate, downProcessRate, upLagCapacity, downLagCapacity):
         self.wsla = wsla
         self.inputTopic = inputTopic
         self.consumerName = consumerName
         self.kafkaGroupName = kafkaGroupName
-        self.maxDefinedProcessingRate = maxDefinedProcessingRate
+        self.processingRateFallBack = processingRateFallBack
         self.topicPartitions = topicPartitions
         self.lastUpScaleDecision = datetime.strptime(lastUpScaleDecision, '%m/%d/%YT%H:%M:%S.%f') if lastUpScaleDecision != "N/A" else None
         self.assignment = assignment
@@ -128,7 +141,7 @@ def pulled_data_from_prometheus(line):
             inputTopic=data["consumerGroup"]["inputTopic"],
             consumerName=data["consumerGroup"]["consumerName"],
             kafkaGroupName=data["consumerGroup"]["kafkaGroupName"],
-            maxDefinedProcessingRate=data["consumerGroup"]["maxDefinedProcessingRate"],
+            processingRateFallBack=data["consumerGroup"]["processingRateFallBack"],
             topicPartitions=topic_partitions,
             lastUpScaleDecision=data["consumerGroup"]["lastUpScaleDecision"],
             assignment=assignment,
@@ -497,7 +510,27 @@ def prefab_nb_consumers_over_time(min_time, max_time):
     print("➡️ Graphique généré : nb_consumers_over_time.png")
     return results
 
-def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None):
+def plot_processing_rate_by_group(grouped_data):
+    for group_name, data_list in grouped_data.items():
+        timestamps = [data.timestamp for data in data_list]
+        fallback_processing_rates = [data.consumerGroup.processingRateFallBack for data in data_list]
+
+        plt.figure(figsize=(14, 7))
+        plt.plot(timestamps, fallback_processing_rates, label='Up Process Rate', color='green')
+        plt.xlabel('Time')
+        plt.ylabel('Processing Rate (events/s)')
+        plt.title(f"Processing Rates over Time — Consumer Group: {group_name}")
+        plt.grid(True)
+        plt.legend()
+        plt.xlim(min(timestamps), max(timestamps))
+        plt.gcf().autofmt_xdate()
+        filename = f"processing_rate_group_{group_name}.png"
+        plt.savefig(filename)
+        plt.close()
+
+        print(f"➡️ Graphique généré : {filename}")
+
+def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None, total_time_exp=0):
     """
     Produit un graphe par groupe :
     - courbe de latence fusionnée de tous les consumers du groupe
@@ -546,9 +579,16 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         step_times = [p[0] for p in change_points]
         step_counts = [p[1] for p in change_points]
 
-        fig, ax1 = plt.subplots(figsize=(14, 6))
+        fig, ax1 = plt.subplots(figsize=(16, 6))
 
-        color_latency = 'tab:blue'
+        
+        replicas_per_minute = defaultdict(set)
+        for ev in all_events:
+            minute_key = ev.insertion_date.replace(second=0, microsecond=0)
+            replicas_per_minute[minute_key].add(ev.consumer_id)
+        total_replicas_minute = sum(len(replicas) for replicas in replicas_per_minute.values()) / len(replicas_per_minute) * (total_time_exp / 60) if replicas_per_minute else 0
+
+        color_latency = '#5C669F'
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Latency (ms)", color=color_latency)
         ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency')
@@ -577,6 +617,11 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
                  verticalalignment='top', horizontalalignment='right',
                  bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
         
+        text_str_replicas = f"total RM: {total_replicas_minute:.1f}"
+        ax1.text(0.75, 0.98, text_str_replicas, transform=ax1.transAxes,
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
+        
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
@@ -585,7 +630,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         fig.tight_layout()
 
         filename = f"latency_and_consumers_group_{group}.png"
-        plt.savefig(filename)
+        plt.savefig(filename, transparent=True)
 
         ax3 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in waiting_scale])
@@ -642,7 +687,7 @@ def plot_events_by_wsla(min_time, max_time, wsla_threshold=500, nb_consumers_per
             step_counts.append(count)
             current_time = next_time
 
-        fig, ax1 = plt.subplots(figsize=(14, 6))
+        fig, ax1 = plt.subplots(figsize=(16, 6))
         ax1.plot(step_times, step_counts, color='lightblue', alpha=0.7, label='Event count')
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Number of Events")
@@ -680,7 +725,7 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
             decision_timestamp = [data["timestamp"] for data in nb_cons_controller_decision_taked[group_name]]
             decision_count = [data["size"] for data in nb_cons_controller_decision_taked[group_name]]
             
-        fig, ax = plt.subplots(figsize=(14, 6))
+        fig, ax = plt.subplots(figsize=(16, 6))
 
         if consumer_timestamps:
             ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Nombre de consommateurs (fichier)')
@@ -803,14 +848,15 @@ if __name__ == "__main__":
     nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
     plot_nbconsumer(grouped_data_for_nb_consumer, nb_consumers_per_group, nb_cons_controller_decision_taked)
     
-    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_cons_controller_decision_taked)
+    duration = (max_time - min_time).total_seconds()
+    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_cons_controller_decision_taked, total_time_exp=duration)
     
     plot_decision_timeline(prometheus_except)
     plot_latency_by_consumer(min_time, max_time)
     plot_events_by_wsla(min_time, max_time, nb_consumers_per_group=nb_cons_controller_decision_taked)
     plot_group_arrival_rate(grouped_data)
     plot_group_lag(grouped_data)
+    plot_processing_rate_by_group(grouped_data)
     
     print("\n✅ All plots generated successfully!")
-    duration = (max_time - min_time).total_seconds()
     print(f"⏱️ Total analysis duration: {duration:.2f} seconds")

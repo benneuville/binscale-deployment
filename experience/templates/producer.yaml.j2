@@ -64,6 +64,8 @@ spec:
           env:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
+            - name: PRODUCER_ID
+              value: "{{ node.id }}"
             - name: TOPIC
               value: {{ node.params.topic_name }}
             - name: PARTITION_WEIGHTS

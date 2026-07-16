@@ -434,20 +434,23 @@ for file in $INPUT_GRAPH_FOLDER/*.bs.yaml; do
     printf "\033[38;5;8m ◻ Output directory creation \033[0m"
     mkdir -p "$DIR_OUTPUT_FINAL"
     cp "$file" "$DIR_OUTPUT_FINAL"
+    mkdir -p "$DIR_OUTPUT_FINAL/logs"
 
     printf "\033[2K"
     printf "\r\033[38;5;36m ▣ Output directory created. [$DIR_OUTPUT_FINAL]\033[0m\n"
 
-    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL"
+    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/analyzer/*" "$DIR_OUTPUT_FINAL"
+    scp -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -J "$SITE_NAME.g5k" "root@$master_node:/export/logs/*" "$DIR_OUTPUT_FINAL/logs/"
     printf "\033[38;5;36m ▣ Experience [$file] run completed. Logs retrieved in \033[0m[$DIR_OUTPUT_FINAL]\n"
     
     if [ "$is_analyze_mode" = true ]; then
         printf "\r\033[38;5;36m ▣ Analyze processed in parallel [$file_name]\033[0m\n"
         {
             cd $DIR_OUTPUT_FINAL || exit 1
-            "$SCRIPT_DIR/log_analysis/extractLogs.sh" filebeat* >/dev/null 2>&1
+            "$SCRIPT_DIR/log_analysis/extractLogs.sh" ./logs/filebeat* >/dev/null 2>&1
             python3 "$SCRIPT_DIR/log_analysis/mtnd-analysis.py" consumer_logs.txt controller_logs.txt &
             python3 "$SCRIPT_DIR/../experience/generator/graph_visualizor.py" $SCRIPT_DIR/../$file &
+            python3 "$SCRIPT_DIR/log_analysis/e2e-analysis.py" export-e2e-analyze.json &
             wait
         } &
     fi

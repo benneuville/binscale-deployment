@@ -16,6 +16,3 @@
 
     - name: Delete Producer Deployment and Service
       command: kubectl delete -f ../experience/generated/workload.yaml -n {{ namespace }} --ignore-not-found=true
-      
-    - name: Delete Topics Definition
-      command: kubectl delete -f ../experience/generated/kafka-topics.yaml -n {{ namespace }} --ignore-not-found=true
