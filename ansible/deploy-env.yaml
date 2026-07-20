@@ -62,3 +62,18 @@
 
     - name: Apply Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
+
+- name: Deploy Kafka Exporter
+  hosts: localhost
+  vars:
+    namespace: default
+    timeout: 180s
+  
+  tasks:
+    - name: Kafka Exporter Deployment
+      command: kubectl apply -f ../experience/generated/exporter.yaml
+
+    - name: Waiting for Exporter
+      command: kubectl wait pod -l app=exporter --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
+      register: exporter_ready
+      failed_when: exporter_ready.rc != 0

@@ -67,3 +67,22 @@ data:
             target_label: namespace
           - source_labels: [__meta_kubernetes_pod_name]
             target_label: pod
+            
+      # Scrape de l'exporter custom
+      - job_name: 'binscale-exporter'
+        metrics_path: /prometheus
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          # Garde uniquement les pods avec le label app=exporter
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            regex: exporter
+            action: keep
+          # Garde les pods ayant un port nommé "metrics" ou "prometheus"
+          - source_labels: [__meta_kubernetes_pod_container_port_name]
+            regex: prometheus|metrics|brom
+            action: keep
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod

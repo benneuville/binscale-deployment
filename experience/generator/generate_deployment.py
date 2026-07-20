@@ -9,7 +9,15 @@ KAFKA_TOPIC = "kafka-topic"
 MONITORING_CONSUMER = "monitoring-consumer"
 PRE_PULL_IMAGE = "pre-pull-image"
 E2E_ANALYZER = "e2e-analyzer"
+EXPORTER = "exporter"
 FINAL_QUEUE = "final-queue"
+
+headers = [
+    {
+        "name":"group_id",
+        "default": "unknown"
+    }
+    ]
 
 
 if len(sys.argv) < 2:
@@ -57,6 +65,8 @@ with open("experience/templates/pre-pull-image.yaml.j2") as f:
 with open("experience/templates/e2e-analyzer.yaml.j2") as f:
     templates[E2E_ANALYZER] = Template(f.read())
 
+with open("experience/templates/exporter.yaml.j2") as f:
+    templates[EXPORTER] = Template(f.read())
 
 ## Load graph
 with open(file_path) as f:
@@ -157,6 +167,11 @@ with open("experience/generated/e2e-analyzer.yaml", "w") as f:
     f.write(templates[E2E_ANALYZER].render(image_tag=image_tag, nodes=[v["params"]["topic_name"] for v in nodes.values() if v["type"] == WORKLOAD], end_queue=FINAL_QUEUE))
 
 print("✅ E2E Analyzer generated")
+
+print("🚂 Generating Exporter...")
+with open("experience/generated/exporter.yaml", "w") as f:
+    f.write(templates[EXPORTER].render(headers=headers))
+print("✅ Exporter generated")
 
 print("🚂 Generating pre-pull image job...")
 with open("experience/generated/pre-pull-image.yaml", "w") as f:
