@@ -33,7 +33,7 @@ spec:
     spec:
       containers:
         - name: exporter
-          image: docker.io/benneuville/binscale:
+          image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/exporter.jar"]
           ports:

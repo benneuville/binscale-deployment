@@ -170,7 +170,7 @@ print("✅ E2E Analyzer generated")
 
 print("🚂 Generating Exporter...")
 with open("experience/generated/exporter.yaml", "w") as f:
-    f.write(templates[EXPORTER].render(headers=headers))
+    f.write(templates[EXPORTER].render(headers=headers, image_tag=image_tag))
 print("✅ Exporter generated")
 
 print("🚂 Generating pre-pull image job...")
