@@ -41,8 +41,8 @@ spec:
               value: my-cluster-kafka-bootstrap:9092
             - name: MESSAGE_COUNTER_NAME
               value: {{ message_counter_name }}
-#            - name: HEADERS_CONFIG_PATH
-#              value: "/config/exporter-config.yaml"
+            - name: HEADERS_CONFIG_PATH
+              value: "/config/exporter-config.yaml"
           volumeMounts:
             - name: exporter-config
               mountPath: /config
