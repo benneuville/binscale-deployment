@@ -26,7 +26,6 @@ spec:
       name: http
   selector:
     app: e2e-analyzer
-    context: experience
 
 ---
 apiVersion: batch/v1
@@ -41,7 +40,6 @@ spec:
     metadata:
       labels:
         app: e2e-analyzer
-        context: experience
     spec:
       restartPolicy: Never
       containers:
@@ -132,7 +130,6 @@ spec:
     metadata:
       labels:
         app: e2e-analyzer
-        context: experience
     spec:
       restartPolicy: Never
       serviceAccountName: e2e-analyzer-sa
