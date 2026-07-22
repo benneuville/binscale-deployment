@@ -7,7 +7,7 @@ data:
   exporter-config.yaml: |
     headers:
 
-    - name: group_id
+    - name: groupId
       default: unknown 
 
 ---
@@ -18,18 +18,15 @@ metadata:
   namespace: default
   labels:
     app: exporter
-    context: experience
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: exporter
-      context: experience
   template:
     metadata:
       labels:
         app: exporter
-        context: experience
     spec:
       containers:
         - name: exporter
@@ -40,12 +37,12 @@ spec:
             - containerPort: 8080
               name: brom
           env:
-            - name: BOOTSTRAP_SERVERS
+            - name: KAFKA_BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: MESSAGE_COUNTER_NAME
               value: 
-#            - name: HEADERS_CONFIG_PATH
-#              value: "/config/exporter-config.yaml"
+            - name: HEADERS_CONFIG_PATH
+              value: "/config/exporter-config.yaml"
           volumeMounts:
             - name: exporter-config
               mountPath: /config

@@ -133,7 +133,7 @@ data:
           - drop_event:
               when:
                 not:
-                  has_fields: ['kubernetes.labels.app']
+                  has_fields: ['kubernetes.labels.context']
           - drop_event:
               when:
                 not:
