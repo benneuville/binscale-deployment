@@ -12,12 +12,11 @@
       command: kubectl delete -f ../filebeat/filebeat-kubernetes.yaml -n elastic --ignore-not-found=true
     - name: Launch Filebeat
       command: kubectl apply -f ../filebeat/filebeat-kubernetes.yaml -n elastic
+    - name: WARM UP - Pre-pull Image
+      command: kubectl apply -f ../experience/generated/pre-pull-image.yaml
     - name: Wait 50s
       pause:
         seconds: 50
-
-    - name: WARM UP - Pre-pull Image
-      command: kubectl apply -f ../experience/generated/pre-pull-image.yaml
 
     - name: Apply Admin Service Account for ControllerAndScaler Pod
       command: kubectl apply -f ../kubernetes/service-account.yaml
