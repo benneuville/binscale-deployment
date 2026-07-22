@@ -14,7 +14,7 @@ FINAL_QUEUE = "final-queue"
 
 headers = [
     {
-        "name":"group_id",
+        "name":"groupId",
         "default": "unknown"
     }
     ]
