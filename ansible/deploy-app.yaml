@@ -30,10 +30,18 @@
     - name: Controller Deployment
       command: kubectl apply -f ../experience/generated/controller.yaml
 
+    - name: Kafka Exporter Deployment
+      command: kubectl apply -f ../experience/generated/exporter.yaml
+
     - name: Waiting for Controller
       command: kubectl wait pod -l app=controllerandscaler --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
       register: controller_ready
       failed_when: controller_ready.rc != 0
+      
+    - name: Waiting for Exporter
+      command: kubectl wait pod -l app=exporter --for=condition=Ready --timeout={{ timeout }} -n {{ namespace }}
+      register: exporter_ready
+      failed_when: exporter_ready.rc != 0
 
     - name: Consumer Deployment (latency)
       command: kubectl apply -f ../experience/generated/latency.yaml
