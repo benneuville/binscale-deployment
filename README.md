@@ -250,5 +250,5 @@ kubectl port-forward svc/prometheus-service 9090:9090
 ```
 
 ```sh
-ssh -L 9090:localhost:9090 -J grenoble.g5k root@dahu-2 -l "kubectl port-forward svc/prometheus-service 9090:9090"
+ssh -L 9090:localhost:9090 -J grenoble.g5k root@dahu-2 "kubectl port-forward svc/prometheus-service 9090:9090"
 ```
