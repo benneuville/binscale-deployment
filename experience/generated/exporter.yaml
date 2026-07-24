@@ -10,6 +10,10 @@ data:
     - name: groupId
       default: unknown 
 
+    blackListedTopics:
+
+    - final-queue
+
 ---
 apiVersion: apps/v1
 kind: Deployment

@@ -17,8 +17,9 @@ headers = [
         "name":"groupId",
         "default": "unknown"
     }
-    ]
+]
 
+blackListedTopics = [FINAL_QUEUE]
 
 if len(sys.argv) < 2:
     print("Usage: python generate_deployment.py <file.yaml> <image-tag>")
@@ -170,7 +171,7 @@ print("✅ E2E Analyzer generated")
 
 print("🚂 Generating Exporter...")
 with open("experience/generated/exporter.yaml", "w") as f:
-    f.write(templates[EXPORTER].render(headers=headers, image_tag=image_tag))
+    f.write(templates[EXPORTER].render(headers=headers, bltopics=blackListedTopics, image_tag=image_tag))
 print("✅ Exporter generated")
 
 print("🚂 Generating pre-pull image job...")

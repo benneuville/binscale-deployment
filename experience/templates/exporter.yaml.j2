@@ -10,6 +10,10 @@ data:
     - name: {{ header.name }}
       default: {{ header.default }} 
 {% endfor %}
+    blackListedTopics:
+{% for topic in bltopics %}
+    - {{ topic }}
+{% endfor %}
 ---
 apiVersion: apps/v1
 kind: Deployment
