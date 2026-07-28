@@ -38,7 +38,7 @@ spec:
         - containerPort: 5002
       env:
         - name: BOOTSTRAP_SERVERS
-          value: my-cluster-kafka-bootstrap:9092
+          value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
         - name: NUMBER_PARTITIONS
           value: "20"
         - name: INIT_SIZE

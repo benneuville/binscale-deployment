@@ -42,7 +42,7 @@ spec:
               name: brom
           env:
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: MESSAGE_COUNTER_NAME
               value: {{ message_counter_name }}
             - name: HEADERS_CONFIG_PATH
