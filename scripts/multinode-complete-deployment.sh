@@ -345,7 +345,7 @@ printf "\033[38;5;8m  ▣ Worker node(s) :\n\033[1m\033[38;5;108m${worker_nodes[
 
 
 printf "\033[38;5;8m ◻ Building hosts file \033[0m"
-hosts_buffer="127.0.0.1 localhost"
+hosts_buffer="127.0.0.1 localhost\n"
 
 res="$(ssh $SITE_NAME.g5k "getent hosts $master_node | awk '{ print $1 }'")"
 cut="$(cut -d ' ' -f 1 <<< $res )"
