@@ -62,6 +62,8 @@ spec:
           imagePullPolicy: Always
           command: ["java", "-jar", "/app/producer.jar"]
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: PRODUCER_ID

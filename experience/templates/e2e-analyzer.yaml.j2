@@ -142,6 +142,8 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPICS_CONFIG_PATH
