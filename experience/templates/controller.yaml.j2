@@ -65,7 +65,7 @@ spec:
         - name: TOPICS_CONFIG_PATH
           value: "/config/controller-config.yaml"
           {% endif %}
-      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
+      command: ["sh", "-c", "java $(JAVA_OPTS) $DEBUG_OPTIONS -jar /app/Controller.jar"]
       volumeMounts:
         - name: controller-config
           mountPath: /config

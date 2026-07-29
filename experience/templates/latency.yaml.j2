@@ -39,7 +39,7 @@ spec:
         - name: {{ node.id }}
           image: docker.io/benneuville/binscale:{{image_tag}}
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
               name: brom

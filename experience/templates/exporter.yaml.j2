@@ -36,7 +36,7 @@ spec:
         - name: exporter
           image: docker.io/benneuville/binscale:{{image_tag}}
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/exporter.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/exporter.jar"]
           ports:
             - containerPort: 8080
               name: brom

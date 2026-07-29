@@ -164,7 +164,7 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-          command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
+          command: ["sh", "-c", "java $(JAVA_OPTS) $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
           volumeMounts:
             - name: e2e-analyzer-config
               mountPath: /config

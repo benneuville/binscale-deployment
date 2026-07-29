@@ -60,7 +60,7 @@ spec:
         - name: java-kafka-producer
           image: docker.io/benneuville/binscale:{{image_tag}}
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/producer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/producer.jar"]
           env:
             - name: JAVA_OPTS
               value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
