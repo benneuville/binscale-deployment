@@ -7,6 +7,7 @@ nodes:
       workload: biased
       producer_ack: 0
       delay_ms: 600
+      input: "spike-n-decrease.csv"
   - id: workload-ehanced-2
     type: workload
     params:

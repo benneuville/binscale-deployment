@@ -19,8 +19,10 @@ spec:
         - name: java-kafka-producer
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/producer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/producer.jar"]
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: PRODUCER_ID
@@ -40,6 +42,8 @@ spec:
                 retries=100
             - name: WORKLOAD
               value: "biased"
+            - name: INPUT_WORKLOAD
+              value: "spike-n-decrease.csv"
       restartPolicy: Never
   backoffLimit: 0
 ---
@@ -64,8 +68,10 @@ spec:
         - name: java-kafka-producer
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/producer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/producer.jar"]
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap:9092
             - name: PRODUCER_ID
@@ -85,5 +91,7 @@ spec:
                 retries=100
             - name: WORKLOAD
               value: "biased"
+            - name: INPUT_WORKLOAD
+              value: "defaultArrivalRatesm.csv"
       restartPolicy: Never
   backoffLimit: 0

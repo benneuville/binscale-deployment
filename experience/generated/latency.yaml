@@ -45,13 +45,15 @@ spec:
         - name: latency-ehanced-1
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
               name: brom
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
               value: topic-latency-ehanced-1
             - name: GROUP_ID
@@ -130,13 +132,15 @@ spec:
         - name: latency-ehanced-2
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
               name: brom
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
               value: topic-latency-ehanced-2
             - name: GROUP_ID
@@ -218,13 +222,15 @@ spec:
         - name: latency-ehanced-3
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
               name: brom
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
               value: topic-latency-ehanced-3
             - name: GROUP_ID
@@ -303,13 +309,15 @@ spec:
         - name: latency-ehanced-4
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
               name: brom
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
               value: topic-latency-ehanced-4
             - name: GROUP_ID
@@ -385,13 +393,15 @@ spec:
         - name: latency-ehanced-5
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/consumer.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
               name: brom
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
               value: topic-latency-ehanced-5
             - name: GROUP_ID

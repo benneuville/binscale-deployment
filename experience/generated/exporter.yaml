@@ -36,13 +36,15 @@ spec:
         - name: exporter
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
-          command: ["java", "-jar", "/app/exporter.jar"]
+          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/exporter.jar"]
           ports:
             - containerPort: 8080
               name: brom
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: KAFKA_BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: MESSAGE_COUNTER_NAME
               value: 
             - name: HEADERS_CONFIG_PATH

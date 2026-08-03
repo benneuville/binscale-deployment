@@ -11,6 +11,7 @@ PRE_PULL_IMAGE = "pre-pull-image"
 E2E_ANALYZER = "e2e-analyzer"
 EXPORTER = "exporter"
 FINAL_QUEUE = "final-queue"
+DEFAULT_WORKLOAD_INPUT = "defaultArrivalRatesm.csv"
 
 headers = [
     {
@@ -89,6 +90,7 @@ for node in graph["nodes"]:
     nodes[node["id"]] = node
 
 
+
 for edge in graph["edges"]:
     tmp_edge = {
         "from": edge["from"],
@@ -148,6 +150,8 @@ print("✅ Service nodes generated")
 print("🚂 Generating Workload nodes...")
 nodes_workload_gen = []
 for node in [v for v in nodes.values() if v["type"] == WORKLOAD]:
+    if "input" not in node["params"] or node["params"]["input"] is None:
+        node["params"]["input"] = DEFAULT_WORKLOAD_INPUT
     nodes_workload_gen.append(templates[node["type"]].render(node=node, image_tag=image_tag))
 # Output all workload nodes in one file in "/generated/workload.yaml"
 with open("experience/generated/workload.yaml", "w") as f:

@@ -83,5 +83,7 @@ spec:
                 retries=100
             - name: WORKLOAD
               value: "{{ node.params.workload }}"
+            - name: INPUT_WORKLOAD
+              value: "{{ node.params.input }}"
       restartPolicy: Never
   backoffLimit: 0

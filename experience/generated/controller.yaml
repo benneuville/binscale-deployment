@@ -76,8 +76,10 @@ spec:
       ports:
         - containerPort: 5002
       env:
+        - name: JAVA_OPTS
+          value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
         - name: BOOTSTRAP_SERVERS
-          value: my-cluster-kafka-bootstrap:9092
+          value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
         - name: NUMBER_PARTITIONS
           value: "20"
         - name: INIT_SIZE
@@ -89,7 +91,7 @@ spec:
         - name: FDOWN
           value: "0.4"
         - name: REB_TIME
-          value: "5.4"
+          value: "0.4"
         - name: DI
           value: "1500"
         - name: REQUEST_TIME_RANGE
@@ -102,7 +104,7 @@ spec:
         - name: TOPICS_CONFIG_PATH
           value: "/config/controller-config.yaml"
           
-      command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/Controller.jar"]
+      command: ["sh", "-c", "java $(JAVA_OPTS) $DEBUG_OPTIONS -jar /app/Controller.jar"]
       volumeMounts:
         - name: controller-config
           mountPath: /config

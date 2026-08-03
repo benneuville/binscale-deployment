@@ -144,8 +144,10 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: JAVA_OPTS
+              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
             - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap:9092
+              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPICS_CONFIG_PATH
               value: "/config/e2e-analyzer-config.yaml"
             - name: ASYNC_COMMIT
@@ -164,7 +166,7 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: POSTGRES_PASSWORD
-          command: ["sh", "-c", "java $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
+          command: ["sh", "-c", "java $(JAVA_OPTS) $DEBUG_OPTIONS -jar /app/e2e-analyzer.jar"]
           volumeMounts:
             - name: e2e-analyzer-config
               mountPath: /config
