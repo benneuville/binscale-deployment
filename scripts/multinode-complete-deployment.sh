@@ -200,6 +200,7 @@ sed -i 's/\r$//' $SSH_CONFIG_FILE
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Hosts added in ssh \033[0m[$SSH_CONFIG_FILE]\n"
 sudo chmod 700 "$HOME/.ssh"
+
 sudo chmod 600 "$SSH_CONFIG_FILE"
 
 
