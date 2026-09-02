@@ -1,4 +1,5 @@
 #!/bin/bash
+
 DEFAULT_NODES=3
 DEFAULT_OUTPUT_DIR="."
 DEFAULT_INPUT_SCRIPT_FILE="grid5000-deployment-script.sh"
