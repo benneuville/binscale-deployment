@@ -43,7 +43,7 @@ spec:
             - name: WORKLOAD
               value: "biased"
             - name: INPUT_WORKLOAD
-              value: "spike-n-decrease.csv"
+              value: "first-600-2h.csv"
       restartPolicy: Never
   backoffLimit: 0
 ---
@@ -92,6 +92,6 @@ spec:
             - name: WORKLOAD
               value: "biased"
             - name: INPUT_WORKLOAD
-              value: "defaultArrivalRatesm.csv"
+              value: "first-600-2h.csv"
       restartPolicy: Never
   backoffLimit: 0
