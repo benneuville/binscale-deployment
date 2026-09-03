@@ -238,7 +238,7 @@ echo ""
 printf "\033[38;5;8m ◻ Configure Github Authentication \033[0m"
 git remote set-url origin "${TOKENIZED_GIT_REPO}"
 printf "\033[2K"
-printf "\r\033[38;5;36m ▣ Configured Github Authentication on '$BRANCH_NAME' \033[0m"
+printf "\r\033[38;5;36m ▣ Configured Github Authentication \033[0m"
 
 printf "\033[38;5;8m ◻ Check branch name \033[0m"
 
@@ -289,7 +289,7 @@ fi
 printf "\033[38;5;8m ◻ Delete Configuration Github Authentication \033[0m"
 git remote set-url origin "${GIT_REPO}"
 printf "\033[2K"
-printf "\r\033[38;5;36m ▣ Deleted Configuration Github Authentication on '$BRANCH_NAME' \033[0m"
+printf "\r\033[38;5;36m ▣ Deleted Configuration Github Authentication \033[0m"
 
 echo ""
 
