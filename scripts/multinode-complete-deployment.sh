@@ -115,11 +115,11 @@ while [[ "$#" -gt 0 ]]; do
             keep_alive=true
             ;;
         -t|--token)
-            AUTH_TOKEN="$2"
+            AUTH_TOKEN="$2@"
             shift
             ;;
         -at|--auth-token)
-            AUTH_TOKEN=$(cat .git-token)
+            AUTH_TOKEN=$(cat .git-token)"@"
             ;;
         -h|--help)
             usage
@@ -164,7 +164,7 @@ printf " \033[33m▣\033[1;33m Docker image tag\033[0m [$IMAGE_TAG]\n"
 no_scheme="${GIT_REPO#https://}"
 no_scheme="${no_scheme#http://}"
 
-TOKENIZED_GIT_REPO="https://${AUTH_TOKEN}@${no_scheme}"
+TOKENIZED_GIT_REPO="https://${AUTH_TOKEN}${no_scheme}"
 
 echo ""
 sleep 1
@@ -258,6 +258,7 @@ else
     printf "\n\033[38;5;8m ◻ Check modification merge \033[0m"
 
     if ! git diff --quiet; then
+        git remote set-url origin "${GIT_REPO}"
         printf "\n\033[1;31m ------------------------------------------------------------------\n"
         printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
         printf " ------------------------------------------------------------------\033[0m\n"
@@ -266,6 +267,7 @@ else
 
     git fetch origin
     if [ "$(git rev-list --count "$BRANCH_NAME"..origin/"$BRANCH_NAME")" -gt 0 ]; then
+        git remote set-url origin "${GIT_REPO}"
         printf "\n\033[1;31m ------------------------------------------------------------------\n"
         printf "      Error: Branch '$BRANCH_NAME' have changes not merged on origin.\n" >&2
         printf " ------------------------------------------------------------------\033[0m\n"
@@ -273,6 +275,7 @@ else
     fi
 
     if [ "$(git rev-list --count origin/"$BRANCH_NAME".."$BRANCH_NAME")" -gt 0 ]; then
+        git remote set-url origin "${GIT_REPO}"
         printf "\n\033[1;31m ------------------------------------------------------------------\n"
         printf "      Error: Branch '$BRANCH_NAME' have unsynchronized changes from origin.\n" >&2
         printf " ------------------------------------------------------------------\033[0m\n"
@@ -394,13 +397,13 @@ printf "\r\033[38;5;36m ▣ Hosts file built.\033[0m\n"
 
 printf "\033[38;5;8m ◻ Deploying nodes \033[0m\n"
 
-./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$GIT_REPO" -gn "$master_node" -nn "master-node" -bh "$hosts_buffer" -m &
+./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$TOKENIZED_GIT_REPO" -gn "$master_node" -nn "master-node" -bh "$hosts_buffer" -m &
 master_pid=$!
 
 worker_pids=()
 index_node=0
 for wk in $worker_nodes; do
-    ./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$GIT_REPO" -gn "$wk" -nn "worker$index_node" -bh "$hosts_buffer" &
+    ./scripts/binscale-node.sh -b "$BRANCH_NAME" -sn "$SITE_NAME" -g "$TOKENIZED_GIT_REPO" -gn "$wk" -nn "worker$index_node" -bh "$hosts_buffer" &
     worker_pids+=($!)
     index_node=$((index_node + 1))
 done
