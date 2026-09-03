@@ -6,14 +6,14 @@ nodes:
     params:
       workload: biased
       producer_ack: 0
-      delay_ms: 600
+      delay_ms: 1000
       input: "first-600-2h.csv"
   - id: workload-ehanced-2
     type: workload
     params:
       workload: biased
       producer_ack: 0
-      delay_ms: 600
+      delay_ms: 1000
       input: "first-600-2h.csv"
 
 # node consumers
