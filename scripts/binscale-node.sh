@@ -84,6 +84,7 @@ fi
 printf "\e[38;5;8m ▣ config $NODE_NAME on '$NODE_G5K_NAME' \033[0m\n"
 ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"sudo hostnamectl set-hostname $NODE_NAME\""
 ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME 'printf \"%b\" \"$BUFFER_HOSTS\" > /etc/hosts'"
+ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"git ls-remote $GIT_REPO\""
 ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"git clone $GIT_REPO\""
 ssh $SITE_NAME.g5k "ssh root@$NODE_G5K_NAME \"cd binscale-deployment && git checkout $BRANCH_NAME && chmod +x scripts/* && sed -i 's/\r$//' scripts/*.*\""
 
