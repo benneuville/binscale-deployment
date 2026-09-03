@@ -238,7 +238,7 @@ printf "\r\033[38;5;36m ▣ Valid Grid5000 connection \033[0m"
 echo ""
 
 printf "\033[38;5;8m ◻ Configure Github Authentication \033[0m"
-git remote set-url origin "${GIT_REPO/$GIT_REPO/$AUTH_TOKEN$GIT_REPO}"
+git remote set-url origin "${GIT_REPO}"
 
 printf "\033[38;5;8m ◻ Check branch name \033[0m"
 
