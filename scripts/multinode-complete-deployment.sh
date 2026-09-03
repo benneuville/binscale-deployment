@@ -23,6 +23,7 @@ INPUT_GRAPH_FOLDER=$DEFAULT_INPUT_GRAPH_FOLDER
 USERNAME=""
 IMAGE_TAG="latest"
 AUTH_TOKEN=""
+TOKENIZED_GIT_REPO=""
 
 master_node=""
 is_analyze_mode=true
@@ -163,7 +164,7 @@ printf " \033[33m▣\033[1;33m Docker image tag\033[0m [$IMAGE_TAG]\n"
 no_scheme="${GIT_REPO#https://}"
 no_scheme="${no_scheme#http://}"
 
-GIT_REPO="https://${AUTH_TOKEN}@${no_scheme}"
+TOKENIZED_GIT_REPO="https://${AUTH_TOKEN}@${no_scheme}"
 
 echo ""
 sleep 1
@@ -235,7 +236,9 @@ printf "\r\033[38;5;36m ▣ Valid Grid5000 connection \033[0m"
 echo ""
 
 printf "\033[38;5;8m ◻ Configure Github Authentication \033[0m"
-git remote set-url origin "${GIT_REPO}"
+git remote set-url origin "${TOKENIZED_GIT_REPO}"
+printf "\033[2K"
+printf "\r\033[38;5;36m ▣ Configured Github Authentication on '$BRANCH_NAME' \033[0m"
 
 printf "\033[38;5;8m ◻ Check branch name \033[0m"
 
@@ -279,6 +282,12 @@ else
     printf "\033[2K"
     printf "\r\033[38;5;36m ▣ Branch name '$BRANCH_NAME' is merged \033[0m"
 fi
+
+printf "\033[38;5;8m ◻ Delete Configuration Github Authentication \033[0m"
+git remote set-url origin "${GIT_REPO}"
+printf "\033[2K"
+printf "\r\033[38;5;36m ▣ Deleted Configuration Github Authentication on '$BRANCH_NAME' \033[0m"
+
 echo ""
 
 printf "\033[38;5;8m ◻ Check site name \033[0m"
