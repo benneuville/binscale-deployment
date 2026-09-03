@@ -163,9 +163,6 @@ printf " \033[33m▣\033[1;33m Docker image tag\033[0m [$IMAGE_TAG]\n"
 no_scheme="${GIT_REPO#https://}"
 no_scheme="${no_scheme#http://}"
 
-no_scheme="${no_scheme#*github.com}"
-no_scheme="github.com${no_scheme}"
-
 GIT_REPO="https://${AUTH_TOKEN}@${no_scheme}"
 
 echo ""
