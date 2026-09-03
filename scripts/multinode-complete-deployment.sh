@@ -53,7 +53,7 @@ usage() {
     echo "  -it, --image-tag TAG            Docker image tag to use for deployment (default: latest)"
     echo "  -k, --keep-alive                Keep the deployed nodes alive after the experience (for debugging)"
     echo "  -t, --token TOKEN               GitHub token for private repository access (no default)"
-    echo "  -at, --auth-token TOKEN         Use the token in '.git-token' at the root of the repository"
+    echo "  -at, --auth-token               Use the token in '.git-token' at the root of the repository"
     echo ""
     echo "  -h, --help           for help"
     echo ""
