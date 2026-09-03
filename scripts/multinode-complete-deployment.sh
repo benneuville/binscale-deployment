@@ -22,6 +22,7 @@ QUEUE_NAME=$DEFAULT_QUEUE_NAME
 INPUT_GRAPH_FOLDER=$DEFAULT_INPUT_GRAPH_FOLDER
 USERNAME=""
 IMAGE_TAG="latest"
+AUTH_TOKEN=""
 
 master_node=""
 is_analyze_mode=true
@@ -33,6 +34,7 @@ worker_nodes=()
 usage() {
     echo "Usage: $0 [OPTIONS]"
     echo "Deploy complete experience on Grid5000."
+    echo "[INFO] Authentification : github could restrict access to repository. Create a token and add it to '.git-token' file at the root of the repository and use the '--auth-token' flag."
     echo ""
     echo "Options:"
     echo "  -n, --nodes NUM                 Number of nodes to deploy (default: $DEFAULT_NODES)"
@@ -49,6 +51,8 @@ usage() {
     echo "  -cb, --current-branch           Use the current git branch"
     echo "  -it, --image-tag TAG            Docker image tag to use for deployment (default: latest)"
     echo "  -k, --keep-alive                Keep the deployed nodes alive after the experience (for debugging)"
+    echo "  -t, --token TOKEN               GitHub token for private repository access (no default)"
+    echo "  -at, --auth-token TOKEN         Use the token in '.git-token' at the root of the repository"
     echo ""
     echo "  -h, --help           for help"
     echo ""
@@ -109,6 +113,13 @@ while [[ "$#" -gt 0 ]]; do
         -k|--keep-alive)
             keep_alive=true
             ;;
+        -t|--token)
+            AUTH_TOKEN="$2"
+            shift
+            ;;
+        -at|--auth-token)
+            AUTH_TOKEN=$(cat .git-token)
+            ;;
         -h|--help)
             usage
             ;;
@@ -147,6 +158,15 @@ printf " \033[33m▣\033[1;33m Grid5000 site name\033[0m [$SITE_NAME]\n"
 printf " \033[33m▣\033[1;33m Grid5000 username\033[0m [$USERNAME]\n"
 printf " \033[33m▣\033[1;33m Grid5000 queue name\033[0m [$QUEUE_NAME]\n"
 printf " \033[33m▣\033[1;33m Docker image tag\033[0m [$IMAGE_TAG]\n"
+
+
+no_scheme="${GIT_REPO#https://}"
+no_scheme="${no_scheme#http://}"
+
+no_scheme="${no_scheme#*github.com}"
+no_scheme="github.com${no_scheme}"
+
+GIT_REPO="https://${AUTH_TOKEN}@${no_scheme}"
 
 echo ""
 sleep 1
@@ -216,6 +236,9 @@ fi
 printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Valid Grid5000 connection \033[0m"
 echo ""
+
+printf "\033[38;5;8m ◻ Configure Github Authentication \033[0m"
+git remote set-url origin "${GIT_REPO/$GIT_REPO/$AUTH_TOKEN$GIT_REPO}"
 
 printf "\033[38;5;8m ◻ Check branch name \033[0m"
 
