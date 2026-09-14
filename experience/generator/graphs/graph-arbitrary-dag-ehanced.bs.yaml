@@ -7,14 +7,14 @@ nodes:
       workload: biased
       producer_ack: 0
       delay_ms: 750
-      # input: "first-600-2h.csv"
+      input: "spike-n-decrease.csv"
   - id: workload-ehanced-2
     type: workload
     params:
       workload: biased
       producer_ack: 0
       delay_ms: 750
-      # input: "first-600-2h.csv"
+      input: "spike-n-decrease.csv"
 
 # node consumers
   - id: latency-ehanced-1
