@@ -622,6 +622,11 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
                 verticalalignment='top', horizontalalignment='right',
                 bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
         
+        text_total_events = f"total events: {total_events}"
+        ax1.text(0.98, 0, text_total_events, transform=ax1.transAxes,
+                verticalalignment='top', horizontalalignment='right',
+                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
+
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
