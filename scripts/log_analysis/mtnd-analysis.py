@@ -220,11 +220,7 @@ def parseLatency(line):
 
     except Exception as e:
         print(f"Error parsing latency: {e}, line: {line}")
-
-def parseLine(line):
-    if "insertion time is" in line:
-        parseLatency(line)
-
+        
 def sort_all_events_by_timestamp():
     for group in consumer_latency_events:
         for uid in consumer_latency_events[group]:
@@ -765,11 +761,24 @@ if __name__ == "__main__":
     cons_file_path = sys.argv[1]
     ctrl_file_path = sys.argv[2]
 
+    processed_events_by_group = {}
+
     # ========== PARSE CONSUMER LOGS ==========
     print(f"📖 Reading consumer logs from {cons_file_path}")
     with open(cons_file_path, "r") as f:
         for line in f:
-            parseLine(line)
+            if "insertion time is" in line:
+                parseLatency(line)
+            elif "Events Processed" in line:
+                # example line : 6dfc7aa3-39dc-449c-bde3-51e8c93b2e9c - latency-1 - 2026-09-16 14:05:00 INFO  f.u.s.l.c.p.strategy.ProcessStrategy - Events Processed : 44
+                group_name = line.split(" - ")[1].split(" ")[0].strip()
+                processed_count = int(line.split("Events Processed : ")[1].strip())
+                if group_name not in processed_events_by_group:
+                    processed_events_by_group[group_name] = 0
+                processed_events_by_group[group_name] += processed_count
+
+    for group, count in processed_events_by_group.items():
+        print(f"✅ Total events processed for group '{group}': {count}")
 
     # ========== PARSE CONTROLLER LOGS ==========
     print(f"📖 Reading controller logs from {ctrl_file_path}")
