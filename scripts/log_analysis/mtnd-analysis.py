@@ -769,10 +769,10 @@ if __name__ == "__main__":
         for line in f:
             if "insertion time is" in line:
                 parseLatency(line)
-            elif "Events Processed" in line:
-                # example line : 6dfc7aa3-39dc-449c-bde3-51e8c93b2e9c - latency-1 - 2026-09-16 14:05:00 INFO  f.u.s.l.c.p.strategy.ProcessStrategy - Events Processed : 44
+            elif "EventProcessing - Processing" in line:
+                # example line : 8d087c3b-9aad-46d9-9434-a18edaff9db9 - latency-3 - 2026-09-16 15:00:11 INFO  f.u.s.l.c.processing.EventProcessing - Processing 2 events using strategy CustomProcessStrategy
                 group_name = line.split(" - ")[1].split(" ")[0].strip()
-                processed_count = int(line.split("Events Processed : ")[1].strip())
+                processed_count = int(line.split("EventProcessing - Processing ")[1].split(" ")[0].strip())
                 if group_name not in processed_events_by_group:
                     processed_events_by_group[group_name] = 0
                 processed_events_by_group[group_name] += processed_count
