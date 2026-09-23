@@ -41,7 +41,7 @@ ansible-playbook ansible/undeploy-app.yaml
 printf "Waiting for e2e Analyzer to finish."
 
 while true; do
-    e2e_analyzer_pod=$(kubectl get pods -l app=e2e-analyzer --field-selector=status.phase=Running -o jsonpath='{.items[*].metadata.name}' | wc -w)
+    e2e_analyzer_pod=$(kubectl get pods -l app=e2e-analyzer --field-selector=status.phase!=Succeeded,status.phase!=Failed -o jsonpath='{.items[*].metadata.name}' | wc -w)
 
     if [ "$e2e_analyzer_pod" -gt 0 ]; then
         printf "."
