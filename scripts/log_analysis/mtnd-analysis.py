@@ -587,7 +587,7 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         color_latency = '#5C669F'
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Latency (ms)", color=color_latency)
-        ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency')
+        ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency', alpha=0.5)
         ax1.axhline(y=latency_threshold, color='red', linestyle='--')
         ax1.tick_params(axis='y', labelcolor=color_latency)
         ax1.grid(True)
