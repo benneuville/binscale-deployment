@@ -251,8 +251,10 @@ def plot_group_arrival_rate(grouped_data):
         timestamps = [data.timestamp for data in data_list]
         nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
         avg_total_arrival_rates_by_nb_assignment = []
+        parent_and_external_arrival_rates = []
         for data in data_list:
             avg_total_arrival_rates_by_nb_assignment.append(data.totalArrivalRate / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            parent_and_external_arrival_rates.append((data.parentArrivalRate + data.totalExternalArrivalRate) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
@@ -260,7 +262,8 @@ def plot_group_arrival_rate(grouped_data):
         ax1.set_ylabel('Avg Total Arrival Rate per Consumer', color=color_arrival)
         ax1.axhline(y=(data.consumerGroup.fup * 200), color='red', linestyle='--', label='Up Process Rate')
         ax1.axhline(y=(data.consumerGroup.fdown * 200), color='red', linestyle='--', label='Down Process Rate')
-        ax1.plot(timestamps, avg_total_arrival_rates_by_nb_assignment, color=color_arrival, marker='x', label='Avg Total Arrival Rate per Consumer')
+        ax1.plot(timestamps, avg_total_arrival_rates_by_nb_assignment, color=color_arrival, alpha=0.7, marker='', label='Avg Total Arrival Rate per Consumer')
+        ax1.plot(timestamps, parent_and_external_arrival_rates, color='tab:blue', alpha=0.7, marker='x', label='Parent + External Arrival Rate')
         ax1.tick_params(axis='y', labelcolor=color_arrival)
         ax1.grid(True)
         ax2 = ax1.twinx()
