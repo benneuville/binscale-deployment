@@ -68,15 +68,55 @@ class ConsumerGroup:
         self.downLagCapacity = fdown * len(self.assignment) * 0.5
 
 class PrometheusData:
-    def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, totalArrivalRate, totalExternalArrivalRate, avgParentArrivalRate):
+    def __init__(
+        self,
+        timestamp,
+        consumerGroup,
+        partitionsMetaData,
+        consumersMetaData,
+        propagatedMetaData,
+        avgParentArrivalRate,
+        totalExternalArrivalRate,
+        totalArrivalRate,
+        parentArrivalRate,
+        lag,
+        maxPropagatedLag,
+        avgTotalInputArrivalRate,
+        dynamicMaxLagCapacity,
+        dynamicMaxAverageArrivalRate,
+        dynamicMinLagCapacity,
+        dynamicMinAverageArrivalRate,
+        consumerGroupDynamicProcessingCapacity,
+        avgTotalExternalArrivalRate,
+        avgLag,
+        fallBackMaxLagCapacity,
+        fallBackMaxAverageArrivalRate,
+        fallBackMinLagCapacity,
+        fallBackMinAverageArrivalRate,
+    ):
         self.timestamp = timestamp
         self.consumerGroup = consumerGroup
         self.partitionsMetaData = partitionsMetaData
         self.consumersMetaData = consumersMetaData
-        self.parentArrivalRate = parentArrivalRate
-        self.totalArrivalRate = totalArrivalRate
-        self.totalExternalArrivalRate = totalExternalArrivalRate
+        self.propagatedMetaData = propagatedMetaData
         self.avgParentArrivalRate = avgParentArrivalRate
+        self.totalExternalArrivalRate = totalExternalArrivalRate
+        self.totalArrivalRate = totalArrivalRate
+        self.parentArrivalRate = parentArrivalRate
+        self.lag = lag
+        self.maxPropagatedLag = maxPropagatedLag
+        self.avgTotalInputArrivalRate = avgTotalInputArrivalRate
+        self.dynamicMaxLagCapacity = dynamicMaxLagCapacity
+        self.dynamicMaxAverageArrivalRate = dynamicMaxAverageArrivalRate
+        self.dynamicMinLagCapacity = dynamicMinLagCapacity
+        self.dynamicMinAverageArrivalRate = dynamicMinAverageArrivalRate
+        self.consumerGroupDynamicProcessingCapacity = consumerGroupDynamicProcessingCapacity
+        self.avgTotalExternalArrivalRate = avgTotalExternalArrivalRate
+        self.avgLag = avgLag
+        self.fallBackMaxLagCapacity = fallBackMaxLagCapacity
+        self.fallBackMaxAverageArrivalRate = fallBackMaxAverageArrivalRate
+        self.fallBackMinLagCapacity = fallBackMinLagCapacity
+        self.fallBackMinAverageArrivalRate = fallBackMinAverageArrivalRate
 
 class LatencyEvent:
     def __init__(self, insertion_date, latency, partition, offset, consumer_id, proces_time):
@@ -147,10 +187,25 @@ def pulled_data_from_prometheus(line):
             consumerGroup=consumer_group,
             partitionsMetaData=partitions,
             consumersMetaData=consumers,
-            parentArrivalRate=data["parentArrivalRate"],
-            totalArrivalRate=data["totalInputArrivalRate"],
+            propagatedMetaData=data.get("propagatedMetaData"),
+            avgParentArrivalRate=data["avgParentArrivalRate"],
             totalExternalArrivalRate=data["totalExternalArrivalRate"],
-            avgParentArrivalRate=data["avgParentArrivalRate"]
+            totalArrivalRate=data["totalInputArrivalRate"],
+            parentArrivalRate=data["parentArrivalRate"],
+            lag=data["lag"],
+            maxPropagatedLag=data["maxPropagatedLag"],
+            avgTotalInputArrivalRate=data["avgTotalInputArrivalRate"],
+            dynamicMaxLagCapacity=data["dynamicMaxLagCapacity"],
+            dynamicMaxAverageArrivalRate=data["dynamicMaxAverageArrivalRate"],
+            dynamicMinLagCapacity=data["dynamicMinLagCapacity"],
+            dynamicMinAverageArrivalRate=data["dynamicMinAverageArrivalRate"],
+            consumerGroupDynamicProcessingCapacity=data["consumerGroupDynamicProcessingCapacity"],
+            avgTotalExternalArrivalRate=data["avgTotalExternalArrivalRate"],
+            avgLag=data["avgLag"],
+            fallBackMaxLagCapacity=data["fallBackMaxLagCapacity"],
+            fallBackMaxAverageArrivalRate=data["fallBackMaxAverageArrivalRate"],
+            fallBackMinLagCapacity=data["fallBackMinLagCapacity"],
+            fallBackMinAverageArrivalRate=data["fallBackMinAverageArrivalRate"],
         )
         prometheus_data_list.append(prometheus_data)
 
@@ -240,7 +295,7 @@ def plot_group_arrival_rate(grouped_data):
         parent_and_external_arrival_rates = []
         for data in data_list:
             avg_total_arrival_rates_by_nb_assignment.append(data.totalArrivalRate / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
-            parent_and_external_arrival_rates.append((data.parentArrivalRate + data.totalExternalArrivalRate) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            parent_and_external_arrival_rates.append((data.parentArrivalRate + data.maxPropagatedLag + data.totalExternalArrivalRate) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
