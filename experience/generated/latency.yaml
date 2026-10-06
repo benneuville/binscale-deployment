@@ -3,17 +3,14 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: latencyehancedgroup1-config
+  name: latencygroup1-config
   namespace: default
 data:
-  latencyehancedgroup1.yaml: |
+  latencygroup1.yaml: |
     output:
 
-    - name: topic-latency-ehanced-2
-      ratio: 0.2 
-
-    - name: topic-latency-ehanced-3
-      ratio: 0.8 
+    - name: topic-latency-2
+      ratio: 1 
 
     - name: final-queue
       ratio: 1 
@@ -23,12 +20,12 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: latency-ehanced-1
+  name: latency-1
   namespace: default
   labels:
     app: latency
     context: experience
-    instance: latency-ehanced-1
+    instance: latency-1
 spec:
   replicas: 1
   selector:
@@ -42,7 +39,7 @@ spec:
         context: experience
     spec:
       containers:
-        - name: latency-ehanced-1
+        - name: latency-1
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
@@ -55,9 +52,9 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
-              value: topic-latency-ehanced-1
+              value: topic-latency-1
             - name: GROUP_ID
-              value: latencyehancedgroup1
+              value: latencygroup1
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
@@ -78,14 +75,14 @@ spec:
               value: "custom"
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
-              value: "/config/latencyehancedgroup1.yaml"
+              value: "/config/latencygroup1.yaml"
           volumeMounts:
-            - name: latencyehancedgroup1-config
+            - name: latencygroup1-config
               mountPath: /config
       volumes:
-        - name: latencyehancedgroup1-config
+        - name: latencygroup1-config
           configMap:
-            name: latencyehancedgroup1-config
+            name: latencygroup1-config
 
 ---
 
@@ -93,14 +90,14 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: latencyehancedgroup2-config
+  name: latencygroup2-config
   namespace: default
 data:
-  latencyehancedgroup2.yaml: |
+  latencygroup2.yaml: |
     output:
 
-    - name: topic-latency-ehanced-5
-      ratio: 0.2 
+    - name: topic-latency-3
+      ratio: 1 
 
     - name: final-queue
       ratio: 1 
@@ -110,12 +107,12 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: latency-ehanced-2
+  name: latency-2
   namespace: default
   labels:
     app: latency
     context: experience
-    instance: latency-ehanced-2
+    instance: latency-2
 spec:
   replicas: 1
   selector:
@@ -129,7 +126,7 @@ spec:
         context: experience
     spec:
       containers:
-        - name: latency-ehanced-2
+        - name: latency-2
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
@@ -142,9 +139,9 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
-              value: topic-latency-ehanced-2
+              value: topic-latency-2
             - name: GROUP_ID
-              value: latencyehancedgroup2
+              value: latencygroup2
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
@@ -165,14 +162,14 @@ spec:
               value: "custom"
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
-              value: "/config/latencyehancedgroup2.yaml"
+              value: "/config/latencygroup2.yaml"
           volumeMounts:
-            - name: latencyehancedgroup2-config
+            - name: latencygroup2-config
               mountPath: /config
       volumes:
-        - name: latencyehancedgroup2-config
+        - name: latencygroup2-config
           configMap:
-            name: latencyehancedgroup2-config
+            name: latencygroup2-config
 
 ---
 
@@ -180,17 +177,11 @@ spec:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: latencyehancedgroup3-config
+  name: latencygroup3-config
   namespace: default
 data:
-  latencyehancedgroup3.yaml: |
+  latencygroup3.yaml: |
     output:
-
-    - name: topic-latency-ehanced-5
-      ratio: 1 
-
-    - name: topic-latency-ehanced-4
-      ratio: 0.2 
 
     - name: final-queue
       ratio: 1 
@@ -200,12 +191,12 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: latency-ehanced-3
+  name: latency-3
   namespace: default
   labels:
     app: latency
     context: experience
-    instance: latency-ehanced-3
+    instance: latency-3
 spec:
   replicas: 1
   selector:
@@ -219,7 +210,7 @@ spec:
         context: experience
     spec:
       containers:
-        - name: latency-ehanced-3
+        - name: latency-3
           image: docker.io/benneuville/binscale:latest
           imagePullPolicy: Always
           command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
@@ -232,9 +223,9 @@ spec:
             - name: BOOTSTRAP_SERVERS
               value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
             - name: TOPIC
-              value: topic-latency-ehanced-3
+              value: topic-latency-3
             - name: GROUP_ID
-              value: latencyehancedgroup3
+              value: latencygroup3
             - name: MESSAGE_COUNT
               value: "1000000"
             - name: CONSUMPTION_RATE
@@ -255,182 +246,14 @@ spec:
               value: "custom"
 
             - name: TOPICS_DISTRIBUTION_CONFIG_PATH
-              value: "/config/latencyehancedgroup3.yaml"
+              value: "/config/latencygroup3.yaml"
           volumeMounts:
-            - name: latencyehancedgroup3-config
+            - name: latencygroup3-config
               mountPath: /config
       volumes:
-        - name: latencyehancedgroup3-config
+        - name: latencygroup3-config
           configMap:
-            name: latencyehancedgroup3-config
-
----
-
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: latencyehancedgroup4-config
-  namespace: default
-data:
-  latencyehancedgroup4.yaml: |
-    output:
-
-    - name: topic-latency-ehanced-5
-      ratio: 1 
-
-    - name: final-queue
-      ratio: 1 
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: latency-ehanced-4
-  namespace: default
-  labels:
-    app: latency
-    context: experience
-    instance: latency-ehanced-4
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: latency
-      context: experience
-  template:
-    metadata:
-      labels:
-        app: latency
-        context: experience
-    spec:
-      containers:
-        - name: latency-ehanced-4
-          image: docker.io/benneuville/binscale:latest
-          imagePullPolicy: Always
-          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
-          ports:
-            - containerPort: 8080
-              name: brom
-          env:
-            - name: JAVA_OPTS
-              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
-            - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
-            - name: TOPIC
-              value: topic-latency-ehanced-4
-            - name: GROUP_ID
-              value: latencyehancedgroup4
-            - name: MESSAGE_COUNT
-              value: "1000000"
-            - name: CONSUMPTION_RATE
-              value: "200"
-            - name: SCALE
-              value: "3"
-            - name: SHAPE
-              value: "2.75"
-            - name: TIME_TO_COMMIT
-              value: "50"
-            - name: WSLA
-              value: "500"
-            - name: ASYNC_COMMIT
-              value: "False"
-
-
-            - name: PROCESSING_STRATEGY
-              value: "custom"
-
-            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
-              value: "/config/latencyehancedgroup4.yaml"
-          volumeMounts:
-            - name: latencyehancedgroup4-config
-              mountPath: /config
-      volumes:
-        - name: latencyehancedgroup4-config
-          configMap:
-            name: latencyehancedgroup4-config
-
----
-
-
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: latencyehancedgroup5-config
-  namespace: default
-data:
-  latencyehancedgroup5.yaml: |
-    output:
-
-    - name: final-queue
-      ratio: 1 
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: latency-ehanced-5
-  namespace: default
-  labels:
-    app: latency
-    context: experience
-    instance: latency-ehanced-5
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: latency
-      context: experience
-  template:
-    metadata:
-      labels:
-        app: latency
-        context: experience
-    spec:
-      containers:
-        - name: latency-ehanced-5
-          image: docker.io/benneuville/binscale:latest
-          imagePullPolicy: Always
-          command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
-          ports:
-            - containerPort: 8080
-              name: brom
-          env:
-            - name: JAVA_OPTS
-              value: "-Dnetworkaddress.cache.ttl=0 -Dnetworkaddress.cache.negative.ttl=0"
-            - name: BOOTSTRAP_SERVERS
-              value: my-cluster-kafka-bootstrap.default.svc.cluster.local:9092
-            - name: TOPIC
-              value: topic-latency-ehanced-5
-            - name: GROUP_ID
-              value: latencyehancedgroup5
-            - name: MESSAGE_COUNT
-              value: "1000000"
-            - name: CONSUMPTION_RATE
-              value: "200"
-            - name: SCALE
-              value: "3"
-            - name: SHAPE
-              value: "2.75"
-            - name: TIME_TO_COMMIT
-              value: "50"
-            - name: WSLA
-              value: "500"
-            - name: ASYNC_COMMIT
-              value: "False"
-
-
-            - name: TOPICS_DISTRIBUTION_CONFIG_PATH
-              value: "/config/latencyehancedgroup5.yaml"
-          volumeMounts:
-            - name: latencyehancedgroup5-config
-              mountPath: /config
-      volumes:
-        - name: latencyehancedgroup5-config
-          configMap:
-            name: latencyehancedgroup5-config
+            name: latencygroup3-config
 
 ---
 apiVersion: monitoring.coreos.com/v1
@@ -448,11 +271,9 @@ spec:
 #      - key: app
 #        operator: In
 #        values:
-#            - "latency-ehanced-1"
-#            - "latency-ehanced-2"
-#            - "latency-ehanced-3"
-#            - "latency-ehanced-4"
-#            - "latency-ehanced-5"
+#            - "latency-1"
+#            - "latency-2"
+#            - "latency-3"
   namespaceSelector:
     matchNames:
       - default

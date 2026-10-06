@@ -6,9 +6,7 @@ metadata:
 data:
   e2e-analyzer-config.yaml: |
     topics: 
-        - name: topic-latency-ehanced-1
-    
-        - name: topic-latency-ehanced-2
+        - name: topic-latency-1
     
         - name: final-queue
 
@@ -26,6 +24,7 @@ spec:
       name: http
   selector:
     app: e2e-analyzer
+    context: experience
 
 ---
 apiVersion: batch/v1
@@ -40,6 +39,7 @@ spec:
     metadata:
       labels:
         app: e2e-analyzer
+        context: experience
     spec:
       restartPolicy: Never
       containers:

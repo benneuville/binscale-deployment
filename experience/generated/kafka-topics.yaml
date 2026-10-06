@@ -1,7 +1,7 @@
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-ehanced-1
+  name: topic-latency-1
   labels:
     strimzi.io/cluster: my-cluster
 spec:
@@ -16,7 +16,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-ehanced-2
+  name: topic-latency-2
   labels:
     strimzi.io/cluster: my-cluster
 spec:
@@ -31,37 +31,7 @@ spec:
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaTopic
 metadata:
-  name: topic-latency-ehanced-3
-  labels:
-    strimzi.io/cluster: my-cluster
-spec:
-  partitions: 10
-  replicas: 1
-  config:
-    retention.ms: 14400000
-    segment.bytes: 1073741824
-    min.insync.replicas: 1
-    message.timestamp.type: CreateTime
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaTopic
-metadata:
-  name: topic-latency-ehanced-5
-  labels:
-    strimzi.io/cluster: my-cluster
-spec:
-  partitions: 10
-  replicas: 1
-  config:
-    retention.ms: 14400000
-    segment.bytes: 1073741824
-    min.insync.replicas: 1
-    message.timestamp.type: CreateTime
----
-apiVersion: kafka.strimzi.io/v1beta2
-kind: KafkaTopic
-metadata:
-  name: topic-latency-ehanced-4
+  name: topic-latency-3
   labels:
     strimzi.io/cluster: my-cluster
 spec:
