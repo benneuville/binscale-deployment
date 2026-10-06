@@ -64,6 +64,7 @@ controller:
     fdown: 0.4
   # #############################
     rebalancing_time: 1
+    time_to_start_consumer: 3
     initial_size: 1
     scaling_strategy: burst # naive, ehanced, burst, reactive
     metrics:

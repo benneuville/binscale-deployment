@@ -61,6 +61,8 @@ spec:
           value: "{{ controller.params.metrics.request_time_unit }}"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+        - name: TIME_TO_START_CONSUMER
+          value: "{{ controller.params.time_to_start_consumer }}"
           {% if edges|length > 0 %}
         - name: TOPICS_CONFIG_PATH
           value: "/config/controller-config.yaml"

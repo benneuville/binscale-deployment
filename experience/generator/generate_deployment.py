@@ -83,7 +83,9 @@ filtered_edges = []
 controller = graph["controller"]
 
 if controller["params"].get("decision_interval", None) is None:
-    controller["params"]["decision_interval"] = controller["params"]["metrics"]["request_time_range"] * 1000 
+    controller["params"]["decision_interval"] = controller["params"]["metrics"]["request_time_range"] * 1000
+if controller["params"].get("time_to_start_consumer", None) is None:
+    controller["params"]["time_to_start_consumer"] = 0
 
 for node in graph["nodes"]:
     node["targets"] = []
