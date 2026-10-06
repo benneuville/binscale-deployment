@@ -43,23 +43,29 @@ class Consumer:
         self.dynamicProcessingCapacity = dynamicProcessingCapacity
 
 class ConsumerGroup:
-    def __init__(self, wsla, inputTopic, consumerName, kafkaGroupName, processingRateFallBack, topicPartitions, lastUpScaleDecision, assignment, fup, fdown, name, groupName, upProcessRate, downProcessRate, upLagCapacity, downLagCapacity):
-        self.wsla = wsla
-        self.inputTopic = inputTopic
-        self.consumerName = consumerName
-        self.kafkaGroupName = kafkaGroupName
-        self.processingRateFallBack = processingRateFallBack
-        self.topicPartitions = topicPartitions
-        self.lastUpScaleDecision = datetime.strptime(lastUpScaleDecision, '%m/%d/%YT%H:%M:%S.%f') if lastUpScaleDecision != "N/A" else None
-        self.assignment = assignment
+    def __init__(self, **consumer_group_data):
+        """Store the complete consumer-group payload and keep the derived metrics."""
+        self.__dict__.update(consumer_group_data)
+
+        last_up_scale_decision = consumer_group_data.get("lastUpScaleDecision")
+        self.lastUpScaleDecision = (
+            datetime.strptime(last_up_scale_decision, '%m/%d/%YT%H:%M:%S.%f')
+            if last_up_scale_decision not in (None, "N/A")
+            else None
+        )
+
+        assignment = consumer_group_data.get("assignment", [])
+        fup = consumer_group_data.get("fup", 0)
+        fdown = consumer_group_data.get("fdown", 0)
+
+        self.assignment = assignment or []
+        self.topicPartitions = consumer_group_data.get("topicPartitions", [])
         self.fup = fup
         self.fdown = fdown
-        self.name = name
-        self.groupName = groupName
-        self.upProcessRate = upProcessRate
-        self.downProcessRate = downProcessRate
-        self.upLagCapacity = upLagCapacity
-        self.downLagCapacity = downLagCapacity
+        self.upProcessRate = fup * len(self.assignment) * 200
+        self.downProcessRate = fdown * len(self.assignment) * 200
+        self.upLagCapacity = fup * len(self.assignment) * 200 * 0.5
+        self.downLagCapacity = fdown * len(self.assignment) * 0.5
 
 class PrometheusData:
     def __init__(self, timestamp, consumerGroup, partitionsMetaData, consumersMetaData, parentArrivalRate, totalArrivalRate, totalExternalArrivalRate, avgParentArrivalRate):
@@ -133,27 +139,7 @@ def pulled_data_from_prometheus(line):
             )
 
         # Parsing du consumerGroup
-        topic_partitions = [p["id"] for p in data["consumerGroup"]["topicPartitions"]]
-        assignment = [a for a in data["consumerGroup"]["assignment"]]
-
-        consumer_group = ConsumerGroup(
-            wsla=data["consumerGroup"]["wsla"],
-            inputTopic=data["consumerGroup"]["inputTopic"],
-            consumerName=data["consumerGroup"]["consumerName"],
-            kafkaGroupName=data["consumerGroup"]["kafkaGroupName"],
-            processingRateFallBack=data["consumerGroup"]["processingRateFallBack"],
-            topicPartitions=topic_partitions,
-            lastUpScaleDecision=data["consumerGroup"]["lastUpScaleDecision"],
-            assignment=assignment,
-            fup=data["consumerGroup"]["fup"],
-            fdown=data["consumerGroup"]["fdown"],
-            name=data["consumerGroup"]["name"],
-            groupName=data["consumerGroup"]["groupName"],
-            upProcessRate = data["consumerGroup"]["fup"] * len(assignment) * 200,
-            downProcessRate = data["consumerGroup"]["fdown"] * len(assignment) * 200,
-            upLagCapacity =  data["consumerGroup"]["fup"] * len(assignment) * 200 * 0.5,
-            downLagCapacity = data["consumerGroup"]["fdown"] * len(assignment) * 0.5
-        )
+        consumer_group = ConsumerGroup(**data["consumerGroup"])
 
         # Création de l'objet PrometheusData
         prometheus_data = PrometheusData(
