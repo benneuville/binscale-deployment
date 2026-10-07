@@ -193,7 +193,7 @@ def pulled_data_from_prometheus(line):
             totalArrivalRate=data["totalInputArrivalRate"],
             parentArrivalRate=data["parentArrivalRate"],
             lag=data["lag"],
-            maxPropagatedLag=data["maxPropagatedLag"],
+            maxPropagatedLag=data["totalMaxPropagatedLag"],
             avgTotalInputArrivalRate=data["avgTotalInputArrivalRate"],
             dynamicMaxLagCapacity=data["dynamicMaxLagCapacity"],
             dynamicMaxAverageArrivalRate=data["dynamicMaxAverageArrivalRate"],

@@ -4,7 +4,7 @@ nodes:
   - id: workload-1
     type: workload
     params:
-      workload: biased
+      workload: stream #biased
       producer_ack: 0
       input: "spike-n-decrease.csv"
       delay_ms: 1000
