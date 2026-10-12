@@ -1,26 +1,31 @@
 import sys
 import datetime
-import matplotlib.pyplot as plt
-import matplotlib.dates as mdates
+try:
+    import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
+    import numpy as np
+except ImportError:
+    plt = None
+    mdates = None
+    np = None
 from typing import List, Dict
 import re
 from datetime import datetime, timedelta
 import json
 from collections import defaultdict
-import numpy as np
 
 X_SMALL_SIZE = 10
 SMALL_SIZE = 14
 MEDIUM_SIZE = 20
 BIGGER_SIZE = 26
 
-plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
-plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
-plt.rc('axes', labelsize=SMALL_SIZE)    # fontsize of the x and y labels
-plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
-plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
-# plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
+if plt is not None:
+    plt.rc('font', size=SMALL_SIZE)
+    plt.rc('axes', titlesize=SMALL_SIZE)
+    plt.rc('axes', labelsize=SMALL_SIZE)
+    plt.rc('xtick', labelsize=SMALL_SIZE)
+    plt.rc('ytick', labelsize=SMALL_SIZE)
+    plt.rc('legend', fontsize=SMALL_SIZE)
 
 # ============================================
 # CLASSES
@@ -119,13 +124,14 @@ class PrometheusData:
         self.fallBackMinAverageArrivalRate = fallBackMinAverageArrivalRate
 
 class LatencyEvent:
-    def __init__(self, insertion_date, latency, partition, offset, consumer_id, proces_time):
+    def __init__(self, insertion_date, latency, partition, offset, consumer_id, process_time, event_provider):
         self.insertion_date = insertion_date
         self.latency = latency
         self.partition = partition
         self.offset = offset
         self.consumer_id = consumer_id
-        self.proces_time = proces_time
+        self.process_time = process_time
+        self.event_provider = event_provider
 
 # ============================================
 # GLOBAL VARIABLES
@@ -207,6 +213,7 @@ def pulled_data_from_prometheus(line):
             fallBackMinLagCapacity=data["fallBackMinLagCapacity"],
             fallBackMinAverageArrivalRate=data["fallBackMinAverageArrivalRate"],
         )
+        prometheus_data.rawData = data
         prometheus_data_list.append(prometheus_data)
 
     return prometheus_data_list
@@ -256,7 +263,7 @@ def parseLatency(line):
             consumer_latency_events[group][uid] = []
 
         consumer_latency_events[group][uid].append(
-            LatencyEvent(parsed_date, latency, partition, offset, uid, process_time)
+            LatencyEvent(parsed_date, latency, partition, offset, uid, process_time, event_provider)
         )
 
     except Exception as e:
@@ -282,6 +289,37 @@ def get_global_time_bounds():
         return None, None
 
     return min(all_dates), max(all_dates)
+
+def json_default(value):
+    if isinstance(value, datetime):
+        return value.isoformat()
+    if isinstance(value, set):
+        return sorted(value)
+    if hasattr(value, "__dict__"):
+        return value.__dict__
+    raise TypeError(f"Object of type {type(value).__name__} is not JSON serializable")
+
+def export_analysis_json(output_path,
+                         grouped_data, grouped_data_for_nb_consumer,
+                         processed_events_by_group, controller_events,
+                         min_time, max_time):
+    duration = (max_time - min_time).total_seconds() if min_time and max_time else None
+    export_data = {
+        "analysis_time_range": {
+            "start": min_time,
+            "end": max_time,
+            "duration_seconds": duration,
+        },
+        "processed_events_by_group": processed_events_by_group,
+        "prometheus_data_by_group": grouped_data,
+        "consumer_count_samples_by_group": grouped_data_for_nb_consumer,
+        "consumer_latency_events": consumer_latency_events,
+    }
+
+    with open(output_path, "w", encoding="utf-8") as output_file:
+        json.dump(export_data, output_file, indent=2, ensure_ascii=False, default=json_default)
+
+    print(f"JSON export generated: {output_path}")
 
 # ============================================
 # CONTROLLER PLOTTING FUNCTIONS
@@ -798,12 +836,21 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print("Usage: python3 mntd-analysis.py <consumer_logs.txt> <controller_logs.txt>")
+    graph_generation = "--graph-generation" in sys.argv or "-gg" in sys.argv
+    input_paths = [
+        argument for argument in sys.argv[1:]
+        if argument not in ("--graph-generation", "-gg")
+    ]
+    if len(input_paths) < 2:
+        print("Usage: python mtnd-analysis.py <consumer_logs.txt> <controller_logs.txt> [-gg|--graph-generation]")
         sys.exit(1)
 
-    cons_file_path = sys.argv[1]
-    ctrl_file_path = sys.argv[2]
+    cons_file_path = input_paths[0]
+    ctrl_file_path = input_paths[1]
+    output_path = "mtnd-analysis-results.json"
+
+    if graph_generation and plt is None:
+        sys.exit("Graph generation requires matplotlib and numpy. Install requirements.txt and retry.")
 
     processed_events_by_group = {}
 
@@ -900,21 +947,49 @@ if __name__ == "__main__":
     for group in nb_cons_controller_decision_taked:
         nb_cons_controller_decision_taked[group].sort(key=lambda x: x["timestamp"])
 
-    # ========== GENERATE PLOTS ==========
-    print("\n🎨 Generating plots...")
-    
-    nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
-    plot_nbconsumer(grouped_data_for_nb_consumer, nb_consumers_per_group, nb_cons_controller_decision_taked)
-    
-    duration = (max_time - min_time).total_seconds()
-    plot_latency_by_group(controller_waiting_scale_time, di_time, min_time, max_time, grouped_data, nb_consumers_per_group=nb_cons_controller_decision_taked, total_time_exp=duration)
-    
-    plot_decision_timeline(prometheus_except)
-    plot_latency_by_consumer(min_time, max_time)
-    plot_events_by_wsla(min_time, max_time, nb_consumers_per_group=nb_cons_controller_decision_taked)
-    plot_group_arrival_rate(grouped_data)
-    plot_group_lag(grouped_data)
-    plot_processing_rate_by_group(grouped_data)
-    
-    print("\n✅ All plots generated successfully!")
-    print(f"⏱️ Total analysis duration: {duration:.2f} seconds")
+    controller_events = {
+        "metric_result_empty_exceptions": prometheus_except,
+        "waiting_scale": controller_waiting_scale_time,
+        "sleep_intervals": di_time,
+        "assignment_decisions": nb_cons_controller_decision_taked,
+    }
+    export_analysis_json(
+        output_path,
+        grouped_data,
+        grouped_data_for_nb_consumer,
+        processed_events_by_group,
+        controller_events,
+        min_time,
+        max_time,
+    )
+
+    if graph_generation:
+        print("\nGenerating graphs...")
+        nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
+        plot_nbconsumer(
+            grouped_data_for_nb_consumer,
+            nb_consumers_per_group,
+            nb_cons_controller_decision_taked,
+        )
+
+        duration = (max_time - min_time).total_seconds()
+        plot_latency_by_group(
+            controller_waiting_scale_time,
+            di_time,
+            min_time,
+            max_time,
+            grouped_data,
+            nb_consumers_per_group=nb_cons_controller_decision_taked,
+            total_time_exp=duration,
+        )
+        plot_decision_timeline(prometheus_except)
+        plot_latency_by_consumer(min_time, max_time)
+        plot_events_by_wsla(
+            min_time,
+            max_time,
+            nb_consumers_per_group=nb_cons_controller_decision_taked,
+        )
+        plot_group_arrival_rate(grouped_data)
+        plot_group_lag(grouped_data)
+        plot_processing_rate_by_group(grouped_data)
+        print("All graphs generated successfully.")
