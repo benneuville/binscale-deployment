@@ -18,6 +18,7 @@ plt.rc('axes', labelsize=SMALL_SIZE)
 plt.rc('xtick', labelsize=SMALL_SIZE)
 plt.rc('ytick', labelsize=SMALL_SIZE)
 plt.rc('legend', fontsize=SMALL_SIZE)
+plt.rcParams["agg.path.chunksize"] = 10000
 
 def parse_timestamp(value):
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
@@ -91,7 +92,7 @@ def generate_end_to_end_percentile_plot(durations):
         plt.legend()
 
     plt.tight_layout()
-    plt.savefig("e2e_percentile_distribution.png", dpi=300, bbox_inches="tight")
+    plt.savefig("e2e_percentile_distribution.png", dpi=200, bbox_inches="tight")
     plt.close()
 
 def build_latency_by_node_origin(trackers):
@@ -143,7 +144,7 @@ def generate_latency_per_node_origin_plot(latency_points_by_node):
     plt.savefig("latency_per_node_origin.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-def generate_individual_latency_plots(latency_points_by_node, latency_threshold = 700):
+def generate_individual_latency_plots(latency_points_by_node, latency_threshold = 500):
     for node_origin, points in latency_points_by_node.items():
         plt.figure(figsize=(16, 5))
         ax = plt.gca()
@@ -211,7 +212,7 @@ def main():
     data = load_json_data(input_file)
     trackers = data.get("data", [])
 
-    print_trackers_without_4_events(trackers)
+    # print_trackers_without_4_events(trackers)
     finish_times, durations = get_end_to_end_metrics(trackers)
     total_events = int(data.get("metadata", {}).get("count", len(durations)))
 
