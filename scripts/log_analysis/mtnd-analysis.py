@@ -370,7 +370,7 @@ def plot_group_lag(grouped_data):
         nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
         avg_lag = []
         for data in data_list:
-            avg_lag.append(sum(p.lag for p in data.partitionsMetaData.values()) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            avg_lag.append(sum(p.lag for p in data.partitionsMetaData.values()))
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
