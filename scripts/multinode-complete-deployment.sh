@@ -305,16 +305,16 @@ printf "\033[2K"
 printf "\r\033[38;5;36m ▣ Site name '$SITE_NAME' is valid\033[0m"
 echo ""
 
-printf "\033[38;5;8m ◻ Check allocation availability \033[0m['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]"
-echo 'N' | ssh $SITE_NAME.g5k "funk -m free -r $SITE_NAME:$NUM_NODES -w $LIFESPAN:0:0" >/dev/null 2>&1
-if [ $? -ne 0 ]; then
-    printf "\n\033[1;31m ----------------------------------------------------------------------\n"
-    printf "      Error: Cannot allocate $NUM_NODES nodes for $LIFESPAN hours on '$SITE_NAME' site.\n" >&2
-    printf " ----------------------------------------------------------------------\033[0m\n"
-    exit 1
-fi
-printf "\033[2K"
-printf "\r\033[38;5;36m ▣ Allocation is available \033[0m['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]"
+# printf "\033[38;5;8m ◻ Check allocation availability \033[0m['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]"
+# echo 'N' | ssh $SITE_NAME.g5k "funk -m free -r $SITE_NAME:$NUM_NODES -w $LIFESPAN:0:0" >/dev/null 2>&1
+# if [ $? -ne 0 ]; then
+#     printf "\n\033[1;31m ----------------------------------------------------------------------\n"
+#     printf "      Error: Cannot allocate $NUM_NODES nodes for $LIFESPAN hours on '$SITE_NAME' site.\n" >&2
+#     printf " ----------------------------------------------------------------------\033[0m\n"
+#     exit 1
+# fi
+# printf "\033[2K"
+# printf "\r\033[38;5;36m ▣ Allocation is available \033[0m['$SITE_NAME' | $NUM_NODES nodes | $LIFESPAN hours]"
 
 echo ""
 echo ""
