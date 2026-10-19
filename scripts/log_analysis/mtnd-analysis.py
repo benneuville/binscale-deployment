@@ -98,6 +98,7 @@ class PrometheusData:
         fallBackMaxAverageArrivalRate,
         fallBackMinLagCapacity,
         fallBackMinAverageArrivalRate,
+        wsla
     ):
         self.timestamp = timestamp
         self.consumerGroup = consumerGroup
@@ -122,6 +123,7 @@ class PrometheusData:
         self.fallBackMaxAverageArrivalRate = fallBackMaxAverageArrivalRate
         self.fallBackMinLagCapacity = fallBackMinLagCapacity
         self.fallBackMinAverageArrivalRate = fallBackMinAverageArrivalRate
+        self.wsla = wsla
 
 class LatencyEvent:
     def __init__(self, insertion_date, latency, partition, offset, consumer_id, process_time, event_provider):
@@ -212,6 +214,7 @@ def pulled_data_from_prometheus(line):
             fallBackMaxAverageArrivalRate=data["fallBackMaxAverageArrivalRate"],
             fallBackMinLagCapacity=data["fallBackMinLagCapacity"],
             fallBackMinAverageArrivalRate=data["fallBackMinAverageArrivalRate"],
+            wsla=data["consumerGroup"]["wsla"]
         )
         prometheus_data.rawData = data
         prometheus_data_list.append(prometheus_data)
@@ -239,6 +242,7 @@ def pulled_data_from_prometheus_for_nb_consumer(line):
         res["timestamp"] = log_timestamp
         res["name"] = data["consumerGroup"]["consumerName"]
         res["consumer"] = len(data["consumerGroup"]["assignment"])
+        res["wsla"] = data["consumerGroup"]["wsla"]
         prometheus_data_list.append(res)
     return prometheus_data_list
 
@@ -331,16 +335,20 @@ def plot_group_arrival_rate(grouped_data):
         nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
         avg_total_arrival_rates_by_nb_assignment = []
         parent_and_external_arrival_rates = []
+        dynamic_arrival_rate_capacity_up = []
+        dynamic_arrival_rate_capacity_down = []
         for data in data_list:
             avg_total_arrival_rates_by_nb_assignment.append(data.totalArrivalRate / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
             parent_and_external_arrival_rates.append((data.parentArrivalRate + data.maxPropagatedLag + data.totalExternalArrivalRate) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            dynamic_arrival_rate_capacity_up.append(data.dynamicMaxAverageArrivalRate)
+            dynamic_arrival_rate_capacity_down.append(data.dynamicMinAverageArrivalRate)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
         ax1.set_xlabel('Time')
         ax1.set_ylabel('Avg Total Arrival Rate per Consumer', color=color_arrival)
-        ax1.axhline(y=(data.consumerGroup.fup * 200), color='red', linestyle='--', label='Up Process Rate')
-        ax1.axhline(y=(data.consumerGroup.fdown * 200), color='red', linestyle='--', label='Down Process Rate')
+        ax1.plot(timestamps, dynamic_arrival_rate_capacity_up, color='red', linestyle='--', label='Up Process Rate')
+        ax1.plot(timestamps, dynamic_arrival_rate_capacity_down, color='red', linestyle='--', label='Down Process Rate')
         ax1.plot(timestamps, avg_total_arrival_rates_by_nb_assignment, color=color_arrival, alpha=0.7, marker='', label='Real Arrival Rate measured')
         ax1.plot(timestamps, parent_and_external_arrival_rates, color='tab:blue', alpha=0.7, marker='x', label='Parent + External Arrival Rate calculated')
         ax1.tick_params(axis='y', labelcolor=color_arrival)
@@ -369,15 +377,19 @@ def plot_group_lag(grouped_data):
         timestamps = [data.timestamp for data in data_list]
         nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
         avg_lag = []
+        dynamic_lag_capacity_up = []
+        dynamic_lag_capacity_down = []
         for data in data_list:
-            avg_lag.append(sum(p.lag for p in data.partitionsMetaData.values()))
+            avg_lag.append(sum(p.lag for p in data.partitionsMetaData.values())/len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            dynamic_lag_capacity_up.append(data.dynamicMaxLagCapacity)
+            dynamic_lag_capacity_down.append(data.dynamicMinLagCapacity)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
         ax1.set_xlabel('Time')
         ax1.set_ylabel('Avg Total Lag per Consumer', color=color_arrival)
-        ax1.axhline(y=(data.consumerGroup.fup * 200 * 0.5), color='red', linestyle='--', label='Avg Up Allowed Lag')
-        ax1.axhline(y=(data.consumerGroup.fdown * 200 * 0.5), color='red', linestyle='--', label='Avg Down Allowed Lag')
+        ax1.plot(timestamps, dynamic_lag_capacity_up, color='red', linestyle='--', label='Avg Up Allowed Lag')
+        ax1.plot(timestamps, dynamic_lag_capacity_down, color='red', linestyle='--', label='Avg Down Allowed Lag')
         ax1.plot(timestamps, avg_lag, color=color_arrival, marker='x', label='Total Lag')
         ax1.tick_params(axis='y', labelcolor=color_arrival)
         ax1.grid(True)
