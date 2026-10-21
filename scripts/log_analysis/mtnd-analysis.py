@@ -936,7 +936,7 @@ if __name__ == "__main__":
     grouped_data = defaultdict(list)
     for all_data in prometheus_data_list:
         for data in all_data:
-            group_name = data.consumerGroup.groupName
+            group_name = data.consumerGroup.name
             grouped_data[group_name].append(data)
     for group_name in grouped_data:
         grouped_data[group_name].sort(key=lambda x: x.timestamp)
