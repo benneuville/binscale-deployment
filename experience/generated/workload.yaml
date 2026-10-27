@@ -41,8 +41,8 @@ spec:
               value: |
                 retries=100
             - name: WORKLOAD
-              value: "biased"
+              value: "stream"
             - name: INPUT_WORKLOAD
-              value: "spike-n-decrease.csv"
+              value: "first-600-2h.csv"
       restartPolicy: Never
   backoffLimit: 0

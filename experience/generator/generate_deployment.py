@@ -12,6 +12,7 @@ E2E_ANALYZER = "e2e-analyzer"
 EXPORTER = "exporter"
 FINAL_QUEUE = "final-queue"
 DEFAULT_WORKLOAD_INPUT = "defaultArrivalRatesm.csv"
+LOCAL_WSLA_MODE = "local"
 
 headers = [
     {
@@ -86,6 +87,12 @@ if controller["params"].get("decision_interval", None) is None:
     controller["params"]["decision_interval"] = controller["params"]["metrics"]["request_time_range"] * 1000
 if controller["params"].get("time_to_start_consumer", None) is None:
     controller["params"]["time_to_start_consumer"] = 0
+if controller["params"].get("wsla_mode", None) is None:
+    print("🛑  ERROR: wsla_mode not specified, choose between 'local' and 'e2e'.")
+    exit(1)
+if controller["params"]["wsla_mode"] == LOCAL_WSLA_MODE:
+    print("⚠️  Warning: wsla_mode is set to 'local'.")
+    controller["params"]["wsla"] = 0
 
 for node in graph["nodes"]:
     node["targets"] = []
@@ -102,7 +109,7 @@ for edge in graph["edges"]:
         "weight": edge.get("weight", 1),
         "partitions": nodes[edge["to"]].get("partitions", 10),
         "topic_name": f"topic-{edge['to']}",
-        "to_wsla": nodes[edge["to"]]["params"].get("wsla", None)
+        "to_wsla": None if controller["params"]["wsla_mode"] != LOCAL_WSLA_MODE else nodes[edge["to"]]["params"].get("wsla", 0)
     }
     edge_check(tmp_edge, nodes)
     

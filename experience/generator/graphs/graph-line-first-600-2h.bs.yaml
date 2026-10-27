@@ -63,6 +63,8 @@ controller:
     fup: 0.9
     fdown: 0.5
   # #############################
+    wsla_mode: e2e # local, e2e
+    wsla: 1200
     rebalancing_time: 1
     time_to_start_consumer: 1
     initial_size: 1

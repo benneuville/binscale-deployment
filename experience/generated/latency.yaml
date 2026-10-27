@@ -41,7 +41,7 @@ spec:
       containers:
         - name: latency-1
           image: docker.io/benneuville/binscale:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
@@ -128,7 +128,7 @@ spec:
       containers:
         - name: latency-2
           image: docker.io/benneuville/binscale:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080
@@ -212,7 +212,7 @@ spec:
       containers:
         - name: latency-3
           image: docker.io/benneuville/binscale:latest
-          imagePullPolicy: Always
+          imagePullPolicy: IfNotPresent
           command: ["java", "$(JAVA_OPTS)", "-jar", "/app/consumer.jar"]
           ports:
             - containerPort: 8080

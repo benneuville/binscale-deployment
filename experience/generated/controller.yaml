@@ -16,23 +16,24 @@ data:
         weight: 1
     nodes:
       - name: latency-1
-        wsla: 500
+        wsla: None
         maxConsumptionRate: 200
         inputTopic: topic-latency-1
         partitionNumber: 10
         groupId: latencygroup1
       - name: latency-2
-        wsla: 500
+        wsla: None
         maxConsumptionRate: 200
         inputTopic: topic-latency-2
         partitionNumber: 10
         groupId: latencygroup2
       - name: latency-3
-        wsla: 500
+        wsla: None
         maxConsumptionRate: 200
         inputTopic: topic-latency-3
         partitionNumber: 10
         groupId: latencygroup3
+    wsla: 1200
 ---
 apiVersion: v1
 kind: Pod
@@ -65,21 +66,23 @@ spec:
         - name: FUP
           value: "0.9"
         - name: FDOWN
-          value: "0.4"
+          value: "0.5"
         - name: REB_TIME
           value: "1"
         - name: DI
           value: "1500"
         - name: REQUEST_TIME_RANGE
-          value: "5"
+          value: "4"
         - name: REQUEST_TIME_UNIT
           value: "s"
         - name: DEBUG_OPTIONS
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
         - name: TIME_TO_START_CONSUMER
-          value: "3"
+          value: "1"
+        - name: WSLA_MODE
+          value: "e2e"
           
-        - name: TOPICS_CONFIG_PATH
+        - name: CONTROLLER_CONFIG_PATH
           value: "/config/controller-config.yaml"
           
       command: ["sh", "-c", "java $(JAVA_OPTS) $DEBUG_OPTIONS -jar /app/Controller.jar"]

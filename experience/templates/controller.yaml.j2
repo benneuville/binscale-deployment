@@ -18,6 +18,7 @@ data:
         inputTopic: {{ node.params.topic_name }}
         partitionNumber: {{ edges_full[node.params.topic_name].partitions }}
         groupId: {{ node.params.group_id }}{% endfor %}
+    wsla: {{ controller.params.wsla }}
 ---
 apiVersion: v1
 kind: Pod
@@ -63,8 +64,10 @@ spec:
           value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
         - name: TIME_TO_START_CONSUMER
           value: "{{ controller.params.time_to_start_consumer }}"
+        - name: WSLA_MODE
+          value: "{{ controller.params.wsla_mode }}"
           {% if edges|length > 0 %}
-        - name: TOPICS_CONFIG_PATH
+        - name: CONTROLLER_CONFIG_PATH
           value: "/config/controller-config.yaml"
           {% endif %}
       command: ["sh", "-c", "java $(JAVA_OPTS) $DEBUG_OPTIONS -jar /app/Controller.jar"]
