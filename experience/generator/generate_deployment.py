@@ -109,7 +109,7 @@ for edge in graph["edges"]:
         "weight": edge.get("weight", 1),
         "partitions": nodes[edge["to"]].get("partitions", 10),
         "topic_name": f"topic-{edge['to']}",
-        "to_wsla": None if controller["params"]["wsla_mode"] != LOCAL_WSLA_MODE else nodes[edge["to"]]["params"].get("wsla", 0)
+        "to_wsla": 0 if controller["params"]["wsla_mode"] != LOCAL_WSLA_MODE else nodes[edge["to"]]["params"].get("wsla", 0)
     }
     edge_check(tmp_edge, nodes)
     
