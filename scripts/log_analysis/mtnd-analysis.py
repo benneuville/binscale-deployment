@@ -1,4 +1,5 @@
 import sys
+from bisect import bisect_right
 import datetime
 try:
     import matplotlib.pyplot as plt
@@ -98,7 +99,8 @@ class PrometheusData:
         fallBackMaxAverageArrivalRate,
         fallBackMinLagCapacity,
         fallBackMinAverageArrivalRate,
-        wsla
+        wsla,
+        dynamicWsla
     ):
         self.timestamp = timestamp
         self.consumerGroup = consumerGroup
@@ -124,6 +126,7 @@ class PrometheusData:
         self.fallBackMinLagCapacity = fallBackMinLagCapacity
         self.fallBackMinAverageArrivalRate = fallBackMinAverageArrivalRate
         self.wsla = wsla
+        self.dynamicWsla = dynamicWsla
 
 class LatencyEvent:
     def __init__(self, insertion_date, latency, partition, offset, consumer_id, process_time, event_provider):
@@ -214,7 +217,8 @@ def pulled_data_from_prometheus(line):
             fallBackMaxAverageArrivalRate=data["fallBackMaxAverageArrivalRate"],
             fallBackMinLagCapacity=data["fallBackMinLagCapacity"],
             fallBackMinAverageArrivalRate=data["fallBackMinAverageArrivalRate"],
-            wsla=data["consumerGroup"]["wsla"]
+            wsla=data["wsla"],
+            dynamicWsla=data["dynamicWsla"]
         )
         prometheus_data.rawData = data
         prometheus_data_list.append(prometheus_data)
@@ -242,7 +246,7 @@ def pulled_data_from_prometheus_for_nb_consumer(line):
         res["timestamp"] = log_timestamp
         res["name"] = data["consumerGroup"]["consumerName"]
         res["consumer"] = len(data["consumerGroup"]["assignment"])
-        res["wsla"] = data["consumerGroup"]["wsla"]
+        res["wsla"] = data["wsla"]
         prometheus_data_list.append(res)
     return prometheus_data_list
 
@@ -620,13 +624,14 @@ def plot_processing_rate_by_group(grouped_data):
 
         print(f"➡️ Graphique généré : {filename}")
 
-def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, latency_threshold=500, nb_consumers_per_group=None, total_time_exp=0):
+def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, nb_consumers_per_group=None, total_time_exp=0):
     """
     Produit un graphe par groupe :
     - courbe de latence fusionnée de tous les consumers du groupe
     - courbe en escalier du nombre de consommateurs actifs (axe secondaire, échelle adaptée)
     - traits rouges pour les downscale, verts pour les upscale
     """
+
 
     for group, uids in consumer_latency_events.items():
         all_events = []
@@ -635,10 +640,52 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         all_events = sorted(all_events, key=lambda ev: ev.insertion_date)
 
 
+        wsla_samples = []
+        for data in grouped_data.get(group, []):
+            try:
+                wsla_value = float(data.dynamicWsla) * 1000
+            except (TypeError, ValueError):
+                continue
+            wsla_samples.append((data.timestamp, wsla_value))
+        wsla_samples.sort(key=lambda sample: sample[0])
+        wsla_timestamps = [sample[0] for sample in wsla_samples]
+        wsla_values = [sample[1] for sample in wsla_samples]
+
         total_events = len(all_events)
-        high_latency_events = [ev for ev in all_events if ev.latency >= latency_threshold]
-        count_high = len(high_latency_events)
-        percent_high = (count_high / total_events * 100) if total_events > 0 else 0
+        events_with_wsla = []
+        for event in all_events:
+            wsla_index = bisect_right(wsla_timestamps, event.insertion_date) - 1
+            if wsla_index >= 0:
+                events_with_wsla.append((event, wsla_values[wsla_index]))
+        count_high = sum(event.latency > wsla for event, wsla in events_with_wsla)
+        count_within_wsla = len(events_with_wsla) - count_high
+        percent_within_wsla = (
+            count_within_wsla / len(events_with_wsla) * 100
+            if events_with_wsla
+            else None
+        )
+        processing_capacity_samples = []
+        for data in grouped_data.get(group, []):
+            try:
+                capacity = float(data.consumerGroupDynamicProcessingCapacity)
+            except (TypeError, ValueError):
+                continue
+            if np.isfinite(capacity):
+                processing_capacity_samples.append((data.timestamp, capacity))
+        processing_capacity_samples.sort(key=lambda sample: sample[0])
+        processing_capacity_values = [
+            capacity for _, capacity in processing_capacity_samples
+        ]
+        mean_processing = (
+            sum(processing_capacity_values) / len(processing_capacity_values)
+            if processing_capacity_values
+            else None
+        )
+        mean_wsla = (
+            sum(wsla_values) / len(wsla_values)
+            if wsla_values
+            else None
+        )
 
         uid_start_times = {}
         uid_end_times = {}
@@ -669,9 +716,28 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         step_times = [p[0] for p in change_points]
         step_counts = [p[1] for p in change_points]
 
-        fig, ax1 = plt.subplots(figsize=(16, 6))
+        fig = plt.figure(figsize=(16, 8))
+        grid = fig.add_gridspec(
+            2,
+            1,
+            height_ratios=[5, 1.15],
+        )
+        ax1 = fig.add_subplot(grid[0, 0])
+        footer_grid = grid[1, 0].subgridspec(
+            1,
+            4,
+            width_ratios=[1.1, 1.1, 1.7, 1.55],
+            wspace=0.2,
+        )
+        wsla_ax = fig.add_subplot(footer_grid[0, 0])
+        replicas_ax = fig.add_subplot(footer_grid[0, 1])
+        details_ax = fig.add_subplot(footer_grid[0, 2])
+        legend_ax = fig.add_subplot(footer_grid[0, 3])
+        for footer_ax in (wsla_ax, replicas_ax, details_ax, legend_ax):
+            footer_ax.set_xlim(0, 1)
+            footer_ax.set_ylim(0, 1)
+            footer_ax.axis("off")
 
-        
         replicas_per_minute = defaultdict(set)
         for ev in all_events:
             minute_key = ev.insertion_date.replace(second=0, microsecond=0)
@@ -682,7 +748,15 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         ax1.set_xlabel("Time")
         ax1.set_ylabel("Latency (ms)", color=color_latency)
         ax1.plot(dates, latencies, marker=".", linestyle="-", color=color_latency, label='Latency', alpha=0.5)
-        ax1.axhline(y=latency_threshold, color='red', linestyle='--')
+        if wsla_timestamps:
+            ax1.step(
+                wsla_timestamps,
+                wsla_values,
+                where='post',
+                color='red',
+                linestyle='--',
+                label='wsla',
+            )
         ax1.tick_params(axis='y', labelcolor=color_latency)
         ax1.grid(True)
         ax1.set_xlim(min_time, max_time)
@@ -702,27 +776,82 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
             ax2.set_ylim(min_consumers, max_consumers)
             ax2.set_xlim(min_time, max_time)
 
-        text_str = f"Events > {latency_threshold}ms: {count_high} ({percent_high:.1f}%)"
-        ax1.text(0.98, 0.98, text_str, transform=ax1.transAxes,
-                 verticalalignment='top', horizontalalignment='right',
-                 bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
-        
-        text_str_replicas = f"total RM: {total_replicas_minute:.1f}"
-        ax1.text(0.75, 0.98, text_str_replicas, transform=ax1.transAxes,
-                verticalalignment='top', horizontalalignment='right',
-                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
-        
-        text_total_events = f"total events: {total_events}"
-        ax1.text(0.98, 0, text_total_events, transform=ax1.transAxes,
-                verticalalignment='top', horizontalalignment='right',
-                bbox=dict(boxstyle='round', facecolor='white', alpha=0.8), fontsize=13)
+        fig.suptitle(f"Latency and Consumer Count over time — Group: {group}", y=0.98)
+
+
+        fig.subplots_adjust(
+            left=0.09,
+            right=0.97,
+            bottom=0.06,
+            top=0.91,
+            hspace=0.18,
+        )
+
+        metric_cells = [
+            (
+                wsla_ax,
+                f"{percent_within_wsla:.1f}%" if percent_within_wsla is not None else "n/a",
+                "Within WSLA",
+            ),
+            (
+                replicas_ax,
+                f"{total_replicas_minute:,.1f}",
+                "Replica minutes",
+            ),
+        ]
+        for metric_ax, value, label in metric_cells:
+            metric_ax.text(
+                0.8,
+                0.73,
+                value,
+                transform=metric_ax.transAxes,
+                fontsize=22,
+                fontweight="bold",
+                verticalalignment="top",
+                horizontalalignment="center",
+            )
+            metric_ax.text(
+                0.8,
+                0.43,
+                label,
+                transform=metric_ax.transAxes,
+                fontsize=14,
+                verticalalignment="top",
+                horizontalalignment="center",
+            )
+
+        detail_lines = [
+            (
+                "Mean WSLA ",
+                f" {mean_wsla:,.1f}ms" if mean_wsla is not None else " n/a",
+            ),
+            (
+                "Process Rate ",
+                f" {mean_processing:,.1f} events/s" if mean_processing is not None else " n/a",
+            ),
+            ("Total events ", f" {total_events:,}"),
+        ]
+        for index, (label, value) in enumerate(detail_lines):
+            y = 0.78 - index * 0.28
+            details_ax.text(
+                0.4,
+                y,
+                f"{label}: {value}",
+                transform=details_ax.transAxes,
+                fontsize=14,
+                verticalalignment="center",
+                horizontalalignment="left",
+            )
 
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
-        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
-
-        plt.title(f"Latency and Consumer Count over time — Group: {group}")
-        fig.tight_layout()
+        legend = legend_ax.legend(
+            lines1 + lines2,
+            labels1 + labels2,
+            loc="center right",
+            frameon=False,
+            fontsize=10,
+        )
 
         filename = f"latency_and_consumers_group_{group}.png"
         plt.savefig(filename, transparent=True)
@@ -730,25 +859,28 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, l
         ax3 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in waiting_scale])
         values = np.array([e["waiting"] for e in waiting_scale])
-        ax3.fill_between(timestamps, values, color="red", step="post", alpha=0.1)
+        ax3.fill_between(timestamps, values, color="red", step="post", alpha=0.1, label="Controller waiting")
         ax3.axes.get_yaxis().set_visible(False)
         ax3.set_xlim(min_time, max_time)
 
         ax4 = ax1.twinx()
         timestamps = np.array([e["timestamp"] for e in di])
         values = np.array([e["sleep"] for e in di])
-        ax4.fill_between(timestamps, values, color="orange", step="post", alpha=0.1)
+        ax4.fill_between(timestamps, values, color="orange", step="post", alpha=0.1, label="Controller sleeping")
         ax4.axes.get_yaxis().set_visible(False)
         ax4.set_xlim(min_time, max_time)
 
 
-        # Légende combinée
-        lines1, labels1 = ax1.get_legend_handles_labels()
-        lines2, labels2 = ax2.get_legend_handles_labels()
-        ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
-
-        plt.title(f"Latency and Consumer Count over time — Group: {group}")
-        fig.tight_layout()
+        lines3, labels3 = ax3.get_legend_handles_labels()
+        lines4, labels4 = ax4.get_legend_handles_labels()
+        legend.remove()
+        legend_ax.legend(
+            lines1 + lines2 + lines3 + lines4,
+            labels1 + labels2 + labels3 + labels4,
+            loc="center right",
+            frameon=False,
+            fontsize=10,
+        )
 
         filename = f"latency_and_consumers_group_{group}_sleep_wait_time.png"
         plt.savefig(filename)
