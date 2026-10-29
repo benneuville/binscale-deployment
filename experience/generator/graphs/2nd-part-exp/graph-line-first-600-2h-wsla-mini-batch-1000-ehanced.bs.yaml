@@ -4,7 +4,7 @@ nodes:
   - id: workload-1
     type: workload
     params:
-      workload: stream #biased
+      workload: mini_batch #batch
       producer_ack: 0
       input: "first-600-2h.csv"
       delay_ms: 1000
@@ -64,11 +64,11 @@ controller:
     fdown: 0.5
   # #############################
     wsla_mode: e2e # local, e2e
-    wsla: 1200
+    wsla: 1000
     rebalancing_time: 1
     time_to_start_consumer: 1
     initial_size: 1
-    scaling_strategy: burst # naive, ehanced, burst, reactive
+    scaling_strategy: ehanced # naive, ehanced, burst, reactive
     metrics:
       request_time_range: 4
       request_time_unit: "s" # "s", "m", "h"

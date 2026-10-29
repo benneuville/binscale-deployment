@@ -8,3 +8,5 @@ logs_test/
 .vscode/
 filebeat-kubernetes.yaml
 .git-token
+.old-experiences/
+.venv/

@@ -19,19 +19,19 @@ nodes:
   - id: workload-1
     type: workload
     params:
-      workload: biased
+      workload: batch
       producer_ack: 0
       delay_ms: 600
   - id: workload-2
     type: workload
     params:
-      workload: biased
+      workload: batch
       producer_ack: 0
       delay_ms: 600
   - id: workload-3
     type: workload
     params:
-      workload: biased
+      workload: batch
       producer_ack: 0
       delay_ms: 600
 
