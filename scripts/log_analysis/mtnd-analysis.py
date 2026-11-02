@@ -2,6 +2,8 @@ import sys
 from bisect import bisect_right
 import datetime
 try:
+    import matplotlib
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
     import numpy as np
@@ -70,8 +72,8 @@ class ConsumerGroup:
         self.fdown = fdown
         self.upProcessRate = fup * len(self.assignment) * 200
         self.downProcessRate = fdown * len(self.assignment) * 200
-        self.upLagCapacity = fup * len(self.assignment) * 200 * 0.5
-        self.downLagCapacity = fdown * len(self.assignment) * 0.5
+        self.upDrainCapacity = fup * len(self.assignment) * 200 * 0.5
+        self.downDrainCapacity = fdown * len(self.assignment) * 0.5
 
 class PrometheusData:
     def __init__(
@@ -88,19 +90,20 @@ class PrometheusData:
         lag,
         maxPropagatedLag,
         avgTotalInputArrivalRate,
-        dynamicMaxLagCapacity,
+        dynamicMaxDrainCapacity,
         dynamicMaxAverageArrivalRate,
-        dynamicMinLagCapacity,
+        dynamicMinDrainCapacity,
         dynamicMinAverageArrivalRate,
         consumerGroupDynamicProcessingCapacity,
         avgTotalExternalArrivalRate,
         avgLag,
-        fallBackMaxLagCapacity,
+        fallBackMaxDrainCapacity,
         fallBackMaxAverageArrivalRate,
-        fallBackMinLagCapacity,
+        fallBackMinDrainCapacity,
         fallBackMinAverageArrivalRate,
         wsla,
-        dynamicWsla
+        dynamicWsla,
+        tBudget
     ):
         self.timestamp = timestamp
         self.consumerGroup = consumerGroup
@@ -114,19 +117,20 @@ class PrometheusData:
         self.lag = lag
         self.maxPropagatedLag = maxPropagatedLag
         self.avgTotalInputArrivalRate = avgTotalInputArrivalRate
-        self.dynamicMaxLagCapacity = dynamicMaxLagCapacity
+        self.dynamicMaxDrainCapacity = dynamicMaxDrainCapacity
         self.dynamicMaxAverageArrivalRate = dynamicMaxAverageArrivalRate
-        self.dynamicMinLagCapacity = dynamicMinLagCapacity
+        self.dynamicMinDrainCapacity = dynamicMinDrainCapacity
         self.dynamicMinAverageArrivalRate = dynamicMinAverageArrivalRate
         self.consumerGroupDynamicProcessingCapacity = consumerGroupDynamicProcessingCapacity
         self.avgTotalExternalArrivalRate = avgTotalExternalArrivalRate
         self.avgLag = avgLag
-        self.fallBackMaxLagCapacity = fallBackMaxLagCapacity
+        self.fallBackMaxDrainCapacity = fallBackMaxDrainCapacity
         self.fallBackMaxAverageArrivalRate = fallBackMaxAverageArrivalRate
-        self.fallBackMinLagCapacity = fallBackMinLagCapacity
+        self.fallBackMinDrainCapacity = fallBackMinDrainCapacity
         self.fallBackMinAverageArrivalRate = fallBackMinAverageArrivalRate
         self.wsla = wsla
         self.dynamicWsla = dynamicWsla
+        self.tBudget = tBudget
 
 class LatencyEvent:
     def __init__(self, insertion_date, latency, partition, offset, consumer_id, process_time, event_provider):
@@ -175,7 +179,8 @@ def pulled_data_from_prometheus(line):
                 processingTime=partition_data["processingTime"],
                 processingCount=partition_data["processingCount"],
                 latency=partition_data["latency"],
-                lagRebalancing=partition_data["lagRebalancing"]
+                lagRebalancing=partition_data["lagRebalancing"],
+
             )
 
         # Parsing des consumers
@@ -206,19 +211,20 @@ def pulled_data_from_prometheus(line):
             lag=data["lag"],
             maxPropagatedLag=data["totalMaxPropagatedLag"],
             avgTotalInputArrivalRate=data["avgTotalInputArrivalRate"],
-            dynamicMaxLagCapacity=data["dynamicMaxLagCapacity"],
+            dynamicMaxDrainCapacity=data["dynamicMaxDrainCapacity"],
             dynamicMaxAverageArrivalRate=data["dynamicMaxAverageArrivalRate"],
-            dynamicMinLagCapacity=data["dynamicMinLagCapacity"],
+            dynamicMinDrainCapacity=data["dynamicMinDrainCapacity"],
             dynamicMinAverageArrivalRate=data["dynamicMinAverageArrivalRate"],
             consumerGroupDynamicProcessingCapacity=data["consumerGroupDynamicProcessingCapacity"],
             avgTotalExternalArrivalRate=data["avgTotalExternalArrivalRate"],
             avgLag=data["avgLag"],
-            fallBackMaxLagCapacity=data["fallBackMaxLagCapacity"],
+            fallBackMaxDrainCapacity=data["fallBackMaxDrainCapacity"],
             fallBackMaxAverageArrivalRate=data["fallBackMaxAverageArrivalRate"],
-            fallBackMinLagCapacity=data["fallBackMinLagCapacity"],
+            fallBackMinDrainCapacity=data["fallBackMinDrainCapacity"],
             fallBackMinAverageArrivalRate=data["fallBackMinAverageArrivalRate"],
             wsla=data["wsla"],
-            dynamicWsla=data["dynamicWsla"]
+            dynamicWsla=data["dynamicWsla"],
+            tBudget=data["tbudget"]
         )
         prometheus_data.rawData = data
         prometheus_data_list.append(prometheus_data)
@@ -381,19 +387,19 @@ def plot_group_lag(grouped_data):
         timestamps = [data.timestamp for data in data_list]
         nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
         avg_lag = []
-        dynamic_lag_capacity_up = []
-        dynamic_lag_capacity_down = []
+        dynamic_drain_capacity_up = []
+        dynamic_drain_capacity_down = []
         for data in data_list:
-            avg_lag.append(sum(p.lag for p in data.partitionsMetaData.values())/len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
-            dynamic_lag_capacity_up.append(data.dynamicMaxLagCapacity)
-            dynamic_lag_capacity_down.append(data.dynamicMinLagCapacity)
+            avg_lag.append(sum(p.lag + p.lagRebalancing + data.tBudget * data.avgTotalInputArrivalRate for p in data.partitionsMetaData.values()) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            dynamic_drain_capacity_up.append(data.dynamicMaxDrainCapacity)
+            dynamic_drain_capacity_down.append(data.dynamicMinDrainCapacity)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
         ax1.set_xlabel('Time')
         ax1.set_ylabel('Avg Total Lag per Consumer', color=color_arrival)
-        ax1.plot(timestamps, dynamic_lag_capacity_up, color='red', linestyle='--', label='Avg Up Allowed Lag')
-        ax1.plot(timestamps, dynamic_lag_capacity_down, color='red', linestyle='--', label='Avg Down Allowed Lag')
+        ax1.plot(timestamps, dynamic_drain_capacity_up, color='red', linestyle='--', label='Avg Up Allowed Lag')
+        ax1.plot(timestamps, dynamic_drain_capacity_down, color='red', linestyle='--', label='Avg Down Allowed Lag')
         ax1.plot(timestamps, avg_lag, color=color_arrival, marker='x', label='Total Lag')
         ax1.tick_params(axis='y', labelcolor=color_arrival)
         ax1.grid(True)
@@ -444,8 +450,8 @@ def plot_group_metrics(grouped_data):
             consumer_counts.append(consumer_count)
             upProcessRates.append(data.consumerGroup.upProcessRate)
             downProcessRates.append(data.consumerGroup.downProcessRate)
-            upLagCapacities.append(data.consumerGroup.upLagCapacity)
-            downLagCapacities.append(data.consumerGroup.downLagCapacity)
+            upLagCapacities.append(data.consumerGroup.upDrainCapacity)
+            downLagCapacities.append(data.consumerGroup.downDrainCapacity)
 
         # Création du graphique
         fig, ax1 = plt.subplots(figsize=(14, 7))
@@ -624,7 +630,30 @@ def plot_processing_rate_by_group(grouped_data):
 
         print(f"➡️ Graphique généré : {filename}")
 
-def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, nb_consumers_per_group=None, total_time_exp=0):
+def calculate_replica_minutes(samples, min_time, max_time):
+    if min_time is None or max_time is None or max_time <= min_time:
+        return 0
+
+    ordered_samples = sorted(samples, key=lambda sample: sample[0])
+    replica_minutes = 0
+
+    for index, (sample_time, consumer_count) in enumerate(ordered_samples):
+        interval_end = (
+            ordered_samples[index + 1][0]
+            if index + 1 < len(ordered_samples)
+            else max_time
+        )
+        interval_start = max(sample_time, min_time)
+        interval_end = min(interval_end, max_time)
+
+        if interval_end > interval_start:
+            replica_minutes += max(consumer_count, 0) * (
+                interval_end - interval_start
+            ).total_seconds() / 60
+
+    return replica_minutes
+
+def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, nb_consumers_per_group=None):
     """
     Produit un graphe par groupe :
     - courbe de latence fusionnée de tous les consumers du groupe
@@ -738,11 +767,15 @@ def plot_latency_by_group(waiting_scale, di, min_time, max_time, grouped_data, n
             footer_ax.set_ylim(0, 1)
             footer_ax.axis("off")
 
-        replicas_per_minute = defaultdict(set)
-        for ev in all_events:
-            minute_key = ev.insertion_date.replace(second=0, microsecond=0)
-            replicas_per_minute[minute_key].add(ev.consumer_id)
-        total_replicas_minute = sum(len(replicas) for replicas in replicas_per_minute.values()) / len(replicas_per_minute) * (total_time_exp / 60) if replicas_per_minute else 0
+        replica_samples = [
+            (data.timestamp, len(data.consumerGroup.assignment))
+            for data in grouped_data.get(group, [])
+        ]
+        total_replicas_minute = calculate_replica_minutes(
+            replica_samples,
+            min_time,
+            max_time,
+        )
 
         color_latency = '#5C669F'
         ax1.set_xlabel("Time")
@@ -1116,7 +1149,6 @@ if __name__ == "__main__":
             nb_cons_controller_decision_taked,
         )
 
-        duration = (max_time - min_time).total_seconds()
         plot_latency_by_group(
             controller_waiting_scale_time,
             di_time,
@@ -1124,7 +1156,6 @@ if __name__ == "__main__":
             max_time,
             grouped_data,
             nb_consumers_per_group=nb_cons_controller_decision_taked,
-            total_time_exp=duration,
         )
         plot_decision_timeline(prometheus_except)
         plot_latency_by_consumer(min_time, max_time)
