@@ -2,6 +2,8 @@ import sys
 import os
 import yaml
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 def load_yaml(file_path):
