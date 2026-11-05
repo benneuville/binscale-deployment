@@ -13,7 +13,7 @@ except ImportError:
     np = None
 from typing import List, Dict
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import json
 from collections import defaultdict
 
@@ -133,7 +133,7 @@ class PrometheusData:
         self.tBudget = tBudget
 
 class LatencyEvent:
-    def __init__(self, insertion_date, latency, partition, offset, consumer_id, process_time, event_provider):
+    def __init__(self, insertion_date, latency, partition=None, offset=None, consumer_id=None, process_time=None, event_provider=None):
         self.insertion_date = insertion_date
         self.latency = latency
         self.partition = partition
@@ -257,31 +257,46 @@ def pulled_data_from_prometheus_for_nb_consumer(line):
     return prometheus_data_list
 
 
-def parseLatency(line):
+def parse_e2e_timestamp(value):
+    parsed_date = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    if parsed_date.tzinfo is not None:
+        parsed_date = parsed_date.astimezone(timezone.utc).replace(tzinfo=None)
+    return parsed_date
+
+def normalize_group_name(value):
+    compact_name = re.sub(r"[^a-z0-9]", "", value.lower())
+    return re.sub(r"group(?=\d+$)", "", compact_name)
+
+def group_for_e2e_origin(node_origin, group_names):
+    normalized_origin = normalize_group_name(node_origin)
+    matches = [
+        group_name
+        for group_name in group_names
+        if normalize_group_name(group_name) == normalized_origin
+    ]
+    return matches[0] if len(matches) == 1 else node_origin
+
+def load_latency_events_from_e2e(file_path, group_names):
     global consumer_latency_events
-    try:
-        uid = line.split(" - ")[0]
-        group = line.split(" - ")[1]
-        date_str = line.split("insertion time is ")[1].split(",")[0]
-        parsed_date = datetime.strptime(date_str, '%m/%d/%YT%H:%M:%S.%f')
-        latency = int(line.split("latency is ")[1].split(",")[0])
-        partition = int(line.split("event come from partition ")[1].split(" ")[0])
-        offset = int(line.split("and position ")[1].split(" ")[0])
-        process_time = float(line.split("time for process ")[1].split(" ")[0])
-        event_provider = line.split("and it is from node ")[1].split(" ")[0]
+    with open(file_path, "r", encoding="utf-8") as input_file:
+        trackers = json.load(input_file).get("data", [])
 
-        if group not in consumer_latency_events:
-            consumer_latency_events[group] = {}
+    for tracker in trackers:
+        tracker_id = tracker.get("id")
+        for event in tracker.get("events") or []:
+            node_origin = event.get("nodeOrigin", "unknown")
+            if node_origin == "unknown":
+                continue
 
-        if uid not in consumer_latency_events[group]:
-            consumer_latency_events[group][uid] = []
-
-        consumer_latency_events[group][uid].append(
-            LatencyEvent(parsed_date, latency, partition, offset, uid, process_time, event_provider)
-        )
-
-    except Exception as e:
-        print(f"Error parsing latency: {e}, line: {line}")
+            group = group_for_e2e_origin(node_origin, group_names)
+            consumer_latency_events.setdefault(group, {}).setdefault(node_origin, []).append(
+                LatencyEvent(
+                    insertion_date=parse_e2e_timestamp(event["timestamp"]),
+                    latency=float(event.get("latency", 0)),
+                    consumer_id=tracker_id,
+                    event_provider=node_origin,
+                )
+            )
         
 def sort_all_events_by_timestamp():
     for group in consumer_latency_events:
@@ -315,7 +330,7 @@ def json_default(value):
 
 def export_analysis_json(output_path,
                          grouped_data, grouped_data_for_nb_consumer,
-                         processed_events_by_group, controller_events,
+                         controller_events,
                          min_time, max_time):
     duration = (max_time - min_time).total_seconds() if min_time and max_time else None
     export_data = {
@@ -324,7 +339,6 @@ def export_analysis_json(output_path,
             "end": max_time,
             "duration_seconds": duration,
         },
-        "processed_events_by_group": processed_events_by_group,
         "prometheus_data_by_group": grouped_data,
         "consumer_count_samples_by_group": grouped_data_for_nb_consumer,
         "consumer_latency_events": consumer_latency_events,
@@ -543,7 +557,7 @@ def plot_latency_by_consumer(min_time, max_time):
 
     plt.xlabel("Time")
     plt.ylabel("Latency (ms)")
-    plt.title("Latency over time per consumer")
+    plt.title("Latency over time per E2E event source")
     plt.grid(True)
     plt.legend()
     plt.xlim(min_time, max_time)
@@ -554,7 +568,7 @@ def plot_latency_by_consumer(min_time, max_time):
 
     print("➡️ Graphique généré : latency_by_consumer.png")
 
-def prefab_nb_consumers_over_time(min_time, max_time):
+def prefab_nb_consumers_over_time(grouped_data_for_nb_consumer):
     """
     Produit un graphe unique :
     - courbe en escalier du nombre de consommateurs actifs (axe secondaire, échelle adaptée) pour chaque groupe
@@ -564,27 +578,10 @@ def prefab_nb_consumers_over_time(min_time, max_time):
 
     plt.figure(figsize=(14, 7))
 
-    for group, uids in consumer_latency_events.items():
-        all_change_times = []
-        for uid, events in uids.items():
-            if events:
-                start = min(e.insertion_date for e in events)
-                end = max(e.insertion_date for e in events)
-                all_change_times.append((start, 'start', uid))
-                all_change_times.append((end, 'end', uid))
-        all_change_times.sort()
-
-        active_uids = set()
-        change_points = []
-        for time, typ, uid in all_change_times:
-            if typ == 'start':
-                active_uids.add(uid)
-            else:
-                active_uids.discard(uid)
-            change_points.append((time, len(active_uids)))
-
-        step_times = [p[0] for p in change_points]
-        step_counts = [p[1] for p in change_points]
+    for group, samples in grouped_data_for_nb_consumer.items():
+        ordered_samples = sorted(samples, key=lambda sample: sample["timestamp"])
+        step_times = [sample["timestamp"] for sample in ordered_samples]
+        step_counts = [sample["consumer"] for sample in ordered_samples]
 
         plt.step(
             step_times,
@@ -962,10 +959,9 @@ def plot_events_by_wsla(min_time, max_time, wsla_threshold=500, nb_consumers_per
 
         print(f"➡️ Graphique généré : {filename}")
 
-def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_decision_taked):
+def plot_nbconsumer(grouped_data, nb_cons_controller_decision_taked):
     """
     Crée un graphe par groupe de consommateurs, affichant :
-    - Le nombre de consommateurs actifs (fichier des consommateurs)
     - Le nombre de consommateurs rapporté par le controller
     - Le nombre de consommateurs choisis par le controller
     """
@@ -973,11 +969,6 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
     for group_name, data_list in grouped_data.items():
         controller_timestamps = [data["timestamp"] for data in data_list]
         controller_consumer_counts = [data["consumer"] for data in data_list]
-
-        consumer_timestamps = []
-        consumer_counts = []
-        if group_name in nb_consumers_per_group:
-            consumer_timestamps, consumer_counts = nb_consumers_per_group[group_name]
 
         decision_timestamp = []
         decision_count = []
@@ -987,8 +978,6 @@ def plot_nbconsumer(grouped_data, nb_consumers_per_group, nb_cons_controller_dec
             
         fig, ax = plt.subplots(figsize=(16, 6))
 
-        if consumer_timestamps:
-            ax.step(consumer_timestamps, consumer_counts, where='post', color='tab:orange', alpha=0.7, label='Nombre de consommateurs (fichier)')
         if controller_timestamps:
             ax.step(controller_timestamps, controller_consumer_counts, where='post', color='tab:blue', alpha=0.7, label='Nombre de consommateurs (controller)')
         if decision_timestamp:
@@ -1019,34 +1008,15 @@ if __name__ == "__main__":
         if argument not in ("--graph-generation", "-gg")
     ]
     if len(input_paths) < 2:
-        print("Usage: python mtnd-analysis.py <consumer_logs.txt> <controller_logs.txt> [-gg|--graph-generation]")
+        print("Usage: python mtnd-analysis.py <export-e2e-analyze.json> <controller_logs.txt> [-gg|--graph-generation]")
         sys.exit(1)
 
-    cons_file_path = input_paths[0]
+    e2e_file_path = input_paths[0]
     ctrl_file_path = input_paths[1]
     output_path = "mtnd-analysis-results.json"
 
     if graph_generation and plt is None:
         sys.exit("Graph generation requires matplotlib and numpy. Install requirements.txt and retry.")
-
-    processed_events_by_group = {}
-
-    # ========== PARSE CONSUMER LOGS ==========
-    print(f"📖 Reading consumer logs from {cons_file_path}")
-    with open(cons_file_path, "r") as f:
-        for line in f:
-            if "insertion time is" in line:
-                parseLatency(line)
-            elif "EventProcessing - Processing" in line:
-                # example line : 8d087c3b-9aad-46d9-9434-a18edaff9db9 - latency-3 - 2026-09-16 15:00:11 INFO  f.u.s.l.c.processing.EventProcessing - Processing 2 events using strategy CustomProcessStrategy
-                group_name = line.split(" - ")[1].split(" ")[0].strip()
-                processed_count = int(line.split("EventProcessing - Processing ")[1].split(" ")[0].strip())
-                if group_name not in processed_events_by_group:
-                    processed_events_by_group[group_name] = 0
-                processed_events_by_group[group_name] += processed_count
-
-    for group, count in processed_events_by_group.items():
-        print(f"✅ Total events processed for group '{group}': {count}")
 
     # ========== PARSE CONTROLLER LOGS ==========
     print(f"📖 Reading controller logs from {ctrl_file_path}")
@@ -1113,6 +1083,9 @@ if __name__ == "__main__":
             grouped_data_for_nb_consumer[group_name].append(data)
     for group_name in grouped_data_for_nb_consumer:
         grouped_data_for_nb_consumer[group_name].sort(key=lambda x: x["timestamp"])
+
+    print(f"📖 Reading E2E events from {e2e_file_path}")
+    load_latency_events_from_e2e(e2e_file_path, grouped_data.keys())
     
 
     # ========== PREPARE TIME BOUNDS ==========
@@ -1134,7 +1107,6 @@ if __name__ == "__main__":
         output_path,
         grouped_data,
         grouped_data_for_nb_consumer,
-        processed_events_by_group,
         controller_events,
         min_time,
         max_time,
@@ -1142,10 +1114,9 @@ if __name__ == "__main__":
 
     if graph_generation:
         print("\nGenerating graphs...")
-        nb_consumers_per_group = prefab_nb_consumers_over_time(min_time, max_time)
+        prefab_nb_consumers_over_time(grouped_data_for_nb_consumer)
         plot_nbconsumer(
             grouped_data_for_nb_consumer,
-            nb_consumers_per_group,
             nb_cons_controller_decision_taked,
         )
 

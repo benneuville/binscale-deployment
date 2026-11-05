@@ -146,7 +146,7 @@ def generate_latency_per_node_origin_plot(latency_points_by_node):
     plt.savefig("latency_per_node_origin.png", dpi=300, bbox_inches="tight")
     plt.close()
 
-def generate_individual_latency_plots(latency_points_by_node, latency_threshold = 500):
+def generate_individual_latency_plots(latency_points_by_node, latency_threshold = 368):
     for node_origin, points in latency_points_by_node.items():
         plt.figure(figsize=(16, 5))
         ax = plt.gca()
