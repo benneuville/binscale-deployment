@@ -19,7 +19,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 2000
       processing_strategy: custom
   - id: latency-2
     type: latency
@@ -30,7 +30,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 2000
       processing_strategy: custom
   - id: latency-3
     type: latency
@@ -41,7 +41,7 @@ nodes:
       shape: 2.75
       producer_ack: 0
       partitions: 10
-      consumption_rate: 200
+      consumption_rate: 2000
       processing_strategy: custom
 
 # edges
