@@ -78,7 +78,7 @@ controller:
     decision_interval: 1500
   # maybe become a edge parameter
     fup: 0.9
-    fdown: 0.4
+    fdown: 0.6
   # #############################
     wsla_mode: e2e # local, e2e
     wsla: 1500
