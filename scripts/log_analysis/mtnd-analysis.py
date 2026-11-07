@@ -396,25 +396,29 @@ def plot_group_arrival_rate(grouped_data):
 
         print(f"➡️ Graphique généré : {filename}")
 
-def plot_group_lag(grouped_data):
+def plot_group_drain(grouped_data):
     for group_name, data_list in grouped_data.items():
         timestamps = [data.timestamp for data in data_list]
         nb_consumers = [len(data.consumerGroup.assignment) for data in data_list]
+        avg_drain_demand = []
         avg_lag = []
+
         dynamic_drain_capacity_up = []
         dynamic_drain_capacity_down = []
         for data in data_list:
-            avg_lag.append(sum(p.lag + p.lagRebalancing + data.tBudget * data.avgTotalInputArrivalRate for p in data.partitionsMetaData.values()) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+            avg_drain_demand.append(sum(p.lag + p.lagRebalancing + data.tBudget * data.avgTotalInputArrivalRate for p in data.partitionsMetaData.values()) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
             dynamic_drain_capacity_up.append(data.dynamicMaxDrainCapacity)
             dynamic_drain_capacity_down.append(data.dynamicMinDrainCapacity)
+            avg_lag.append(data.avgLag)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
         ax1.set_xlabel('Time')
-        ax1.set_ylabel('Avg Total Lag per Consumer', color=color_arrival)
-        ax1.plot(timestamps, dynamic_drain_capacity_up, color='red', linestyle='--', label='Avg Up Allowed Lag')
-        ax1.plot(timestamps, dynamic_drain_capacity_down, color='red', linestyle='--', label='Avg Down Allowed Lag')
-        ax1.plot(timestamps, avg_lag, color=color_arrival, marker='x', label='Total Lag')
+        ax1.set_ylabel('Avg Total Drain Demand per Consumer', color=color_arrival)
+        ax1.plot(timestamps, dynamic_drain_capacity_up, color='red', linestyle='--', label='Avg Up Allowed Demand')
+        ax1.plot(timestamps, dynamic_drain_capacity_down, color='red', linestyle='--', label='Avg Down Allowed Demand')
+        ax1.plot(timestamps, avg_drain_demand, color=color_arrival, marker='x', label='Total Drain Demand measured')
+        ax1.plot(timestamps, avg_lag, color='tab:blue', marker='x', label='Avg Lag measured')
         ax1.tick_params(axis='y', labelcolor=color_arrival)
         ax1.grid(True)
         ax2 = ax1.twinx()
@@ -428,9 +432,9 @@ def plot_group_lag(grouped_data):
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
         ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
         plt.xticks(rotation=45)
-        plt.title(f"Avg Total Lag per Consumer over Time — Consumer Group: {group_name}")
+        plt.title(f"Avg Drain Demand per Consumer over Time — Consumer Group: {group_name}")
         fig.tight_layout()
-        filename = f"avg_total_lag_per_consumer_group_{group_name}.png"
+        filename = f"avg_total_drain_demand_per_consumer_group_{group_name}.png"
         plt.savefig(filename)
         plt.close()
 
@@ -1136,6 +1140,6 @@ if __name__ == "__main__":
             nb_consumers_per_group=nb_cons_controller_decision_taked,
         )
         plot_group_arrival_rate(grouped_data)
-        plot_group_lag(grouped_data)
+        plot_group_drain(grouped_data)
         plot_processing_rate_by_group(grouped_data)
         print("All graphs generated successfully.")
