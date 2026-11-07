@@ -1,0 +1,74 @@
+
+nodes:
+# producer input workload
+  - id: workload-1
+    type: workload
+    params:
+      workload: batch #batch
+      producer_ack: 0
+      input: "first-600-2h.csv"
+      delay_ms: 1000
+
+# node consumers
+  - id: latency-1
+    type: latency
+    params:
+      group_id: latencygroup1
+      wsla: 500
+      scale: 3
+      shape: 2.75
+      producer_ack: 0
+      partitions: 10
+      consumption_rate: 200
+      processing_strategy: custom
+  - id: latency-2
+    type: latency
+    params:
+      group_id: latencygroup2
+      wsla: 500
+      scale: 3
+      shape: 2.75
+      producer_ack: 0
+      partitions: 10
+      consumption_rate: 200
+      processing_strategy: custom
+  - id: latency-3
+    type: latency
+    params:
+      group_id: latencygroup3
+      wsla: 500
+      scale: 3
+      shape: 2.75
+      producer_ack: 0
+      partitions: 10
+      consumption_rate: 200
+      processing_strategy: custom
+
+# edges
+edges:
+  - from: workload-1
+    to: latency-1
+    weight: 1
+  - from: latency-1
+    to: latency-2
+    weight: 1
+  - from: latency-2
+    to: latency-3
+    weight: 1
+
+controller:
+  params:
+    decision_interval: 1500
+  # maybe become a edge parameter
+    fup: 0.9
+    fdown: 0.5
+  # #############################
+    wsla_mode: e2e # local, e2e
+    wsla: 1000
+    rebalancing_time: 1
+    time_to_start_consumer: 1
+    initial_size: 1
+    scaling_strategy: reactive # naive, ehanced, burst, reactive
+    metrics:
+      request_time_range: 4
+      request_time_unit: "s" # "s", "m", "h"
