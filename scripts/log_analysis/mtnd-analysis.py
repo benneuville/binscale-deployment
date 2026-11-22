@@ -361,9 +361,10 @@ def plot_group_arrival_rate(grouped_data):
         parent_and_external_arrival_rates = []
         dynamic_arrival_rate_capacity_up = []
         dynamic_arrival_rate_capacity_down = []
-        for data in data_list:
-            avg_total_arrival_rates_by_nb_assignment.append(data.totalArrivalRate / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
-            parent_and_external_arrival_rates.append((data.parentArrivalRate + data.maxPropagatedLag + data.totalExternalArrivalRate) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+        for index, data in enumerate(data_list):
+            consumer_count = nb_consumers[index - 1] if index > 0 else nb_consumers[index]
+            avg_total_arrival_rates_by_nb_assignment.append(data.totalArrivalRate / consumer_count if consumer_count > 0 else 0)
+            parent_and_external_arrival_rates.append((data.parentArrivalRate + data.maxPropagatedLag + data.totalExternalArrivalRate) / consumer_count if consumer_count > 0 else 0)
             dynamic_arrival_rate_capacity_up.append(data.dynamicMaxAverageArrivalRate)
             dynamic_arrival_rate_capacity_down.append(data.dynamicMinAverageArrivalRate)
 
@@ -405,8 +406,9 @@ def plot_group_drain(grouped_data):
 
         dynamic_drain_capacity_up = []
         dynamic_drain_capacity_down = []
-        for data in data_list:
-            avg_drain_demand.append(sum(p.lag + p.lagRebalancing + data.tBudget * data.avgTotalInputArrivalRate for p in data.partitionsMetaData.values()) / len(data.consumerGroup.assignment) if len(data.consumerGroup.assignment) > 0 else 0)
+        for index, data in enumerate(data_list):
+            consumer_count = nb_consumers[index - 1] if index > 0 else nb_consumers[index]
+            avg_drain_demand.append(sum(p.lag + p.lagRebalancing + data.tBudget * data.avgTotalInputArrivalRate for p in data.partitionsMetaData.values()) / consumer_count if consumer_count > 0 else 0)
             dynamic_drain_capacity_up.append(data.dynamicMaxDrainCapacity)
             dynamic_drain_capacity_down.append(data.dynamicMinDrainCapacity)
             avg_lag.append(data.avgLag)
