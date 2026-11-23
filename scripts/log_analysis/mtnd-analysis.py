@@ -1,6 +1,8 @@
 import sys
 from bisect import bisect_right
 import datetime
+import math
+from pathlib import Path
 try:
     import matplotlib
     matplotlib.use("Agg")
@@ -16,6 +18,7 @@ import re
 from datetime import datetime, timedelta, timezone
 import json
 from collections import defaultdict
+import yaml
 
 X_SMALL_SIZE = 10
 SMALL_SIZE = 14
@@ -263,6 +266,11 @@ def parse_e2e_timestamp(value):
         parsed_date = parsed_date.astimezone(timezone.utc).replace(tzinfo=None)
     return parsed_date
 
+def format_time_axis(axis):
+    locator = mdates.AutoDateLocator(minticks=4, maxticks=8)
+    axis.xaxis.set_major_locator(locator)
+    axis.xaxis.set_major_formatter(mdates.ConciseDateFormatter(locator))
+
 def normalize_group_name(value):
     compact_name = re.sub(r"[^a-z0-9]", "", value.lower())
     return re.sub(r"group(?=\d+$)", "", compact_name)
@@ -297,7 +305,148 @@ def load_latency_events_from_e2e(file_path, group_names):
                     event_provider=node_origin,
                 )
             )
-        
+
+    return trackers
+
+def load_end_to_end_sla(input_directory):
+    config_files = sorted(Path(input_directory).glob("*.bs.yaml"))
+    if not config_files:
+        raise FileNotFoundError(f"No *.bs.yaml file found in {input_directory}")
+    if len(config_files) > 1:
+        raise ValueError(f"Expected one *.bs.yaml file in {input_directory}, found {len(config_files)}")
+
+    with config_files[0].open("r", encoding="utf-8") as config_file:
+        config = yaml.safe_load(config_file)
+    if not isinstance(config, dict):
+        raise ValueError(f"Invalid configuration in {config_files[0]}")
+
+    controller = config.get("controller")
+    if not isinstance(controller, dict):
+        raise ValueError(f"Missing controller configuration in {config_files[0]}")
+    controller_params = controller.get("params")
+    if not isinstance(controller_params, dict):
+        raise ValueError(f"Invalid controller.params in {config_files[0]}")
+    if controller_params.get("wsla_mode") != "e2e":
+        return None
+
+    try:
+        sla_ms = float(controller_params["wsla"])
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValueError(f"Missing or invalid controller.params.wsla in {config_files[0]}") from error
+    if not math.isfinite(sla_ms) or sla_ms < 0:
+        raise ValueError(f"controller.params.wsla must be a finite non-negative value in {config_files[0]}")
+
+    return sla_ms
+
+def get_end_to_end_metrics(trackers, e2e_sla_ms):
+
+    finish_times = []
+    durations = []
+    sla_values = []
+    for tracker in trackers:
+        events = tracker.get("events") or []
+        if not events:
+            continue
+
+        event_times = [parse_e2e_timestamp(event["timestamp"]) for event in events]
+        finish_time = max(event_times)
+        duration = tracker.get("endToEndDurationMs")
+        if duration in (None, 0) and len(event_times) > 1:
+            start_time = min(event_times)
+            duration = int((finish_time - start_time).total_seconds() * 1000)
+        if duration is None:
+            continue
+
+        if e2e_sla_ms == 0:
+            continue
+
+        finish_times.append(finish_time)
+        durations.append(float(duration))
+        if e2e_sla_ms is not None:
+            sla_values.append(e2e_sla_ms)
+
+    return finish_times, durations, sla_values
+
+def generate_end_to_end_latency_plot(finish_times, durations, sla_values, total_events):
+    fig, ax = plt.subplots(figsize=(16, 6))
+    ordered_metrics = sorted(zip(finish_times, durations))
+    finish_times = [item[0] for item in ordered_metrics]
+    durations = [item[1] for item in ordered_metrics]
+
+    ax.scatter(finish_times, durations, alpha=0.3, s=5, color="#5C669F", label="Durée end-to-end")
+    if sla_values:
+        ax.axhline(sla_values[0], color="red", linestyle="--", label=f"SLA E2E ({sla_values[0]:g} ms)")
+    format_time_axis(ax)
+    ax.set_xlabel("Heure de fin")
+    ax.set_ylabel("Durée end-to-end (ms)")
+    ax.set_title("Durée end-to-end par événement")
+    ax.grid(True, alpha=0.3)
+    if finish_times:
+        ax.legend()
+
+    event_summary = (
+        f"Événements avec SLA définie : {len(durations)} / {total_events}"
+        if sla_values
+        else f"Événements : {len(durations)} / {total_events}"
+    )
+    ax.text(
+        0.99,
+        0.98,
+        event_summary,
+        transform=ax.transAxes,
+        verticalalignment="top",
+        horizontalalignment="right",
+        bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+        fontsize=13,
+    )
+
+    fig.autofmt_xdate(rotation=30, ha="right")
+    fig.tight_layout()
+    plt.savefig("e2e_latency.png", dpi=300, bbox_inches="tight", transparent=True)
+    plt.close(fig)
+
+def generate_end_to_end_percentile_plot(durations, sla_values):
+    plt.figure(figsize=(16, 6))
+    sorted_durations = np.sort(np.asarray(durations, dtype=float))
+    cumulative_counts = np.arange(1, len(sorted_durations) + 1)
+
+    plt.plot(sorted_durations, cumulative_counts, label="Événements cumulés")
+    plt.xlabel("Durée end-to-end (ms)")
+    plt.ylabel("Nombre cumulé d'événements")
+    plt.title("Courbe cumulative des événements par durée")
+    plt.grid(True, alpha=0.3)
+
+    if len(sorted_durations) > 0:
+        for percentile in [50, 90, 95, 99]:
+            p = np.percentile(sorted_durations, percentile)
+            plt.axvline(p, color="gray", linestyle=":", alpha=0.7, label=f"{percentile}e percentile")
+
+        if sla_values:
+            sla_ms = sla_values[0]
+            plt.axvline(
+                sla_ms,
+                color="red",
+                linestyle="--",
+                alpha=0.8,
+                label=f"SLA E2E ({sla_ms:g} ms)",
+            )
+            events_within_sla = sum(duration <= sla_ms for duration in durations)
+            percent_within_sla = events_within_sla / len(durations) * 100
+            plt.text(
+                0.99,
+                0.02,
+                f"Sous la SLA : {percent_within_sla:.1f}% ({events_within_sla}/{len(durations)})",
+                transform=plt.gca().transAxes,
+                verticalalignment="bottom",
+                horizontalalignment="right",
+                bbox=dict(boxstyle="round", facecolor="white", alpha=0.8),
+            )
+        plt.legend()
+
+    plt.tight_layout()
+    plt.savefig("e2e_percentile_distribution.png", dpi=200, bbox_inches="tight")
+    plt.close()
+
 def sort_all_events_by_timestamp():
     for group in consumer_latency_events:
         for uid in consumer_latency_events[group]:
@@ -387,8 +536,8 @@ def plot_group_arrival_rate(grouped_data):
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-        plt.xticks(rotation=45)
+        format_time_axis(ax1)
+        fig.autofmt_xdate(rotation=30, ha="right")
         plt.title(f"Avg Total Arrival Rate per Consumer over Time — Consumer Group: {group_name}")
         fig.tight_layout()
         filename = f"avg_total_arrival_rate_per_consumer_group_{group_name}.png"
@@ -432,8 +581,8 @@ def plot_group_drain(grouped_data):
         lines1, labels1 = ax1.get_legend_handles_labels()
         lines2, labels2 = ax2.get_legend_handles_labels()
         ax1.legend(lines1 + lines2, labels1 + labels2, loc='upper left')
-        ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d %H:%M'))
-        plt.xticks(rotation=45)
+        format_time_axis(ax1)
+        fig.autofmt_xdate(rotation=30, ha="right")
         plt.title(f"Avg Drain Demand per Consumer over Time — Consumer Group: {group_name}")
         fig.tight_layout()
         filename = f"avg_total_drain_demand_per_consumer_group_{group_name}.png"
@@ -1023,6 +1172,11 @@ if __name__ == "__main__":
 
     if graph_generation and plt is None:
         sys.exit("Graph generation requires matplotlib and numpy. Install requirements.txt and retry.")
+    e2e_sla_ms = (
+        load_end_to_end_sla(Path(e2e_file_path).resolve().parent)
+        if graph_generation
+        else None
+    )
 
     # ========== PARSE CONTROLLER LOGS ==========
     print(f"📖 Reading controller logs from {ctrl_file_path}")
@@ -1091,7 +1245,7 @@ if __name__ == "__main__":
         grouped_data_for_nb_consumer[group_name].sort(key=lambda x: x["timestamp"])
 
     print(f"📖 Reading E2E events from {e2e_file_path}")
-    load_latency_events_from_e2e(e2e_file_path, grouped_data.keys())
+    trackers = load_latency_events_from_e2e(e2e_file_path, grouped_data.keys())
     
 
     # ========== PREPARE TIME BOUNDS ==========
@@ -1120,6 +1274,17 @@ if __name__ == "__main__":
 
     if graph_generation:
         print("\nGenerating graphs...")
+        finish_times, durations, sla_values = get_end_to_end_metrics(
+            trackers,
+            e2e_sla_ms,
+        )
+        generate_end_to_end_latency_plot(
+            finish_times,
+            durations,
+            sla_values,
+            len(trackers),
+        )
+        generate_end_to_end_percentile_plot(durations, sla_values)
         prefab_nb_consumers_over_time(grouped_data_for_nb_consumer)
         plot_nbconsumer(
             grouped_data_for_nb_consumer,
