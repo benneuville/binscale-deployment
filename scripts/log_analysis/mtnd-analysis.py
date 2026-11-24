@@ -560,7 +560,7 @@ def plot_group_drain(grouped_data):
             avg_drain_demand.append(sum(p.lag + p.lagRebalancing + data.tBudget * data.avgTotalInputArrivalRate for p in data.partitionsMetaData.values()) / consumer_count if consumer_count > 0 else 0)
             dynamic_drain_capacity_up.append(data.dynamicMaxDrainCapacity)
             dynamic_drain_capacity_down.append(data.dynamicMinDrainCapacity)
-            avg_lag.append(data.avgLag)
+            avg_lag.append(data.avgLag * len(data.partitionsMetaData) / consumer_count if consumer_count > 0 else 0)
 
         fig, ax1 = plt.subplots(figsize=(14, 7))
         color_arrival = 'tab:orange'
