@@ -101,7 +101,7 @@ edges:
 
 controller:
   params:
-    decision_interval: 1500
+    decision_interval: 3000
   # maybe become a edge parameter
     fup: 0.9
     fdown: 0.6
