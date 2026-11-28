@@ -9,10 +9,14 @@ try:
     import matplotlib.pyplot as plt
     import matplotlib.dates as mdates
     import numpy as np
+    import networkx as nx
+    from matplotlib.patches import Patch
 except ImportError:
     plt = None
     mdates = None
     np = None
+    nx = None
+    Patch = None
 from typing import List, Dict
 import re
 from datetime import datetime, timedelta, timezone
@@ -308,35 +312,112 @@ def load_latency_events_from_e2e(file_path, group_names):
 
     return trackers
 
-def load_end_to_end_sla(input_directory):
+def find_graph_config_file(input_directory):
     config_files = sorted(Path(input_directory).glob("*.bs.yaml"))
     if not config_files:
         raise FileNotFoundError(f"No *.bs.yaml file found in {input_directory}")
     if len(config_files) > 1:
         raise ValueError(f"Expected one *.bs.yaml file in {input_directory}, found {len(config_files)}")
 
-    with config_files[0].open("r", encoding="utf-8") as config_file:
+    return config_files[0]
+
+def load_end_to_end_sla(config_file_path):
+    with Path(config_file_path).open("r", encoding="utf-8") as config_file:
         config = yaml.safe_load(config_file)
     if not isinstance(config, dict):
-        raise ValueError(f"Invalid configuration in {config_files[0]}")
+        raise ValueError(f"Invalid configuration in {config_file_path}")
 
     controller = config.get("controller")
     if not isinstance(controller, dict):
-        raise ValueError(f"Missing controller configuration in {config_files[0]}")
+        raise ValueError(f"Missing controller configuration in {config_file_path}")
     controller_params = controller.get("params")
     if not isinstance(controller_params, dict):
-        raise ValueError(f"Invalid controller.params in {config_files[0]}")
+        raise ValueError(f"Invalid controller.params in {config_file_path}")
     if controller_params.get("wsla_mode") != "e2e":
         return None
 
     try:
         sla_ms = float(controller_params["wsla"])
     except (KeyError, TypeError, ValueError) as error:
-        raise ValueError(f"Missing or invalid controller.params.wsla in {config_files[0]}") from error
+        raise ValueError(f"Missing or invalid controller.params.wsla in {config_file_path}") from error
     if not math.isfinite(sla_ms) or sla_ms < 0:
-        raise ValueError(f"controller.params.wsla must be a finite non-negative value in {config_files[0]}")
+        raise ValueError(f"controller.params.wsla must be a finite non-negative value in {config_file_path}")
 
     return sla_ms
+
+def generate_service_graph(graph_file_path):
+    if nx is None or Patch is None:
+        raise RuntimeError(
+            "Service graph generation requires matplotlib and networkx. "
+            "Install requirements.txt and retry."
+        )
+
+    with Path(graph_file_path).open("r", encoding="utf-8") as graph_file:
+        graph_data = yaml.safe_load(graph_file)
+
+    nodes = graph_data["nodes"]
+    edges = graph_data["edges"]
+    graph = nx.DiGraph()
+    graph.add_nodes_from(node["id"] for node in nodes)
+    for edge in edges:
+        graph.add_edge(edge["from"], edge["to"], weight=edge.get("weight", 1))
+
+    generations = list(nx.topological_generations(graph))
+    positions = {}
+    for depth, generation in enumerate(generations):
+        for index, node_id in enumerate(generation):
+            y_position = ((len(generation) - 1) / 2 - index) * 2.5
+            positions[node_id] = (depth * 3, y_position)
+
+    node_types = {node["id"]: node.get("type") for node in nodes}
+    node_colors = [
+        "lightblue" if node_types[node_id] == "latency"
+        else "pink" if node_types[node_id] == "workload"
+        else "gray"
+        for node_id in graph.nodes
+    ]
+
+    max_generation_size = max((len(generation) for generation in generations), default=1)
+    figure_width = max(12, len(generations) * 3)
+    figure_height = max(8, max_generation_size * 2.5)
+    figure, axis = plt.subplots(figsize=(figure_width, figure_height))
+    nx.draw(
+        graph,
+        positions,
+        ax=axis,
+        with_labels=True,
+        node_size=6000,
+        node_color=node_colors,
+        font_size=10,
+        font_weight="bold",
+        arrowsize=25,
+    )
+    edge_labels = {
+        (source, target): f"BF={data['weight']}"
+        for source, target, data in graph.edges(data=True)
+    }
+    nx.draw_networkx_edge_labels(
+        graph,
+        positions,
+        edge_labels=edge_labels,
+        ax=axis,
+        font_color="black",
+        font_size=10,
+    )
+    axis.legend(
+        handles=[
+            Patch(facecolor="pink", label="Workload pod"),
+            Patch(facecolor="lightblue", label="Service"),
+        ],
+        loc="upper right",
+    )
+    axis.set_title("Graphe des services par profondeur")
+    axis.margins(0.15)
+    figure.tight_layout()
+    output_file = Path(graph_file_path).with_suffix(".png").name
+    figure.savefig(output_file, dpi=300, bbox_inches="tight")
+    plt.close(figure)
+    print(f"➡️ Graphe de services généré : {output_file}")
 
 def get_end_to_end_metrics(trackers, e2e_sla_ms):
 
@@ -1171,12 +1252,13 @@ if __name__ == "__main__":
     output_path = "mtnd-analysis-results.json"
 
     if graph_generation and plt is None:
-        sys.exit("Graph generation requires matplotlib and numpy. Install requirements.txt and retry.")
-    e2e_sla_ms = (
-        load_end_to_end_sla(Path(e2e_file_path).resolve().parent)
+        sys.exit("Graph generation requires matplotlib, numpy, and networkx. Install requirements.txt and retry.")
+    graph_config_path = (
+        find_graph_config_file(Path(e2e_file_path).resolve().parent)
         if graph_generation
         else None
     )
+    e2e_sla_ms = load_end_to_end_sla(graph_config_path) if graph_generation else None
 
     # ========== PARSE CONTROLLER LOGS ==========
     print(f"📖 Reading controller logs from {ctrl_file_path}")
@@ -1274,6 +1356,7 @@ if __name__ == "__main__":
 
     if graph_generation:
         print("\nGenerating graphs...")
+        generate_service_graph(graph_config_path)
         finish_times, durations, sla_values = get_end_to_end_metrics(
             trackers,
             e2e_sla_ms,
